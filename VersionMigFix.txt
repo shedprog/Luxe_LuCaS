@@ -1,0 +1,2 @@
+﻿    1. Change aParticleIterator to GetParticleIterator()
+    2. Change theParticleIterator to GetParticleIterator()
