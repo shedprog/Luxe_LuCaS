@@ -15,8 +15,7 @@
 
 
 
-SteppingAction::SteppingAction(DetectorConstruction* DET,
-                               EventAction* EA)
+SteppingAction::SteppingAction(DetectorConstruction* DET, EventAction* EA)
 :G4UserSteppingAction(),fDetector(DET), fEventAction(EA)
 { }
 

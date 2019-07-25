@@ -14,6 +14,8 @@
 #include "G4VPVParameterisation.hh"
 #include "G4NistManager.hh"
 
+#include "LCSensitiveDetector.hh"
+
 // #include "LCDetectorConstruction.hh"
 
 class G4Box;
@@ -84,7 +86,6 @@ class DetectorConstruction : public G4VUserDetectorConstruction
      
                              
   private:
-     // LCDetectorConstruction* LumiCal;
 
      G4Material*        fAbsorberMaterial;
      G4double           fAbsorberThickness;
@@ -140,15 +141,16 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
   private:
-        // Implement a sensitive detector object
-    // LCSensitiveDetector *SensDet;
+    
+    
+    // Implement a sensitive detector object
+    LCSensitiveDetector *SensDet;
 
     void ConstructLumiCal();
     void InitDetectorParameters();
     void BuildTBeamPT16();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ LUMUCAL WORLD~~~~~~~~~~~~~~~~~! START
-
     // world
     G4LogicalVolume *logicWorld;
     G4VPhysicalVolume *physiWorld;

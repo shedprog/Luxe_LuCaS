@@ -28,7 +28,7 @@
 #/lxphoton/gun/beamType   gaussian
 /lxphoton/gun/beamType   mc
 
-/lxphoton/gun/MCParticlesFileList /nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_1.0J.out
+/lxphoton/gun/MCParticlesFileList mc_list_out.txt
 
 #/gun/particle  e-
 /gun/particle  gamma
@@ -45,7 +45,7 @@
 #/lxphoton/ttree_cut_y  1 m
 #/lxphoton/ttree_particle all
 
-/analysis/setFileName bppp_17.5GeV_5mfoiltoIP_Enelas_1.0J.root
+/analysis/setFileName MC_OUTPUT.root
 
 
 # Run
@@ -53,6 +53,6 @@
 /run/printProgress 100000
 #/run/beamOn 1000
 #/run/beamOn 100000
-#/run/beamOn 1000
-/run/beamOn 6250000000
+/run/beamOn 1000
+#/run/beamOn 6250000000
 ####################################

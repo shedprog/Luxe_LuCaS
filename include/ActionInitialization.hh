@@ -32,6 +32,7 @@
 #define ActionInitialization_h 1
 
 #include "G4VUserActionInitialization.hh"
+#include "LCRootOut.hh"
 
 class DetectorConstruction;
 class G4VSteppingVerbose;
@@ -42,7 +43,8 @@ class G4VSteppingVerbose;
 class ActionInitialization : public G4VUserActionInitialization
 {
   public:
-    ActionInitialization(DetectorConstruction*);
+  	ActionInitialization(DetectorConstruction*);
+    ActionInitialization(DetectorConstruction*,LCRootOut *);
     virtual ~ActionInitialization();
 
     virtual void BuildForMaster() const;
@@ -52,6 +54,7 @@ class ActionInitialization : public G4VUserActionInitialization
     
   private:
     DetectorConstruction* fDetector;
+    LCRootOut *RootOut; // Handles writing the ROOT tree
 
 };
 

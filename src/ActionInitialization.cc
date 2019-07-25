@@ -15,9 +15,15 @@
 
 ActionInitialization::ActionInitialization(DetectorConstruction* det)
  : G4VUserActionInitialization(),fDetector(det)
-{ }
+{ 
+    RootOut = 0;
+}
 
-
+ActionInitialization::ActionInitialization(DetectorConstruction* det, LCRootOut *RO)
+ : G4VUserActionInitialization(),fDetector(det)
+{ 
+    RootOut = RO;
+}
 
 ActionInitialization::~ActionInitialization()
 { }
@@ -26,7 +32,7 @@ ActionInitialization::~ActionInitialization()
 
 void ActionInitialization::BuildForMaster() const
 {
- SetUserAction(new RunAction(fDetector));
+ SetUserAction(new RunAction(fDetector, RootOut));
 }
 
 
@@ -38,10 +44,10 @@ void ActionInitialization::Build() const
   
   SetUserAction(primary);
  
-  RunAction* runaction = new RunAction(fDetector,primary);
+  RunAction* runaction = new RunAction(fDetector,RootOut,primary);
   SetUserAction(runaction); 
   
-  EventAction* eventaction = new EventAction();
+  EventAction* eventaction = new EventAction(RootOut);
   SetUserAction(eventaction);
 
   SetUserAction(new TrackingAction(fDetector,eventaction));

@@ -70,7 +70,8 @@ int main(int argc,char** argv) {
 
   // set user action classes
   //
-  runManager->SetUserInitialization(new ActionInitialization(detector));  
+  LCRootOut *theRootOut = new LCRootOut ;
+  runManager->SetUserInitialization(new ActionInitialization(detector,theRootOut));  
    
   // get the pointer to the User Interface manager 
   G4UImanager* UI = G4UImanager::GetUIpointer();  
