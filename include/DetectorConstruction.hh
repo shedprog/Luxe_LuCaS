@@ -14,7 +14,6 @@
 #include "G4VPVParameterisation.hh"
 #include "G4NistManager.hh"
 
-#include "LCSensitiveDetector.hh"
 
 // #include "LCDetectorConstruction.hh"
 
@@ -142,10 +141,6 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
   private:
     
-    
-    // Implement a sensitive detector object
-    LCSensitiveDetector *SensDet;
-
     void ConstructLumiCal();
     void InitDetectorParameters();
     void BuildTBeamPT16();

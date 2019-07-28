@@ -3,11 +3,11 @@
 //
 // #define G4MULTITHREADED
 
-#ifdef G4MULTITHREADED
-#include "G4MTRunManager.hh"
-#else
+// #ifdef G4MULTITHREADED
+// #include "G4MTRunManager.hh"
+// #else
 #include "G4RunManager.hh"
-#endif
+// #endif
 
 #include "G4UImanager.hh"
 #include "Randomize.hh"
@@ -16,15 +16,14 @@
 // #include "LCDetectorConstruction.hh"
 
 #include "PhysicsList.hh"
-#include "ActionInitialization.hh"
-#include "SteppingVerbose.hh"
+// #include "ActionInitialization.hh"
+// #include "SteppingVerbose.hh"
 #include "G4StepLimiterPhysics.hh"
 #include "QGSP_BERT.hh"
 #include "G4EmStandardPhysics.hh"
 
-#include "LCRootOut.hh"
-
 #include "Setup.hh"
+
 
 #ifdef G4VIS_USE
 #include "G4VisExecutive.hh"
@@ -33,6 +32,10 @@
 #ifdef G4UI_USE
 #include "G4UIExecutive.hh"
 #endif
+
+#include "PrimaryGeneratorAction.hh"
+#include "RunAction.hh"
+#include "EventAction.hh"
 
 bool isRoot = 0;
 
@@ -47,17 +50,20 @@ int main(int argc,char** argv) {
   theSetup->SetupInit(argc, argv);    
   
   // Construct the default run manager
-#ifdef G4MULTITHREADED
-  G4MTRunManager* runManager = new G4MTRunManager;
-  G4int nThreads = G4Threading::G4GetNumberOfCores();
-  if (argc==3) nThreads = G4UIcommand::ConvertToInt(argv[2]);
-  runManager->SetNumberOfThreads(nThreads);
-  G4cout << "===== lxbeamsim is started with " 
-         <<  runManager->GetNumberOfThreads() << " threads =====" << G4endl;
-#else
-  G4VSteppingVerbose::SetInstance(new SteppingVerbose);
-  G4RunManager* runManager = new G4RunManager;
-#endif
+// #ifdef G4MULTITHREADED
+//   G4MTRunManager* runManager = new G4MTRunManager;
+//   G4int nThreads = G4Threading::G4GetNumberOfCores();
+//   if (argc==3) nThreads = G4UIcommand::ConvertToInt(argv[2]);
+//   runManager->SetNumberOfThreads(nThreads);
+//   G4cout << "===== lxbeamsim is started with " 
+//          <<  runManager->GetNumberOfThreads() << " threads =====" << G4endl;
+// #else
+// G4VSteppingVerbose::SetInstance(new SteppingVerbose);
+G4RunManager* runManager = new G4RunManager;
+// #endif
+
+
+
   // set mandatory initialization classes
   DetectorConstruction* detector = new DetectorConstruction;
   // LCDetectorConstruction* detector = new LCDetectorConstruction;
@@ -69,18 +75,20 @@ int main(int argc,char** argv) {
 //   plist->RegisterPhysics(new G4StepLimiterPhysics());
 
   runManager->SetUserInitialization(plist);
-
-  // set user action classes
-  //
-  // runManager->Initialize();
   
-  if(isRoot){
-    LCRootOut *theRootOut = new LCRootOut ;
-    runManager->SetUserInitialization(new ActionInitialization(detector,theRootOut));  
-  } else {
-    runManager->SetUserInitialization(new ActionInitialization(detector));
-  }
+  PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(detector);
+  runManager->SetUserAction(primary);
+
+  RunAction* runaction = new RunAction(detector,primary);
+  runManager->SetUserAction(runaction); 
+
+  EventAction* eventaction =  new EventAction();
+  runManager->SetUserAction(eventaction);
+
+
+
   // get the pointer to the User Interface manager 
+  
   G4UImanager* UI = G4UImanager::GetUIpointer();  
  
   if (argc!=1)   // batch mode  

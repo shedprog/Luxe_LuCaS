@@ -8,7 +8,6 @@
 #include "G4UserRunAction.hh"
 #include "globals.hh"
 
-#include "LCRootOut.hh"
 
 class Run;
 class DetectorConstruction;
@@ -22,7 +21,7 @@ class RunAction : public G4UserRunAction
 
 public:
 
-    RunAction(DetectorConstruction* det,LCRootOut *RO, PrimaryGeneratorAction* prim=0);
+    // RunAction(DetectorConstruction* det,LCRootOut *RO, PrimaryGeneratorAction* prim=0);
     RunAction(DetectorConstruction* det,PrimaryGeneratorAction* prim=0);
    ~RunAction();
    
@@ -39,9 +38,6 @@ public:
     HistoManager*           fHistoManager;
 
     G4String  fFileName;
-
-    // Handles writing to a ROOT file
-    LCRootOut *RootOut;
 };
 
 

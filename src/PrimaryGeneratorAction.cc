@@ -314,9 +314,9 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
   fParticleGun->SetNumberOfParticles(1);
   //fnfixparticles = static_cast<int>(wght/100.0)-1;
   fnfixparticles = 0;
-  //std::cout << "Generating " <<pid<<" "<< static_cast<int>(wght) << " particle with following mC data:\n"; 
+  std::cout << "Generating " <<pid<<" "<< static_cast<int>(wght) << " particle with following mC data:\n"; 
   fParticleGun->GeneratePrimaryVertex(anEvent);
-  //std::for_each(pdata.begin(), pdata.end(), [](const double x){std::cout << x << "  ";});
+  std::for_each(pdata.begin(), pdata.end(), [](const double x){std::cout << x << "  ";});
   std::cout << std::endl;
 }
 }

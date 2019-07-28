@@ -37,10 +37,11 @@
 #include "globals.hh"
 #include "G4VDiscreteProcess.hh"
 #include "G4ParticleDefinition.hh"
+#include "G4UImessenger.hh"
 #include "G4Step.hh"
 
 class StepMaxMessenger;
-
+class G4UIcmdWithADoubleAndUnit;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class StepMax : public G4VDiscreteProcess
@@ -67,6 +68,24 @@ class StepMax : public G4VDiscreteProcess
 
      G4double    fMaxChargedStep;
      StepMaxMessenger* fMess;
+};
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+class StepMaxMessenger: public G4UImessenger
+{
+  public:
+    StepMaxMessenger(StepMax*);
+   ~StepMaxMessenger();
+    
+    virtual void SetNewValue(G4UIcommand*, G4String);
+    
+  private:
+    StepMax* fStepMax;
+    G4UIcmdWithADoubleAndUnit* fStepMaxCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

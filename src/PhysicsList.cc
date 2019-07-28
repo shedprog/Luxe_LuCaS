@@ -23,7 +23,6 @@
 #include "G4StepLimiterPhysics.hh"
 
 #include "G4Decay.hh"
-#include "StepMax.hh"
 
 #include "G4LossTableManager.hh"
 
@@ -46,6 +45,7 @@
 
 #include "G4Electron.hh"
 
+#include "StepMax.hh"
 
 
 PhysicsList::PhysicsList() : G4VModularPhysicsList(),
