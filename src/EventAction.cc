@@ -3,7 +3,6 @@
 //
 
 #include "EventAction.hh"
-
 #include "Run.hh"
 // #include "HistoManager.hh"
 
@@ -28,6 +27,8 @@
 #include "G4PrimaryParticle.hh"
 
 #include "G4SystemOfUnits.hh"
+
+
 
 
 EventAction::EventAction()
@@ -103,8 +104,11 @@ time(&_start);
 
 if (collID < 0) {
     // there is only 1 hits collection, so the name is constant
-    collID = SDman->GetCollectionID("LumiCalSD_HC");
+    std::cout << "Call SDman from Begin Of Event Action\n";
+    // collID = SDman->GetCollectionID("LumiCalSD_HC");
+    collID = SDman->GetCollectionID("LumiCalSD");
 }
+// collID = 0;
 
 
 }
@@ -113,8 +117,7 @@ if (collID < 0) {
 
 void EventAction::EndOfEventAction(const G4Event* event)
 {
-  Run* run = static_cast<Run*>(
-             G4RunManager::GetRunManager()->GetNonConstCurrentRun());
+  Run* run = static_cast<Run*>(G4RunManager::GetRunManager()->GetNonConstCurrentRun());
               
  run->AddEnergy(fEnergyDeposit);
  run->AddTrakLenCharg(fTrakLenCharged);

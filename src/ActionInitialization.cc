@@ -49,11 +49,11 @@ void ActionInitialization::Build() const
   EventAction* eventaction = (RootOut) ?  new EventAction(RootOut): new EventAction();
   SetUserAction(eventaction);
 
-  SetUserAction(new TrackingAction(fDetector,eventaction));
+  // SetUserAction(new TrackingAction(fDetector,eventaction));
 
-  SetUserAction(new SteppingAction(fDetector,eventaction));
+  // SetUserAction(new SteppingAction(fDetector,eventaction));
 
-  SetUserAction(new StackingAction(eventaction));
+  // SetUserAction(new StackingAction(eventaction));
 }  
 
 

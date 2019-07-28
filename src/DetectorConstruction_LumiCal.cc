@@ -1,5 +1,4 @@
-#include "DetectorConstruction.hh"
-#include "DetectorMessenger.hh"
+
 
 #include "G4Material.hh"
 #include "G4Box.hh"
@@ -26,12 +25,6 @@
 
 #include "G4UserLimits.hh"
 
-// Taken from LUCAS part  
-#include "Setup.hh"
-#include <iostream>
-#include <sstream>
-#include <string>
-#include "globals.hh"
 
 #include "G4Box.hh"
 #include "G4Tubs.hh"
@@ -75,8 +68,15 @@
 
 #include <G4PVDivision.hh>
 
+// Taken from LUCAS part  
+#include "Setup.hh"
+#include <iostream>
+#include <sstream>
+#include <string>
+#include "globals.hh"
 #include "LCSensitiveDetector.hh"
-
+#include "DetectorConstruction.hh"
+#include "DetectorMessenger.hh"
 
 //----------------------------------------
 //// DESY 2016 Prototype test beam
@@ -523,21 +523,20 @@ std::string delimiter = ":";
     SDman->AddNewDetector(SensDet);
     // the Cells are the sensitive detectors
    
-    //logicSensorV->SetSensitiveDetector( SensDet );
+    logicSensorV->SetSensitiveDetector( SensDet );
 
-    if ( VirtualCell )  logicSensorV->SetSensitiveDetector( SensDet );
-
-      //logicCell->SetSensitiveDetector(SensDet);
-    else
-      //logicSensorV->SetSensitiveDetector( SensDet );
-
-    G4cout << "  there is no VirtualCell.... " << G4endl;
+    // if ( VirtualCell )  logicSensorV->SetSensitiveDetector( SensDet );
+    //   //logicCell->SetSensitiveDetector(SensDet);
+    // else
+    //   //logicSensorV->SetSensitiveDetector( SensDet );
+    //   G4cout << "  there is no VirtualCell.... " << G4endl;
 
 
 	G4cout <<  " Test Beam setup done !  "  << G4endl;
 
 	G4Transform3D shift_toall ( G4RotationMatrix().rotateZ( 90.0*deg ),
 			   G4ThreeVector( -15.0*cm, 0.0, 3.*m));
+
 	new G4PVPlacement(shift_toall,
 		logicWorld,
 		"LumiCal", // an updated string
@@ -547,12 +546,17 @@ std::string delimiter = ":";
 
 	G4Transform3D shift_toall2 ( G4RotationMatrix().rotateZ( -90.0*deg ),
 			   		G4ThreeVector( 15.0*cm, 0.0, 3.*m));
+  
   	new G4PVPlacement(shift_toall2,
 		logicWorld,
 		"LumiCal", // an updated string
 		fLogicWorld,
 		0,
 		1); // copy number
+    
+  SDman = G4SDManager::GetSDMpointer();
+  std::cout<<"@@@@@@@@@@@@@@@@@@@@@@@@@ Pointer from detector Construction: "<<SDman->GetCollectionID("LumiCalSD")<<"\n";
+
 
 }
 

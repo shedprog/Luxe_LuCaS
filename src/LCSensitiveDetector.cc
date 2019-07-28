@@ -31,7 +31,8 @@ LCSensitiveDetector::LCSensitiveDetector(G4String sdname,
       VirtualCell( cellvirtual )
 {
     collName = SDName+"_HC"; // not dynamic - name becomes LumiCalSD_HC
-    collectionName.insert(collName); // a G4VSensitiveDetector element
+    // collectionName.insert(collName); // a G4VSensitiveDetector element
+    collectionName.insert("LumiCalSD");
     origin = G4ThreeVector();
     hitMap = new LCHitMap;
 
@@ -55,6 +56,7 @@ LCSensitiveDetector::~LCSensitiveDetector()
 
 void LCSensitiveDetector::Initialize(G4HCofThisEvent *HCE)
 {
+    std::cout<<"@@@@@@@@@@@@@@@@@@@@@@@ SD was initialized!\n";
     //Create a (G4) hit collection for this event
     // hitsColl = new LCHitsCollection(SDName, collectionName[0]);
     hitsColl = new LCHitsCollection(SDName, collName);

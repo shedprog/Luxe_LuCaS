@@ -72,6 +72,8 @@ int main(int argc,char** argv) {
 
   // set user action classes
   //
+  // runManager->Initialize();
+  
   if(isRoot){
     LCRootOut *theRootOut = new LCRootOut ;
     runManager->SetUserInitialization(new ActionInitialization(detector,theRootOut));  

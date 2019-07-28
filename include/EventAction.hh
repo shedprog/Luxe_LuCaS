@@ -39,7 +39,9 @@
 
 #include <vector>
 
+#include "LCHit.hh"
 #include "LCRootOut.hh"
+#include "LCSensitiveDetector.hh" // need to get the SD name
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
