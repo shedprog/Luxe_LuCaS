@@ -5,7 +5,7 @@
 #include "EventAction.hh"
 
 #include "Run.hh"
-#include "HistoManager.hh"
+// #include "HistoManager.hh"
 
 #include "G4RunManager.hh"
 #include "G4Event.hh"
@@ -37,7 +37,7 @@ EventAction::EventAction()
  fNbStepsCharged(0), fNbStepsNeutral(0),
  fTransmitFlag(0), fReflectFlag(0)
 {    
-	collID = -1;
+	  collID = -1;
     RootOut = 0; 
 }
 
@@ -48,7 +48,7 @@ EventAction::EventAction(LCRootOut * RO)
  fNbStepsCharged(0), fNbStepsNeutral(0),
  fTransmitFlag(0), fReflectFlag(0)
 {    
-	collID = -1;
+	  collID = -1;
     RootOut = RO;
 }
 
@@ -184,12 +184,12 @@ void EventAction::EndOfEventAction(const G4Event* event)
     if (HitsColl) { // fill the ROOT Tree
 
       if( RootOut ) {
-	if ( Setup::AccumulateEvents ){
-	  RootOut->ProcEventAccumulate( HitsColl );
-	}
-	else {
-	  RootOut->ProcessEvent( event, HitsColl );
-	}
+	// if ( Setup::AccumulateEvents ){
+	//   RootOut->ProcEventAccumulate( HitsColl );
+	// }
+	// else {
+	    RootOut->ProcessEvent( event, HitsColl );
+	// }
       }
     }
 

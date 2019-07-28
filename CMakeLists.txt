@@ -20,11 +20,11 @@ else()
 endif()
 
 # Find ROOT
-    find_package(ROOT REQUIRED)
-    if(NOT ROOT_FOUND)
-        message(FATAL_ERROR "ROOT is not found :(")
-        return()
-    endif()
+#    find_package(ROOT REQUIRED)
+#    if(NOT ROOT_FOUND)
+#        message(FATAL_ERROR "ROOT is not found :(")
+#        return()
+#    endif()
 
 #----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions
@@ -34,13 +34,13 @@ include(${Geant4_USE_FILE})
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 #
-include_directories(${PROJECT_SOURCE_DIR}/include ${Geant4_INCLUDE_DIR} ${ROOT_INCLUDE_DIR})
+include_directories(${PROJECT_SOURCE_DIR}/include ${Geant4_INCLUDE_DIR})
 #file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 #file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cxx)
 
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
-file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.h)
+#file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.h)
 #file(GLOB headers ${PROJECT_SOURCE_DIR}/include/LumiCal/*.hh)
 file(GLOB headers ${ROOT_INCLUDE_DIR}/*.h)
 
@@ -54,14 +54,14 @@ file(COPY ${PROJECT_SOURCE_DIR}/run_condor.sh DESTINATION ./)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/condor_out)
 
-set(libsuffix .so)
-set(ROOT_LIBRARY_PROPERTIES ${ROOT_LIBRARY_PROPERTIES} SUFFIX ${libsuffix})
+#set(libsuffix .so)
+#set(ROOT_LIBRARY_PROPERTIES ${ROOT_LIBRARY_PROPERTIES} SUFFIX ${libsuffix})
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(lxbeamsim lxbeamsim.cc ${sources} ${headers} ${TOOLS_FORTRAN_OBJECTS} )
-target_link_libraries(lxbeamsim ${Geant4_LIBRARIES} ${HBOOK_LIBRARIES} ${ROOT_LIBRARIES})
+target_link_libraries(lxbeamsim ${Geant4_LIBRARIES} ${HBOOK_LIBRARIES})
 
 #target_compile_options(lxbeamsim PUBLIC -ggdb -g)
 #SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ggdb -g")

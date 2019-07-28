@@ -9,7 +9,7 @@
 #include "DetectorConstruction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
-#include "HistoManager.hh"
+// #include "HistoManager.hh"
 
 #include "G4Step.hh"
 

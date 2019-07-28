@@ -5,7 +5,7 @@
 #include "RunAction.hh"
 #include "DetectorConstruction.hh"
 #include "PrimaryGeneratorAction.hh"
-#include "HistoManager.hh"
+// #include "HistoManager.hh"
 #include "G4UImessenger.hh"
 
 #include "G4AnalysisMessenger.hh"
@@ -33,11 +33,11 @@ RunAction::RunAction(DetectorConstruction* det, LCRootOut *RO, PrimaryGeneratorA
   // Book predefined histograms
   //fHistoManager = new HistoManager();
   
-  G4AnalysisManager* man = G4AnalysisManager::Instance();
-  // Open an output file
-  man->SetFileName(fFileName);
-  man->SetVerboseLevel(1);
-  man->SetActivation(true);    // enabl
+  // G4AnalysisManager* man = G4AnalysisManager::Instance();
+  // // Open an output file
+  // man->SetFileName(fFileName);
+  // man->SetVerboseLevel(1);
+  // man->SetActivation(true);    // enabl
 
   RootOut = RO;
 }
@@ -48,11 +48,11 @@ RunAction::RunAction(DetectorConstruction* det, PrimaryGeneratorAction* kin)
   // Book predefined histograms
   //fHistoManager = new HistoManager();
   
-  G4AnalysisManager* man = G4AnalysisManager::Instance();
-  // Open an output file
-  man->SetFileName(fFileName);
-  man->SetVerboseLevel(1);
-  man->SetActivation(true);    // enabl
+  // G4AnalysisManager* man = G4AnalysisManager::Instance();
+  // // Open an output file
+  // man->SetFileName(fFileName);
+  // man->SetVerboseLevel(1);
+  // man->SetActivation(true);    // enabl
 
   RootOut = 0;
 }
@@ -87,6 +87,9 @@ void RunAction::BeginOfRunAction(const G4Run* Run)
     fRun->SetPrimary(particle, energy);
     std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~ E: "<<energy<<" "<<particle<<"\n";
   }
+
+  /*
+
   // My histograms 14.06.2019
   
   // Get analysis manager
@@ -289,9 +292,9 @@ void RunAction::EndOfRunAction(const G4Run* Run)
   //
   if (isMaster) fRun->EndOfRun();    
       
-  G4AnalysisManager* man = G4AnalysisManager::Instance();
-  man->Write();
-  man->CloseFile();
+  // G4AnalysisManager* man = G4AnalysisManager::Instance();
+  // man->Write();
+  // man->CloseFile();
 
   // save histograms
   // G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();  

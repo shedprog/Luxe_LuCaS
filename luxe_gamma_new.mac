@@ -45,7 +45,7 @@
 #/lxphoton/ttree_cut_y  1 m
 #/lxphoton/ttree_particle all
 
-/analysis/setFileName MC_OUTPUT.root
+#/analysis/setFileName MC_OUTPUT.root
 
 
 # Run

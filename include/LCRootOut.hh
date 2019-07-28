@@ -1,24 +1,5 @@
-/*
- * LCRootOut.hh
- *
- *  Created on: Apr 23, 2009
- *      Author: aguilar
- *
- *      Fill a Tree object, then write the object to file
- *      You can get help from the ROOT documentation at http://root.cern.ch
- *
- *      MAJOR question: is there going to be just one tree,
- *      or one tree for each hit?
- */
-
 #ifndef LCROOTOUT_HH_
 #define LCROOTOUT_HH_ 1
-
-#include "LCSensitiveDetector.hh"
-#include "LCHit.hh"
-
-#include "G4Event.hh"
-#include "G4SDManager.hh"
 
 #include <stdio.h>
 #include <math.h>
@@ -29,52 +10,19 @@
 #include <iostream>
 #include <sstream>
 
-// root classes:
-#include "TROOT.h"
-#include "TFile.h"
-#include "TTree.h"
-#include "TH1.h"
+#include "tls.hh"
+#include "G4String.hh"
 
-#include "Track_t.hh"
-#include "Hit_t.hh"
+#include "G4Run.hh"
+#include "G4RunManager.hh"
+#include "G4ios.hh"
 
-// typedef struct {
-//   double pX;
-//   double pY;
-//   double pZ;
-//   int    ID;
-//   int   PDG;
-// } Track_t;
-
-// typedef struct{
-//     int    cellID;
-//     double eHit;
-//     double xCell;
-//     double yCell;
-//     double zCell;
-//     double xHit;
-//     double yHit;
-//     double zHit;
-//     double TOF;
-// } Hit_t;
-
-// // #ifdef __MAKECINT__
-// // // #pragma link C++ class vector<float>+;
-
-// #pragma link C++ struct Hit_t+;
-// #pragma link C++ struct Track_t+;
-// #pragma link C++ class std::vector<Hit_t>+;
-// #pragma link C++ class std::vector<Track_t>+;
-
-// #endif
-
+#include "LCSensitiveDetector.hh"
+#include "LCHit.hh"
+#include "g4root.hh"
 // namespaces
 using namespace std;
-using namespace TMath;
-
-// ------------------------------------------------------------------
-// ROOT output class
-// ------------------------------------------------------------------
+// using namespace TMath;
 
 class LCRootOut
 {
@@ -87,46 +35,61 @@ public:
  
   void Init();                                                         // opens a file, creates a Tree 
   void ProcessEvent(const G4Event* event, LCHitsCollection *HitsColl);
-  void ProcEventAccumulate( LCHitsCollection *HitsColl);
+  // void ProcEventAccumulate( LCHitsCollection *HitsColl);
+  void ClearData();
   void End();                                                         // writes to file and closes it
   void SetAddresses();                                                // sets branch addresses in "UPDATE" mode
   void CreateNewTree();                                               // creates new Tree
-  TFile *GetFile(){ return _file; }
-  // root variables:
-static TFile *pRootFile;
 
 
 private:
   // root output file name 
   G4String RootOutFile;
-  TFile *_file;
-  TTree *_LcalData;
-  //
-   G4double _z0;
-   G4double _dz;
-   G4double _r0;
-   G4double _dr;
-   G4double _phi0;
-   G4double _phiOffset;
-   G4double _dphi;
-  //
-   vector<G4int> theUsedCells;
-public:
+  G4AnalysisManager* analysisManager;
  
 
 private:
   G4double vX, vY, vZ;
   G4int numPrim;       // number of primary particles
-  vector< Track_t > Tracks;
-  vector< Track_t > *pTracks;
   G4int numHits;     // total number of hits
   //  caloHit
-  vector< Hit_t > Hits;
-  vector< Hit_t > *pHits;
   G4double Etot[2];       // total energy deposit in arm per arm
   G4double Emax;          // max  energy deposit in cell
-//------------------------------------------------------------------------
 
+  std::vector<G4double> Tracks_pX;
+  std::vector<G4double> Tracks_pY;
+  std::vector<G4double> Tracks_pZ;
+  std::vector<G4int> Tracks_ID;
+  std::vector<G4int> Tracks_PDG;
+
+  std::vector<G4int> Hits_cellID;
+  std::vector<G4double> Hits_eHit;
+  std::vector<G4double> Hits_xCell;
+  std::vector<G4double> Hits_yCell;
+  std::vector<G4double> Hits_zCell;
+  std::vector<G4double> Hits_xHit;
+  std::vector<G4double> Hits_yHit;
+  std::vector<G4double> Hits_zHit;
+  std::vector<G4double> Hits_TOF;
+
+
+void FillTracks_pX(G4double pX_) {Tracks_pX.push_back(pX_);}
+void FillTracks_pY(G4double pY_) {Tracks_pY.push_back(pY_);}
+void FillTracks_pZ(G4double pZ_) {Tracks_pZ.push_back(pZ_);}
+void FillTracks_ID(G4int ID_) {Tracks_ID.push_back(ID_);}
+void FillTracks_PDG(G4int PDG_) {Tracks_PDG.push_back(PDG_);}
+
+void FillcellID(G4int cellID_) {Hits_cellID.push_back(cellID_);}
+void FilleHit(G4double eHit_) {Hits_eHit.push_back(eHit_);}
+void FillxCell(G4double xCell_) {Hits_xCell.push_back(xCell_);}
+void FillyCell(G4double yCell_) {Hits_yCell.push_back(yCell_);}
+void FillzCell(G4double zCell_) {Hits_zCell.push_back(zCell_);}
+void FillxHit(G4double xHit_) {Hits_xHit.push_back(xHit_);}
+void FillyHit(G4double yHit_) {Hits_yHit.push_back(yHit_);}
+void FillzHit(G4double zHit_) {Hits_zHit.push_back(zHit_);}
+void FillTOF(G4double TOF_) {Hits_TOF.push_back(TOF_);}
+
+//------------------------------------------------------------------------
 };
 
-#endif /* LCROOTOUT_HH_ */
+#endif;

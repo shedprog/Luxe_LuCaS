@@ -4,7 +4,7 @@
 #include "Run.hh"
 #include "DetectorConstruction.hh"
 #include "PrimaryGeneratorAction.hh"
-#include "HistoManager.hh"
+// #include "HistoManager.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
 

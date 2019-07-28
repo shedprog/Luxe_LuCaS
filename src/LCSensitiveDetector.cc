@@ -14,7 +14,7 @@
 // #include "LCEventAction.hh"
 #include "Setup.hh"
 
-
+#include "G4SystemOfUnits.hh"
 
 LCSensitiveDetector::LCSensitiveDetector(G4String sdname,
                                          G4double CalRhoMin,
@@ -43,7 +43,7 @@ LCSensitiveDetector::LCSensitiveDetector(G4String sdname,
 		SetPhiCellDim( cellDimPhi);
 		SetNCellRho(nCellRho);
 		SetNCellPhi(nCellPhi);
-   G4cout << "SD created <" << SDName << ">" << G4endl;
+    G4cout << "SD created <" << SDName << ">" << G4endl;
  
 }
 
@@ -100,11 +100,8 @@ G4bool LCSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *)
     // store energy deposition and momentum change from primary particles
     G4double edep = aStep->GetTotalEnergyDeposit();
 
-        // make sure you aren't using geantinos
-        if (edep <= 0 &&
-                aStep->GetTrack()->GetDefinition()->GetParticleType() != "geantino") {
-            return true;
-        }
+    // make sure you aren't using geantinos
+    if (edep <= 0 && aStep->GetTrack()->GetDefinition()->GetParticleType() != "geantino") return true;
 
     // PARTICLE INFORMATION ---------------------------------
 
@@ -117,8 +114,8 @@ G4bool LCSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *)
     G4int PDG=aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
 
     if ( parentID <= 0 ){
-     G4int PID = aStep->GetTrack()->GetTrackID();
-     if( PID != primaryID )
+    G4int PID = aStep->GetTrack()->GetTrackID();
+    if( PID != primaryID )
        {
            primaryID = PID;
            primaryPDG= PDG;
@@ -130,7 +127,7 @@ G4bool LCSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *)
     const G4StepPoint *postStepPoint = aStep->GetPostStepPoint();
     G4ThreeVector GlobalHitPos = ( (preStepPoint->GetPosition())+(postStepPoint->GetPosition())) / 2.;
     //
-    //G4cout << "GlobalHitPosition " << GlobalHitPos/mm << " mm " <<G4endl;
+    G4cout << "GlobalHitPosition " << GlobalHitPos/mm << " mm " <<G4endl;
     //
     G4int LC_num = 0, layer_num = 0, sector_num = 0, cell_num = 0;
         // Use the touchable handle to get the volume hierarchy for the hit

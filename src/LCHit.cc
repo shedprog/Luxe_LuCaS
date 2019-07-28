@@ -34,6 +34,7 @@ G4Allocator<LCHit> LCHitAllocator;
 //destructor
 LCHit::~LCHit()
 {
+    std::cout<<"@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LCHit destructor\n";
     trackIDs->clear();
     delete trackIDs;
 }

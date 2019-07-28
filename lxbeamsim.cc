@@ -22,6 +22,8 @@
 #include "QGSP_BERT.hh"
 #include "G4EmStandardPhysics.hh"
 
+#include "LCRootOut.hh"
+
 #include "Setup.hh"
 
 #ifdef G4VIS_USE
@@ -32,7 +34,7 @@
 #include "G4UIExecutive.hh"
 #endif
 
-
+bool isRoot = 0;
 
 int main(int argc,char** argv) {
 
@@ -70,9 +72,12 @@ int main(int argc,char** argv) {
 
   // set user action classes
   //
-  LCRootOut *theRootOut = new LCRootOut ;
-  runManager->SetUserInitialization(new ActionInitialization(detector,theRootOut));  
-   
+  if(isRoot){
+    LCRootOut *theRootOut = new LCRootOut ;
+    runManager->SetUserInitialization(new ActionInitialization(detector,theRootOut));  
+  } else {
+    runManager->SetUserInitialization(new ActionInitialization(detector));
+  }
   // get the pointer to the User Interface manager 
   G4UImanager* UI = G4UImanager::GetUIpointer();  
  

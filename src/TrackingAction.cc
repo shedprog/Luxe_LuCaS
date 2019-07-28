@@ -7,7 +7,7 @@
 #include "DetectorConstruction.hh"
 #include "Run.hh"
 #include "EventAction.hh"
-#include "HistoManager.hh"
+// #include "HistoManager.hh"
 
 #include "G4RunManager.hh"
 #include "G4Track.hh"
@@ -29,55 +29,55 @@ void TrackingAction::PreUserTrackingAction(const G4Track* aTrack )
 //   //
     //double weight_fromMC;
    // G4cout<<"###############Weights of histograms######################: -> "<<weight_fromMC<<"\n";
-    G4AnalysisManager* man = G4AnalysisManager::Instance();
+    // G4AnalysisManager* man = G4AnalysisManager::Instance();
     
-    // fZstartAbs = fDetector->GetzstartAbs();
-    // fZendAbs   = fDetector->GetzendAbs();
-    fPrimaryCharge = aTrack->GetDefinition()->GetPDGCharge();
-    G4ThreeVector position = aTrack->GetPosition();
-    G4ThreeVector vertex   = aTrack->GetVertexPosition();
-    G4ThreeVector momentum   = aTrack->GetMomentum();
-    G4double EnergyKin = aTrack->GetKineticEnergy();
+    // // fZstartAbs = fDetector->GetzstartAbs();
+    // // fZendAbs   = fDetector->GetzendAbs();
+    // fPrimaryCharge = aTrack->GetDefinition()->GetPDGCharge();
+    // G4ThreeVector position = aTrack->GetPosition();
+    // G4ThreeVector vertex   = aTrack->GetVertexPosition();
+    // G4ThreeVector momentum   = aTrack->GetMomentum();
+    // G4double EnergyKin = aTrack->GetKineticEnergy();
 
-    G4int pdgid = aTrack->GetDefinition()->GetPDGEncoding(); 
+    // G4int pdgid = aTrack->GetDefinition()->GetPDGEncoding(); 
 
-    double theta = atan2(sqrt(momentum[0]*momentum[0] + momentum[1]*momentum[1]), momentum[2]);
-    double phi = atan2(momentum[1], momentum[0]);
+    // double theta = atan2(sqrt(momentum[0]*momentum[0] + momentum[1]*momentum[1]), momentum[2]);
+    // double phi = atan2(momentum[1], momentum[0]);
 
-    // photon at start
-    if (pdgid == G4Gamma::Gamma()->GetPDGEncoding()) {
-    man->FillH1(0,EnergyKin,weight_fromMC);
-    man->FillH1(3,phi,weight_fromMC);
-    man->FillH1(6,theta,weight_fromMC);
+    // // photon at start
+    // if (pdgid == G4Gamma::Gamma()->GetPDGEncoding()) {
+    // man->FillH1(0,EnergyKin,weight_fromMC);
+    // man->FillH1(3,phi,weight_fromMC);
+    // man->FillH1(6,theta,weight_fromMC);
 
-    man->FillH1(9,position.x(),weight_fromMC);
-    man->FillH1(10,position.y(),weight_fromMC);
-    man->FillH1(11,position.z(),weight_fromMC);
-    }
-    // electron at start
-    if (pdgid == G4Electron::Electron()->GetPDGEncoding()) {
-    man->FillH1(1,EnergyKin,weight_fromMC);
-    man->FillH1(4,phi,weight_fromMC);
-    man->FillH1(7,theta,weight_fromMC);
+    // man->FillH1(9,position.x(),weight_fromMC);
+    // man->FillH1(10,position.y(),weight_fromMC);
+    // man->FillH1(11,position.z(),weight_fromMC);
+    // }
+    // // electron at start
+    // if (pdgid == G4Electron::Electron()->GetPDGEncoding()) {
+    // man->FillH1(1,EnergyKin,weight_fromMC);
+    // man->FillH1(4,phi,weight_fromMC);
+    // man->FillH1(7,theta,weight_fromMC);
 
-    man->FillH1(12,position.x(),weight_fromMC);
-    man->FillH1(13,position.y(),weight_fromMC);
-    man->FillH1(14,position.z(),weight_fromMC);
-    }
+    // man->FillH1(12,position.x(),weight_fromMC);
+    // man->FillH1(13,position.y(),weight_fromMC);
+    // man->FillH1(14,position.z(),weight_fromMC);
+    // }
 
-    // positron at start
-    if (pdgid == G4Positron::Positron()->GetPDGEncoding()) {
-    man->FillH1(2,EnergyKin,weight_fromMC);
-    man->FillH1(5,phi,weight_fromMC);
-    man->FillH1(8,theta,weight_fromMC);
+    // // positron at start
+    // if (pdgid == G4Positron::Positron()->GetPDGEncoding()) {
+    // man->FillH1(2,EnergyKin,weight_fromMC);
+    // man->FillH1(5,phi,weight_fromMC);
+    // man->FillH1(8,theta,weight_fromMC);
 
-    man->FillH1(15,position.x(),weight_fromMC);
-    man->FillH1(16,position.y(),weight_fromMC);
-    man->FillH1(17,position.z(),weight_fromMC);
-    }
+    // man->FillH1(15,position.x(),weight_fromMC);
+    // man->FillH1(16,position.y(),weight_fromMC);
+    // man->FillH1(17,position.z(),weight_fromMC);
+    // }
 
 
-    man->FillH1(36,pdgid,weight_fromMC);
+    // man->FillH1(36,pdgid,weight_fromMC);
     
 //   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();  
     
@@ -117,61 +117,61 @@ void TrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   // My hist filling 
   //double weight_fromMC;
   //G4cout<<"###############Weights of histograms######################: -> "<<weight_fromMC<<"\n";
-  G4AnalysisManager* man = G4AnalysisManager::Instance(); 
+ //  G4AnalysisManager* man = G4AnalysisManager::Instance(); 
   
-  G4ThreeVector position = aTrack->GetPosition();
-  G4ThreeVector vertex   = aTrack->GetVertexPosition();
-  G4ThreeVector momentum = aTrack->GetMomentum();
+ //  G4ThreeVector position = aTrack->GetPosition();
+ //  G4ThreeVector vertex   = aTrack->GetVertexPosition();
+ //  G4ThreeVector momentum = aTrack->GetMomentum();
 
-  G4double charge        = aTrack->GetDefinition()->GetPDGCharge();
-  G4double EnergyKin     = aTrack->GetKineticEnergy();
+ //  G4double charge        = aTrack->GetDefinition()->GetPDGCharge();
+ //  G4double EnergyKin     = aTrack->GetKineticEnergy();
 
-  G4double z_threshold = 300*cm;
+ //  G4double z_threshold = 300*cm;
 
-  G4int pdgid = aTrack->GetDefinition()->GetPDGEncoding(); 
-  double theta = atan2(sqrt(momentum[0]*momentum[0] + momentum[1]*momentum[1]), momentum[2]);
-  double phi = atan2(momentum[1], momentum[0]);
+ //  G4int pdgid = aTrack->GetDefinition()->GetPDGEncoding(); 
+ //  double theta = atan2(sqrt(momentum[0]*momentum[0] + momentum[1]*momentum[1]), momentum[2]);
+ //  double phi = atan2(momentum[1], momentum[0]);
 
-  if (position.z() <= z_threshold) return;
+ //  if (position.z() <= z_threshold) return;
   
-  G4cout<<"To histograms: "<<pdgid<<"\n";
-  G4cout<<EnergyKin<<phi<<theta<<"\n";
+ //  G4cout<<"To histograms: "<<pdgid<<"\n";
+ //  G4cout<<EnergyKin<<phi<<theta<<"\n";
 
-  // photon at start
-  if (pdgid == G4Gamma::Gamma()->GetPDGEncoding()) {
-  man->FillH1(18,EnergyKin,weight_fromMC);
-  man->FillH1(21,phi,weight_fromMC);
-  man->FillH1(24,theta,weight_fromMC);
+ //  // photon at start
+ //  if (pdgid == G4Gamma::Gamma()->GetPDGEncoding()) {
+ //  man->FillH1(18,EnergyKin,weight_fromMC);
+ //  man->FillH1(21,phi,weight_fromMC);
+ //  man->FillH1(24,theta,weight_fromMC);
 
-  man->FillH1(27,position.x(),weight_fromMC);
-  man->FillH1(28,position.y(),weight_fromMC);
-  man->FillH1(29,position.z(),weight_fromMC);
-  }
-  // electron at start
-  if (pdgid == G4Electron::Electron()->GetPDGEncoding()) {
-  man->FillH1(19,EnergyKin,weight_fromMC);
-  man->FillH1(22,phi,weight_fromMC);
-  man->FillH1(25,theta,weight_fromMC);
+ //  man->FillH1(27,position.x(),weight_fromMC);
+ //  man->FillH1(28,position.y(),weight_fromMC);
+ //  man->FillH1(29,position.z(),weight_fromMC);
+ //  }
+ //  // electron at start
+ //  if (pdgid == G4Electron::Electron()->GetPDGEncoding()) {
+ //  man->FillH1(19,EnergyKin,weight_fromMC);
+ //  man->FillH1(22,phi,weight_fromMC);
+ //  man->FillH1(25,theta,weight_fromMC);
 
-  man->FillH1(30,position.x(),weight_fromMC);
-  man->FillH1(31,position.y(),weight_fromMC);
-  man->FillH1(32,position.z(),weight_fromMC);
+ //  man->FillH1(30,position.x(),weight_fromMC);
+ //  man->FillH1(31,position.y(),weight_fromMC);
+ //  man->FillH1(32,position.z(),weight_fromMC);
 
- // man->FillH2(0,position.x(),position.y(),weight_fromMC);
-  }
+ // // man->FillH2(0,position.x(),position.y(),weight_fromMC);
+ //  }
 
-  // positron at start
-  if (pdgid == G4Positron::Positron()->GetPDGEncoding()) {
-  man->FillH1(20,EnergyKin,weight_fromMC);
-  man->FillH1(23,phi,weight_fromMC);
-  man->FillH1(26,theta,weight_fromMC);
+ //  // positron at start
+ //  if (pdgid == G4Positron::Positron()->GetPDGEncoding()) {
+ //  man->FillH1(20,EnergyKin,weight_fromMC);
+ //  man->FillH1(23,phi,weight_fromMC);
+ //  man->FillH1(26,theta,weight_fromMC);
 
-  man->FillH1(33,position.x(),weight_fromMC);
-  man->FillH1(34,position.y(),weight_fromMC);
-  man->FillH1(35,position.z(),weight_fromMC);
+ //  man->FillH1(33,position.x(),weight_fromMC);
+ //  man->FillH1(34,position.y(),weight_fromMC);
+ //  man->FillH1(35,position.z(),weight_fromMC);
 
-  man->FillH2(0,position.x(),position.y(),weight_fromMC);
-  }
+ //  man->FillH2(0,position.x(),position.y(),weight_fromMC);
+ //  }
 
 
 

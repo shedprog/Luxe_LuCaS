@@ -518,7 +518,7 @@ std::string delimiter = ":";
                                       sectorPhi,    // angular cell width
                                       nCells,       // # cells in the rad dir
                                       nSectors,     // # cells in the phi dir
-				      VirtualCell); // cell type real/virtual =  false/true
+				                              VirtualCell); // cell type real/virtual =  false/true
         
     SDman->AddNewDetector(SensDet);
     // the Cells are the sensitive detectors

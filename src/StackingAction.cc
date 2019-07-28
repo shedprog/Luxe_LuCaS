@@ -35,7 +35,7 @@
 
 #include "Run.hh"
 #include "EventAction.hh"
-#include "HistoManager.hh"
+// #include "HistoManager.hh"
 #include "StackingMessenger.hh"
 
 #include "G4RunManager.hh"

@@ -41,13 +41,12 @@ void ActionInitialization::BuildForMaster() const
 void ActionInitialization::Build() const
 {
   PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(fDetector);
-  
   SetUserAction(primary);
- 
-  RunAction* runaction = new RunAction(fDetector,RootOut,primary);
+
+  RunAction* runaction = (RootOut) ? new RunAction(fDetector,RootOut,primary) : new RunAction(fDetector,primary);
   SetUserAction(runaction); 
-  
-  EventAction* eventaction = new EventAction(RootOut);
+
+  EventAction* eventaction = (RootOut) ?  new EventAction(RootOut): new EventAction();
   SetUserAction(eventaction);
 
   SetUserAction(new TrackingAction(fDetector,eventaction));
