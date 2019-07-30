@@ -23,8 +23,6 @@ class G4VPhysicalVolume;
 class G4Material;
 class G4MaterialCutsCouple;
 class G4UniformMagField;
-class DetectorMessenger;
-class G4GlobalMagFieldMessenger;
 class G4UserLimits;
 
 
@@ -38,45 +36,27 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
   public:
 
-     void SetAbsorberMaterial (G4String);
-     void SetAbsorberThickness(G4double);
-     void SetAbsorberSizeXY   (G4double);
-
-     void SetAbsorberZpos(G4double);
-     void SetAbsorberType(G4String val);
-
      void SetWorldMaterial(G4String);
      void SetWorldSizeZ   (G4double);
      void SetWorldSizeXY  (G4double);
 
      void SetMagField(G4double);
+     void DefineMaterials();
 
      virtual G4VPhysicalVolume* Construct();
-     virtual void ConstructSDandField();
+     // virtual void ConstructSDandField();
 
 
 
   public:
 
-     void PrintCalorParameters();
-
-     G4Material* GetAbsorberMaterial()  const {return fAbsorberMaterial;};
-     G4double    GetAbsorberThickness() const {return fAbsorberThickness;};
-     G4double    GetAbsorberSizeXY()    const {return fAbsorberSizeXY;};
-     G4double    GetAbsorberSizeX()     const {if (fTargetType == tfoil) return fAbsorberSizeXY; else return fAbsorberThickness;};
-
-     G4double    GetAbsorberZpos() const {return fZposAbs;};
-     G4double    GetzstartAbs()    const {return fZstartAbs;};
-     G4double    GetzendAbs()      const {return fZendAbs;};
-
+     // void PrintCalorParameters();
+     G4VPhysicalVolume* ConstructCalorimeter();
      G4Material* GetWorldMaterial()     {return fWorldMaterial;};
      G4double    GetWorldSizeZ()    const {return fWorldSizeZ;};
      G4double    GetWorldSizeXY()   const {return fWorldSizeXY;};
 
      const G4VPhysicalVolume* GetphysiWorld() {return fPhysiWorld;};
-     const G4VPhysicalVolume* GetAbsorber()   {return fPhysiAbsorber;};
-     const G4MaterialCutsCouple* GetAbsorbMaterialCut()  const
-                             {return fLogicAbsorber->GetMaterialCutsCouple();};
 
      G4double GetMagnetZend() { return fMagnetZPos + fMagnetSizeZ/2.0; };
      
@@ -86,12 +66,6 @@ class DetectorConstruction : public G4VUserDetectorConstruction
                              
   private:
 
-     G4Material*        fAbsorberMaterial;
-     G4double           fAbsorberThickness;
-     G4double           fAbsorberSizeXY;
-
-     G4double           fZposAbs;
-     G4double           fZstartAbs, fZendAbs;
 
      G4Material*        fWorldMaterial;
      G4double           fWorldSizeZ;
@@ -103,12 +77,6 @@ class DetectorConstruction : public G4VUserDetectorConstruction
      G4LogicalVolume*   fLogicWorld;
      G4VPhysicalVolume* fPhysiWorld;
 
-     G4VSolid*          fSolidAbsorber;
-     G4LogicalVolume*   fLogicAbsorber;
-     G4VPhysicalVolume* fPhysiAbsorber;
-     
-     DetectorMessenger* fDetectorMessenger;
-     G4Cache<G4GlobalMagFieldMessenger*> fFieldMessenger;
      
      G4double           fMagnetFieldValue; //2000 - 13000 Gauss
      G4Box*             fSolidMagnet;
@@ -116,24 +84,10 @@ class DetectorConstruction : public G4VUserDetectorConstruction
      G4VPhysicalVolume* fPhysiMagnet;
      G4double           fMagnetSizeX, fMagnetSizeY, fMagnetSizeZ;
      G4double           fMagnetZPos;
-     
-     G4double            fTelscopeSensorSizeX, fTelscopeSensorSizeY, fTelscopeSensorSizeZ;
-     G4double            fTelscopeFirstPlaneZPos, fTelscopePlanesDz ;
-     G4int               fTelescopeNPlanes;
-     G4Box*              fSolidTelescopeSensor; 
-     G4LogicalVolume*    fLogicTelescopeSensor;
-     
-     G4UserLimits       *fStepLimit;
-     
-     tTargetType         fTargetType;
+
   private:
-    
-     void DefineMaterials();
-     void ComputeCalorParameters();
-     G4VPhysicalVolume* ConstructCalorimeter(); 
-     
+
      void ConstructMagnet();
-     void ConstructTelescope();
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 //~~~~~~~~~~~LumiCal Part~~~~~~~~~~~~~~~!

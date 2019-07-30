@@ -1,0 +1,95 @@
+#ifndef LCROOTOUT_HH_
+#define LCROOTOUT_HH_ 1
+
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <vector>
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
+#include "tls.hh"
+#include "G4String.hh"
+
+#include "G4Run.hh"
+#include "G4RunManager.hh"
+#include "G4ios.hh"
+
+#include "LCSensitiveDetector.hh"
+#include "LCHit.hh"
+#include "g4root.hh"
+// namespaces
+using namespace std;
+// using namespace TMath;
+
+class LCRootOut
+{
+public:
+    LCRootOut();
+    LCRootOut(const G4String fName );
+   ~LCRootOut();
+
+public:
+ 
+  void Init();                                                         // opens a file, creates a Tree 
+  void ProcessEvent(const G4Event* event, LCHitsCollection *HitsColl);
+  // void ProcEventAccumulate( LCHitsCollection *HitsColl);
+  void ClearData();
+  void End();                                                         // writes to file and closes it
+  // void SetAddresses();                                                // sets branch addresses in "UPDATE" mode
+  // void CreateNewTree();                                               // creates new Tree
+
+
+private:
+  // root output file name 
+  G4String RootOutFile;
+  // G4AnalysisManager* analysisManager;
+ 
+
+private:
+  // G4double vX, vY, vZ;
+  // G4int numPrim;       // number of primary particles
+  // G4int numHits;     // total number of hits
+  // //  caloHit
+  // G4double Etot[2];       // total energy deposit in arm per arm
+  // G4double Emax;          // max  energy deposit in cell
+
+  std::vector<G4double> Tracks_pX;
+  std::vector<G4double> Tracks_pY;
+  std::vector<G4double> Tracks_pZ;
+  std::vector<G4int> Tracks_ID;
+  std::vector<G4int> Tracks_PDG;
+
+  std::vector<G4int> Hits_cellID;
+  std::vector<G4double> Hits_eHit;
+  std::vector<G4double> Hits_xCell;
+  std::vector<G4double> Hits_yCell;
+  std::vector<G4double> Hits_zCell;
+  std::vector<G4double> Hits_xHit;
+  std::vector<G4double> Hits_yHit;
+  std::vector<G4double> Hits_zHit;
+  std::vector<G4double> Hits_TOF;
+
+
+  void Fill_Tracks_pX(const std::vector<G4double> &v){ Tracks_pX = v;};
+  void Fill_Tracks_pY(const std::vector<G4double> &v){ Tracks_pY = v;};
+  void Fill_Tracks_pZ(const std::vector<G4double> &v){ Tracks_pZ = v;};
+  void Fill_Tracks_ID(const std::vector<G4int> &v){ Tracks_ID = v;};
+  void Fill_Tracks_PDG(const std::vector<G4int> &v){ Tracks_PDG = v;};
+
+  void Fill_Hits_cellID(const std::vector<G4int> &v){ Hits_cellID = v;};
+  void Fill_Hits_eHit(const std::vector<G4double> &v){ Hits_eHit = v;};
+  void Fill_Hits_xCell(const std::vector<G4double> &v){ Hits_xCell = v;};
+  void Fill_Hits_yCell(const std::vector<G4double> &v){ Hits_yCell = v;};
+  void Fill_Hits_zCell(const std::vector<G4double> &v){ Hits_zCell = v;};
+  void Fill_Hits_xHit(const std::vector<G4double> &v){ Hits_xHit = v;};
+  void Fill_Hits_yHit(const std::vector<G4double> &v){ Hits_yHit = v;};
+  void Fill_Hits_zHit(const std::vector<G4double> &v){ Hits_zHit = v;};
+  void Fill_Hits_TOF(const std::vector<G4double> &v){ Hits_TOF = v;};
+
+//------------------------------------------------------------------------
+};
+
+#endif;

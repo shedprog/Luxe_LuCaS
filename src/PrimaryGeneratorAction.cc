@@ -149,6 +149,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     else if (fBeamType == beamMC) {
     GeneratefromMC(anEvent);
   }
+
+  // std::cout<<"@@@@@@@@@@@@@@@@@@@@@@ GenerateMono \n";
 }
 
 
@@ -158,13 +160,13 @@ void PrimaryGeneratorAction::GenerateGaussian(G4Event* anEvent)
   // it generate particle according to defined emittance drifting from fz0 towards an IP 
   // where the beam size is fsigmax, fsigmay, fsigmaz.
   G4double zshift = -20.0*cm;
-  if (zshift > fDetector->GetzstartAbs() - 100.0*fsigmaz) {
-    zshift = 0.5 * (fDetector->GetzstartAbs() - 0.5 * fDetector->GetWorldSizeZ());
-    if (zshift > fDetector->GetzstartAbs() - 100.0*fsigmaz) {
-      G4String msgstr("Error setting initial position!\n");
-      G4Exception("PrimaryGeneratorAction::", "GenerateGaussian(Event)", FatalException, msgstr.c_str());
-    }
-  }
+  // if (zshift > fDetector->GetzstartAbs() - 100.0*fsigmaz) {
+  //   zshift = 0.5 * (fDetector->GetzstartAbs() - 0.5 * fDetector->GetWorldSizeZ());
+  //   if (zshift > fDetector->GetzstartAbs() - 100.0*fsigmaz) {
+  //     G4String msgstr("Error setting initial position!\n");
+  //     G4Exception("PrimaryGeneratorAction::", "GenerateGaussian(Event)", FatalException, msgstr.c_str());
+  //   }
+  // }
   
   fz0 = zshift;  // in SetDefaultKinematic fDetector is before update from the config file.
   
@@ -197,6 +199,7 @@ void PrimaryGeneratorAction::GenerateGaussian(G4Event* anEvent)
 
 void PrimaryGeneratorAction::GenerateMono(G4Event* anEvent)
 {
+  /*
   G4double zshift = -20.0*cm;
   if (zshift > fDetector->GetzstartAbs()) {
     zshift = 0.5 * (fDetector->GetzstartAbs() - 0.5 * fDetector->GetWorldSizeZ());
@@ -211,6 +214,20 @@ void PrimaryGeneratorAction::GenerateMono(G4Event* anEvent)
   fParticleGun->SetParticlePosition(G4ThreeVector(fx0, fy0, fz0));
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.0, 0.0, pz));
   fParticleGun->GeneratePrimaryVertex(anEvent);
+  */
+
+  fz0=fy0 = 0.0;
+  fx0 = 14*cm;
+
+
+  G4double mass = fParticleGun->GetParticleDefinition()->GetPDGMass();
+  G4double E = fParticleGun->GetParticleEnergy();
+  G4double pz = sqrt(E*E - mass*mass);
+    
+  fParticleGun->SetParticlePosition(G4ThreeVector(fx0, fy0, fz0));
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.0, 0.0, pz));
+  fParticleGun->GeneratePrimaryVertex(anEvent);
+
 }
 
 
@@ -314,20 +331,20 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
   fParticleGun->SetNumberOfParticles(1);
   //fnfixparticles = static_cast<int>(wght/100.0)-1;
   fnfixparticles = 0;
-  std::cout << "Generating " <<pid<<" "<< static_cast<int>(wght) << " particle with following mC data:\n"; 
+  //std::cout << "Generating " <<pid<<" "<< static_cast<int>(wght) << " particle with following mC data:\n"; 
   fParticleGun->GeneratePrimaryVertex(anEvent);
-  std::for_each(pdata.begin(), pdata.end(), [](const double x){std::cout << x << "  ";});
-  std::cout << std::endl;
+  //std::for_each(pdata.begin(), pdata.end(), [](const double x){std::cout << x << "  ";});
+  //std::cout << std::endl;
 }
 }
 
 
-G4double PrimaryGeneratorAction::TestHitTarget(const std::vector <double> &pp, const double *vtx)
-{
-   const DetectorConstruction  *det = dynamic_cast<const DetectorConstruction*>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-   G4ThreeVector pv = G4ThreeVector(pp[0], pp[1], pp[2]);
-   G4ThreeVector rv = G4ThreeVector(vtx[0], vtx[1], vtx[2]);
-   G4ThreeVector rt = rv + pv.unit() * (det->GetAbsorberZpos() - vtx[2]);
-   return std::fabs(2.0*rt.x()/det->GetAbsorberSizeX());
-}
+// G4double PrimaryGeneratorAction::TestHitTarget(const std::vector <double> &pp, const double *vtx)
+// {
+//    const DetectorConstruction  *det = dynamic_cast<const DetectorConstruction*>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+//    G4ThreeVector pv = G4ThreeVector(pp[0], pp[1], pp[2]);
+//    G4ThreeVector rv = G4ThreeVector(vtx[0], vtx[1], vtx[2]);
+//    G4ThreeVector rt = rv + pv.unit() * (det->GetAbsorberZpos() - vtx[2]);
+//    return std::fabs(2.0*rt.x()/det->GetAbsorberSizeX());
+// }
 

@@ -38,19 +38,22 @@
 #include "globals.hh"
 
 #include <vector>
-
+#include "LCRootOut.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class EventAction : public G4UserEventAction
 {
   public:
+    EventAction(LCRootOut*);
     EventAction();
    ~EventAction();
 
   public:
     virtual void BeginOfEventAction(const G4Event*);
     virtual void   EndOfEventAction(const G4Event*);
+    void AddLeakEnergy ( G4double elost );
+    G4double GetLeakEnergy();
     
     void AddEnergy      (G4double edep)   {fEnergyDeposit  += edep;};
     void AddTrakLenCharg(G4double length) {fTrakLenCharged += length;};
@@ -76,6 +79,16 @@ class EventAction : public G4UserEventAction
     
     std::vector<G4double> fKinetikEnergyGamma;
     std::vector<G4double> fKinetikEnergyCharged;
+
+  private:
+    G4int collID;       // ID number for a collection of calorimeter hits
+    G4String collName;  // hits collection name
+    LCRootOut *RootOut; // Handles writing the ROOT tree
+    G4SDManager *SDman;
+    time_t  _start, _end;
+    G4int noTrackKilled;
+    G4double LeakEnergy;  // Accumulates energy leak
+
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -13,11 +13,8 @@
 #include "Randomize.hh"
 
 #include "DetectorConstruction.hh"
-// #include "LCDetectorConstruction.hh"
 
-#include "PhysicsList.hh"
-// #include "ActionInitialization.hh"
-// #include "SteppingVerbose.hh"
+
 #include "G4StepLimiterPhysics.hh"
 #include "QGSP_BERT.hh"
 #include "G4EmStandardPhysics.hh"
@@ -37,7 +34,8 @@
 #include "RunAction.hh"
 #include "EventAction.hh"
 
-bool isRoot = 0;
+#include "LCRootOut.hh"
+bool isRoot = 1;
 
 int main(int argc,char** argv) {
 
@@ -69,28 +67,41 @@ G4RunManager* runManager = new G4RunManager;
   // LCDetectorConstruction* detector = new LCDetectorConstruction;
   runManager->SetUserInitialization(detector);
 
-  PhysicsList *plist = new PhysicsList();
-
+  //==================== default physics
+  // PhysicsList *plist = new PhysicsList();
+  //==================== G4 physics
+  G4VUserPhysicsList *plist = new QGSP_BERT;
+  plist->SetDefaultCutValue(Setup::rangeCut);
 //   G4VModularPhysicsList *plist = new QGSP_BERT;
 //   plist->RegisterPhysics(new G4StepLimiterPhysics());
-
   runManager->SetUserInitialization(plist);
   
-  PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(detector);
-  runManager->SetUserAction(primary);
 
-  RunAction* runaction = new RunAction(detector,primary);
-  runManager->SetUserAction(runaction); 
+  if(!isRoot){
+    
+    PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(detector);
+    runManager->SetUserAction(primary);
+    RunAction* runaction = new RunAction(detector,primary);
+    runManager->SetUserAction(runaction); 
+    EventAction* eventaction =  new EventAction();
+    runManager->SetUserAction(eventaction);
 
-  EventAction* eventaction =  new EventAction();
-  runManager->SetUserAction(eventaction);
+  }else{
+
+    LCRootOut *theRootOut = new LCRootOut("test.root");
+
+    PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(detector);
+    runManager->SetUserAction(primary);
+    RunAction* runaction = new RunAction(detector,theRootOut,primary);
+    runManager->SetUserAction(runaction); 
+    EventAction* eventaction =  new EventAction(theRootOut);
+    runManager->SetUserAction(eventaction);
+  }
 
 
 
   // get the pointer to the User Interface manager 
-  
   G4UImanager* UI = G4UImanager::GetUIpointer();  
- 
   if (argc!=1)   // batch mode  
     {
       G4String command = "/control/execute ";

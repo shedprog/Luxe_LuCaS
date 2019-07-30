@@ -52,13 +52,13 @@ void Run::SetPrimary(G4ParticleDefinition* particle, G4double energy)
   fEkin = energy;
   
   //compute theta0
-  fMscThetaCentral = 3*ComputeMscHighland();
+  // fMscThetaCentral = 3*ComputeMscHighland();
 }
  
 
 
 void Run::Merge(const G4Run* run)
-{
+{ 
   const Run* localRun = static_cast<const Run*>(run);
 
   // pass information about primary particle
@@ -106,9 +106,11 @@ void Run::Merge(const G4Run* run)
 
 void Run::EndOfRun()
 {
+  // std::cout<<"@@@@@@@@@@@@@@@@@@ AND OF RUN\n";
   // compute mean and rms
   //
  
+  /*
   G4int TotNbofEvents = numberOfEvent;
   if (TotNbofEvents == 0) return;
   
@@ -319,27 +321,28 @@ void Run::EndOfRun()
   // reset default precision
   G4cout.precision(prec);
   */
+  
 }   
 
 
 
 G4double Run::ComputeMscHighland()
 {
-  //compute the width of the Gaussian central part of the MultipleScattering
-  //projected angular distribution.
-  //Eur. Phys. Jour. C15 (2000) page 166, formule 23.9
+  // //compute the width of the Gaussian central part of the MultipleScattering
+  // //projected angular distribution.
+  // //Eur. Phys. Jour. C15 (2000) page 166, formule 23.9
 
-  G4double t = (fDetector->GetAbsorberThickness())
-              /(fDetector->GetAbsorberMaterial()->GetRadlen());
-  if (t < DBL_MIN) return 0.;
+  // G4double t = (fDetector->GetAbsorberThickness())
+  //             /(fDetector->GetAbsorberMaterial()->GetRadlen());
+  // if (t < DBL_MIN) return 0.;
 
-  G4double T = fEkin;
-  G4double M = fParticle->GetPDGMass();
-  G4double z = std::abs(fParticle->GetPDGCharge()/eplus);
+  // G4double T = fEkin;
+  // G4double M = fParticle->GetPDGMass();
+  // G4double z = std::abs(fParticle->GetPDGCharge()/eplus);
 
-  G4double bpc = T*(T+2*M)/(T+M);
-  G4double teta0 = 13.6*MeV*z*std::sqrt(t)*(1.+0.038*std::log(t))/bpc;
-  return teta0;
+  // G4double bpc = T*(T+2*M)/(T+M);
+  // G4double teta0 = 13.6*MeV*z*std::sqrt(t)*(1.+0.038*std::log(t))/bpc;
+  // return teta0;
 }
 
 /*

@@ -12,7 +12,7 @@
 #
 /control/verbose 2
 /run/verbose 2
-/process/em/verbose 3
+/process/em/verbose 0
 #
 
 # Some geometry settings

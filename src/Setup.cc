@@ -84,9 +84,9 @@ G4int    Setup::Mask_VisSolid      = 1 ;
 // base LCAL
 G4bool   Setup::Lcal_virtual_cells = true;
 G4bool   Setup::Lcal_layer_fan = false;
-G4int    Setup::Lcal_n_layers   = 10;
-G4int    Setup::Lcal_n_tiles    = 12;
-G4int    Setup::Lcal_n_sectors  = 48;
+G4int    Setup::Lcal_n_layers   = 5;
+G4int    Setup::Lcal_n_tiles    = 1;
+G4int    Setup::Lcal_n_sectors  = 4;
 G4int    Setup::Lcal_n_rings    = 64;
 
 G4double Setup::Lcal_z_end = 2635. *mm;
@@ -97,7 +97,7 @@ G4double Setup::Lcal_SensRadMax   = 195.2 *mm;
 G4double Setup::Lcal_layers_phi_offset = 3.75 *deg;
 G4double Setup::Lcal_Phi_Offset = -3.75 *deg;
 G4double Setup::Lcal_start_phi = 0. *deg;
-G4double Setup::Lcal_end_phi = 360. *deg;
+G4double Setup::Lcal_end_phi = 30. *deg;
  
 G4double Setup::Lcal_space_for_ears    = 25.5 *mm;
 G4double Setup::Lcal_sector_dead_gap    = 1.2 *mm;

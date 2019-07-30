@@ -74,9 +74,10 @@
 #include <sstream>
 #include <string>
 #include "globals.hh"
-// #include "LCSensitiveDetector.hh"
+
+#include "LCSensitiveDetector.hh"
 #include "DetectorConstruction.hh"
-#include "DetectorMessenger.hh"
+// #include "DetectorMessenger.hh"
 
 //----------------------------------------
 //// DESY 2016 Prototype test beam
@@ -86,6 +87,11 @@ void DetectorConstruction::BuildTBeamPT16(){
 
 // Detector parametrs:
 
+bool overlap_check = true;
+
+double base_airx = 70.*mm;
+double base_airy = 132.*mm;
+double base_airz = 50.*mm;
 
 
 
@@ -96,15 +102,16 @@ void DetectorConstruction::BuildTBeamPT16(){
 G4cout<< "DetectorConstrucion::Construct(): creating World ....";
 G4cout<< "The paramters : dx dy dz WorldMat = " <<Setup::world_hdx <<"- "  << Setup::world_hdy<<" -  "  << Setup::world_hdz << "- .... " << WorldMat ;
 
-G4Box *solidWorld = new G4Box("World", Setup::world_hdx, Setup::world_hdy, Setup::world_hdz );
+// G4Box *solidWorld = new G4Box("World", 3.*m, 3.*m, 3.*m);
+G4Box *solidWorld = new G4Box("World", base_airx, base_airy, base_airz);
 logicWorld = new G4LogicalVolume(solidWorld, WorldMat, "World", 0, 0, 0);
 physiWorld = new G4PVPlacement(0,               // no rotation
                            G4ThreeVector(), // origin
                            logicWorld,      // its logical volume
                            "World",         // name
                            0,               // no mother log; null ptr
-                           false,           // no boolean ops
-                           0);              // copy #
+                           true,           // no boolean ops
+                           overlap_check);              // copy #
 
 logicWorld->SetVisAttributes(G4VisAttributes::Invisible);
 
@@ -122,13 +129,14 @@ G4cout<< ".......... done! " << G4endl;
 //
 //==============================================================================================================
 
+
  G4cout<< " Building Test Beam 2016..." << G4endl;
 
 //---------------------------
 //   x, y  direction (beam) sizes 
 //---------------------------
-  G4double airhx = 300.0 *mm;
-  G4double airhy = 300.0 *mm;
+  // G4double airhx = 300.0 *mm;
+  // G4double airhy = 300.0 *mm;
 //---------------------------
 //   z direction (beam) sizes 
 //---------------------------
@@ -150,22 +158,22 @@ G4cout<< ".......... done! " << G4endl;
  std::cout << "-------------------------------------------------" << std::endl;
  std::cout << "-----------    building air base units           : "    << std::endl;
  std::cout << "-------------------------------------------------" << std::endl;
-  G4Box *solidBaseUnit = new G4Box ( "solidBaseUnit", airhx, airhy, airhz );
-  G4Box *solidBaseUnit_PL = new G4Box ( "solidBaseUnit_PL", airhx, airhy, airhz );  
+  G4Box *solidBaseUnit = new G4Box ( "solidBaseUnit", base_airx, base_airy, airhz );
+  G4Box *solidBaseUnit_PL = new G4Box ( "solidBaseUnit_PL", base_airx, base_airy, airhz );  
   G4LogicalVolume *logicBaseUnit = new G4LogicalVolume (solidBaseUnit, Air, "logicBaseUnit", 0, 0, 0);//1
   G4LogicalVolume *logicBaseUnit_PL = new G4LogicalVolume (solidBaseUnit_PL, Air, "logicBaseUnit_PL", 0, 0, 0);//2
   logicBaseUnit->SetVisAttributes( G4VisAttributes::Invisible );
   logicBaseUnit_PL->SetVisAttributes( G4VisAttributes::Invisible );
  
-  G4Box *solidBaseUnitAB = new G4Box ( "solidBaseUnitAB", airhx, airhy, airhz );
-  G4Box *solidBaseUnitAB_PL = new G4Box ( "solidBaseUnitAB_PL", airhx, airhy, airhz );  
+  G4Box *solidBaseUnitAB = new G4Box ( "solidBaseUnitAB", base_airx, base_airy, airhz );
+  G4Box *solidBaseUnitAB_PL = new G4Box ( "solidBaseUnitAB_PL", base_airx, base_airy, airhz );  
   G4LogicalVolume *logicBaseUnitONLYAB = new G4LogicalVolume (solidBaseUnitAB, Air, "logicBaseUnitONLYAB", 0, 0, 0);//3
    G4LogicalVolume *logicBaseUnitONLYAB_PL = new G4LogicalVolume (solidBaseUnitAB_PL, Air, "logicBaseUnitONLYAB_PL", 0, 0, 0);//4
   logicBaseUnitONLYAB->SetVisAttributes( G4VisAttributes::Invisible );
   logicBaseUnitONLYAB_PL->SetVisAttributes( G4VisAttributes::Invisible );
 
-  G4Box *solidBaseUnitFor1mm = new G4Box ( "solidBaseUnitFor1mm", airhx, airhy, airhz1mm );
-  G4Box *solidBaseUnitFor1mm_PL = new G4Box ( "solidBaseUnitFor1mm_NoS", airhx, airhy,airhz1mm );  
+  G4Box *solidBaseUnitFor1mm = new G4Box ( "solidBaseUnitFor1mm", base_airx, base_airy, airhz1mm );
+  G4Box *solidBaseUnitFor1mm_PL = new G4Box ( "solidBaseUnitFor1mm_NoS", base_airx, base_airy,airhz1mm );  
   G4LogicalVolume *logicBaseUnitFor1mm = new G4LogicalVolume (solidBaseUnitFor1mm, Air, "logicBaseUnitFor1mm", 0, 0, 0);//5
   G4LogicalVolume *logicBaseUnitFor1mm_NoS = new G4LogicalVolume (solidBaseUnitFor1mm_PL, Air, "logicBaseUnitFor1mm_NoS", 0, 0, 0);//6
   logicBaseUnitFor1mm->SetVisAttributes( G4VisAttributes::Invisible );
@@ -174,12 +182,12 @@ G4cout<< ".......... done! " << G4endl;
   G4Colour *SC_Color  = new	G4Colour(1., 0., 1., 1.);
 
   ///for Plastic SC
-  G4Box *solidBase_PSC = new G4Box ( "solidBase_PSC", airhx, airhy, airhz_PSC );
+  G4Box *solidBase_PSC = new G4Box ( "solidBase_PSC", base_airx, base_airy, airhz_PSC );
   G4LogicalVolume *logicBaseUnit_PSC = new G4LogicalVolume (solidBase_PSC, PLASTIC_SC , "logicBaseUnit_PSC", 0, 0, 0);//5
   logicBaseUnit_PSC->SetVisAttributes( SC_Color );
 
   //for trigger SC
-  G4Box *solidBase_TR_PSC = new G4Box ( "solidBase_TR_PSC", airhx, airhy, airhz_TR_PSC );
+  G4Box *solidBase_TR_PSC = new G4Box ( "solidBase_TR_PSC", base_airx, base_airy, airhz_TR_PSC );
   G4LogicalVolume *logicBaseUnit_TR_PSC = new G4LogicalVolume (solidBase_TR_PSC, PLASTIC_SC , "logicBaseUnit_TR_PSC", 0, 0, 0);//5
   logicBaseUnit_TR_PSC->SetVisAttributes(SC_Color);
   
@@ -187,15 +195,15 @@ G4cout<< ".......... done! " << G4endl;
   //add absorber (single X0) in front sensor 
   //---------------------------------------------
   std::cout << "-------------------------------------------------" << std::endl;
-  std::cout << "-----------    building  absorber               : "    << std::endl;
+  std::cout << "-----------    building  absorber               : "<< std::endl;
   std::cout << "-------------------------------------------------" << std::endl;
 
   G4double zposAbs0 = -airhz + hTungstenDZ;
   G4double zposAbs0_MSG = -airhz + hTungstenDZ*1.02;
 
-  G4Box *solidAbs0 = new G4Box("solidAbs0", 70.*mm, 140.*mm, hTungstenDZ );
-  G4Box *solidAbs0_MGS = new G4Box("solidAbs0_MGS", 70.*mm, 140.*mm, hTungstenDZ*1.02 ); // nominal thiknes of MSG plate is ~3.57
-  G4Box *solidAbs0_PL = new G4Box("solidAbs0_PL", 70.*mm, 140.*mm, hTungstenDZ );
+  G4Box *solidAbs0 = new G4Box("solidAbs0", base_airx, base_airy, hTungstenDZ );
+  G4Box *solidAbs0_MGS = new G4Box("solidAbs0_MGS", base_airx, base_airy, hTungstenDZ*1.02 ); // nominal thiknes of MSG plate is ~3.57
+  G4Box *solidAbs0_PL = new G4Box("solidAbs0_PL", base_airx, base_airy, hTungstenDZ );
 
   G4LogicalVolume *logicAbs0 = new G4LogicalVolume(solidAbs0, Tungsten, "logicAbs0", 0, 0, 0);
   G4LogicalVolume *logicAbs0_MGS = new G4LogicalVolume(solidAbs0_MGS,Setup::Wabsorber_MGS , "logicAbs0_MGS", 0, 0, 0); // 2 kind of absorber plate we use in 2014 -2015 TB
@@ -225,14 +233,15 @@ G4cout<< ".......... done! " << G4endl;
 //---------------------------------------------
  
   G4double CFhx = 70.0 *mm;
-  G4double CFhy = 140.0 *mm;
+  G4double CFhy = 132.0 *mm;
   G4double CFhz = 0.395 *mm;
 
  std::cout << "-------------------------------------------------" << std::endl;
  std::cout << "-----------   building carbon fiber suppurt      : "    << std::endl;
  std::cout << "-------------------------------------------------" << std::endl;
 
-  G4Box *solidCF = new G4Box ( "solidCF", CFhx, CFhy, CFhz );
+  // G4Box *solidCF = new G4Box ( "solidCF", CFhx, CFhy, CFhz );
+  G4Box *solidCF = new G4Box ( "solidCF", base_airx, base_airy, CFhz );
   G4LogicalVolume *logicCF = new G4LogicalVolume (solidCF, Setup::C_fiber, "logicCF", 0, 0, 0);
   
   G4VisAttributes *CF0Att = new G4VisAttributes(G4Colour(1.0,1.0,1.0));
@@ -307,23 +316,23 @@ std::cout << " hFanoutBackDZ   : " <<  hFanoutBackDZ<<  std::endl;
 
 G4double SensorAtCF = -CFhz +  hFanoutFrontDZ ; 
 std::cout << " 1.SensorAtCF : " << SensorAtCF <<  std::endl;
-new G4PVPlacement ( 0, G4ThreeVector(0., ypos, ( SensorAtCF)),logicFanoutFrnt , "FunOut0", logicCF, false,0, 1);
+new G4PVPlacement ( 0, G4ThreeVector(0., ypos, ( SensorAtCF)),logicFanoutFrnt , "FunOut0", logicCF, false,1, overlap_check);
 
 SensorAtCF = SensorAtCF + hFanoutFrontDZ +  hMetalDZ ; 
 std::cout << " 2.SensorAtCF : " << SensorAtCF <<  std::endl;
-new G4PVPlacement ( 0, G4ThreeVector(0., ypos, ( SensorAtCF)),logicMetalV , "PadMetal0", logicCF, false,0, 1);
+new G4PVPlacement ( 0, G4ThreeVector(0., ypos, ( SensorAtCF)),logicMetalV , "PadMetal0", logicCF, false,1, overlap_check);
 
 SensorAtCF = SensorAtCF + hMetalDZ + hSiliconDZ; 
 std::cout << " 3.SensorAtCF : " << SensorAtCF <<  std::endl;
-new G4PVPlacement ( 0, G4ThreeVector(0.,ypos , ( SensorAtCF)),logicSensorV , "SensorV0", logicCF, false,0, 1);
+new G4PVPlacement ( 0, G4ThreeVector(0.,ypos , ( SensorAtCF)),logicSensorV , "SensorV0", logicCF, false,1, overlap_check);
 
 SensorAtCF = SensorAtCF + hSiliconDZ + hMetalDZ;
 std::cout << " 4.SensorAtCF : " << SensorAtCF <<  std::endl;
-new G4PVPlacement ( 0, G4ThreeVector(0., ypos, ( SensorAtCF)),logicMetalV , "PadMetal1", logicCF, false,0, 1);
+new G4PVPlacement ( 0, G4ThreeVector(0., ypos, ( SensorAtCF)),logicMetalV , "PadMetal1", logicCF, false,1, overlap_check);
 
 SensorAtCF =  SensorAtCF + hMetalDZ + hFanoutBackDZ ; 
 std::cout << " 5.SensorAtCF : " << SensorAtCF <<  std::endl;
-new G4PVPlacement ( 0, G4ThreeVector(0.,ypos , ( SensorAtCF)),logicFanoutBack , "FunOut1", logicCF, false,0, 1);
+new G4PVPlacement ( 0, G4ThreeVector(0.,ypos , ( SensorAtCF)),logicFanoutBack , "FunOut1", logicCF, false,1, overlap_check);
 
 // ------placement of second sensor
 double delta_NoOverlap = 2.*mm;
@@ -342,23 +351,23 @@ std::cout << " hFanoutBackDZ   : " <<  hFanoutBackDZ<<  std::endl;
 
 SensorAtCF = -CFhz +  hFanoutFrontDZ ; 
 std::cout << " 1.SensorAtCF : " << SensorAtCF <<  std::endl;
-new G4PVPlacement ( 0, G4ThreeVector(0., ypos, ( SensorAtCF)),logicFanoutFrnt , "FunOut0", logicCF, false,0, 2);
+new G4PVPlacement ( 0, G4ThreeVector(0., ypos, ( SensorAtCF)),logicFanoutFrnt , "FunOut0", logicCF, false,2, overlap_check);
 
 SensorAtCF = SensorAtCF + hFanoutFrontDZ +  hMetalDZ ; 
 std::cout << " 2.SensorAtCF : " << SensorAtCF <<  std::endl;
-new G4PVPlacement ( 0, G4ThreeVector(0., ypos, ( SensorAtCF)),logicMetalV , "PadMetal0", logicCF, false,0, 2);
+new G4PVPlacement ( 0, G4ThreeVector(0., ypos, ( SensorAtCF)),logicMetalV , "PadMetal0", logicCF, false,2, overlap_check);
 
 SensorAtCF = SensorAtCF + hMetalDZ + hSiliconDZ; 
 std::cout << " 3.SensorAtCF : " << SensorAtCF <<  std::endl;
-new G4PVPlacement ( 0, G4ThreeVector(0.,ypos , ( SensorAtCF)),logicSensorV , "SensorV0", logicCF, false,0, 2);
+new G4PVPlacement ( 0, G4ThreeVector(0.,ypos , ( SensorAtCF)),logicSensorV , "SensorV0", logicCF, false,2, overlap_check);
 
 SensorAtCF = SensorAtCF + hSiliconDZ + hMetalDZ;
 std::cout << " 4.SensorAtCF : " << SensorAtCF <<  std::endl;
-new G4PVPlacement ( 0, G4ThreeVector(0., ypos, ( SensorAtCF)),logicMetalV , "PadMetal1", logicCF, false,0, 2);
+new G4PVPlacement ( 0, G4ThreeVector(0., ypos, ( SensorAtCF)),logicMetalV , "PadMetal1", logicCF, false,2, overlap_check);
 
 SensorAtCF =  SensorAtCF + hMetalDZ + hFanoutBackDZ ; 
 std::cout << " 5.SensorAtCF : " << SensorAtCF <<  std::endl;
-new G4PVPlacement ( 0, G4ThreeVector(0.,ypos , ( SensorAtCF)),logicFanoutBack , "FunOut1", logicCF, false,0, 2);
+new G4PVPlacement ( 0, G4ThreeVector(0.,ypos , ( SensorAtCF)),logicFanoutBack , "FunOut1", logicCF, false,2, overlap_check);
 
 
 //-------------------------------------------------------------
@@ -367,9 +376,9 @@ new G4PVPlacement ( 0, G4ThreeVector(0.,ypos , ( SensorAtCF)),logicFanoutBack , 
  std::cout << "-------------------------------------------------" << std::endl;
  std::cout << "-----------  placment of CF suppurt in air base units : "    << std::endl;
  std::cout << "-------------------------------------------------" << std::endl;
-  new G4PVPlacement ( 0, G4ThreeVector(0., 0.,airhz - CFhz ),logicCF , "CF0",logicBaseUnit , false, 0,1); //1
-  new G4PVPlacement ( 0, G4ThreeVector(0., 0.,airhz - CFhz ),logicCF , "CF0",logicBaseUnit_PL , false, 0,1); //2
-  new G4PVPlacement ( 0, G4ThreeVector(0., 0.,airhz1mm - CFhz ),logicCF , "CF0",logicBaseUnitFor1mm , false, 0,1); //5
+  new G4PVPlacement ( 0, G4ThreeVector(0., 0.,airhz - CFhz ),logicCF , "CF0",logicBaseUnit , false, 0,overlap_check); //1
+  new G4PVPlacement ( 0, G4ThreeVector(0., 0.,airhz - CFhz ),logicCF , "CF0",logicBaseUnit_PL , false, 0,overlap_check); //2
+  new G4PVPlacement ( 0, G4ThreeVector(0., 0.,airhz1mm - CFhz ),logicCF , "CF0",logicBaseUnitFor1mm , false, 0,overlap_check); //5
 
 
      // put LCAL to world
@@ -429,15 +438,16 @@ std::string delimiter = ":";
 
 	if (sub == "AS") {
 			placement_name << "DUTAS" << iplacelayer;
-			new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC+ypos_stag[iplacelayer], zposLC + airhz),logicBaseUnit, placement_name.str().c_str(), logicWorld, 0, iplacelayer+1, 1);
-			G4cout<< " placed "<<iplaceElements << " as sensor number  : " << iplacelayer<< " at z = " << zposLC<<" layer with name "<< placement_name.str().c_str() << G4endl;
+			new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC+ypos_stag[iplacelayer], zposLC + airhz),logicBaseUnit, placement_name.str().c_str(), logicWorld, 0, iplacelayer+1, overlap_check);
+      std::cout<< " placed "<<iplaceElements << " as sensor number  : " << iplacelayer<< " at z = " << zposLC<<" layer with name "<< placement_name.str().c_str() << G4endl;
+			// G4cout<< " placed "<<iplaceElements << " as sensor number  : " << iplacelayer<< " at z = " << zposLC<<" layer with name "<< placement_name.str().c_str() << G4endl;
 			zposLC= zposLC+ 2*airhz + DUTextrahz;
 			iplacelayer++;
 			}
 
 	else if(sub == "AS_PL"){
 			placement_name << "DUTASP" << iplacelayer;
-			new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC+ypos_stag[iplacelayer], zposLC + airhz  ),logicBaseUnit_PL, placement_name.str().c_str(), logicWorld, 0, iplacelayer+1,1);
+			new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC+ypos_stag[iplacelayer], zposLC + airhz  ),logicBaseUnit_PL, placement_name.str().c_str(), logicWorld, 0, iplacelayer+1,overlap_check);
 			G4cout<< " placed "<<iplaceElements << " as sensor number  : " << iplacelayer<<" at z = " << zposLC<<" layer with name "<< placement_name.str().c_str() << G4endl;
 			zposLC= zposLC+2*airhz + DUTextrahz;			
 			iplacelayer++;
@@ -445,7 +455,7 @@ std::string delimiter = ":";
 
 	else if (sub == "A_PL") {
 			placement_name << "ABP" << iplaceElements;
-			new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC, zposLC +airhz ),logicBaseUnitONLYAB_PL, placement_name.str().c_str(), logicWorld, 0,iplaceElements +1, 1);
+			new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC, zposLC +airhz ),logicBaseUnitONLYAB_PL, placement_name.str().c_str(), logicWorld, 0,iplaceElements +1, overlap_check);
 			G4cout<< " placed "<<iplaceElements <<" at z = " << zposLC<<" layer with name "<< placement_name.str().c_str() << G4endl;
 			zposLC= zposLC+ 2* airhz + DUTextrahz;
 			//iplaceA++;
@@ -453,7 +463,7 @@ std::string delimiter = ":";
 
 	else if(sub == "A"){
 			placement_name << "AB" << iplaceElements;
-			new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC, zposLC + airhz ),logicBaseUnitONLYAB, placement_name.str().c_str(), logicWorld, 0, iplaceElements+1,1);
+			new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC, zposLC + airhz ),logicBaseUnitONLYAB, placement_name.str().c_str(), logicWorld, 0, iplaceElements+1,overlap_check);
 			G4cout<< " placed "<<iplaceElements <<" at z = " << zposLC<<" layer with name "<< placement_name.str().c_str() << G4endl;
 			zposLC= zposLC+ 2*airhz + DUTextrahz;			
 //iplaceA++;
@@ -461,7 +471,7 @@ std::string delimiter = ":";
 
 	else if(sub == "JSM"){
 			placement_name << "DUTJSM" << iplacelayer;	     		
-			new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC+ypos_stag[iplacelayer], zposLC+ airhz1mm ),logicBaseUnitFor1mm, placement_name.str().c_str(), logicWorld, 0, iplacelayer+1, 1);
+			new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC+ypos_stag[iplacelayer], zposLC+ airhz1mm ),logicBaseUnitFor1mm, placement_name.str().c_str(), logicWorld, 0, iplacelayer+1, overlap_check);
 			G4cout<< " placed "<<iplaceElements << " as sensor number  : " << iplacelayer<<" at z = " << zposLC<<" layer with name "<< placement_name.str().c_str() << G4endl;
 			zposLC= zposLC+ 2*airhz1mm + DUTextrahz + i_air; //add the air gup after 
 			iplacelayer++;
@@ -469,7 +479,7 @@ std::string delimiter = ":";
 	else if(sub == "SC"){
 			if(Is_SC == 0 ){
 				placement_name << "SC" ;	     		
-				new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC, zpos_PSC ),logicBaseUnit_PSC, placement_name.str().c_str(), logicWorld, 0, 1, 1);
+				new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC, zpos_PSC ),logicBaseUnit_PSC, placement_name.str().c_str(), logicWorld, 0, 1, overlap_check);
 				G4cout<< " placed SC" <<" at z = " << zpos_PSC <<" layer with name "<< placement_name.str().c_str() << G4endl;
 				Is_SC =1; // can by placed only 1 time  
 			}
@@ -477,7 +487,7 @@ std::string delimiter = ":";
 	else if(sub == "TSC"){
 			if(Is_TSC == 0 ){
 				placement_name << "TR_SC" ;	     		
-				new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC, zpos_TR_PSC ),logicBaseUnit_TR_PSC, placement_name.str().c_str(), logicWorld, 0, 1, 1);
+				new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC, zpos_TR_PSC ),logicBaseUnit_TR_PSC, placement_name.str().c_str(), logicWorld, 0, 1, overlap_check);
 				G4cout<< " placed SC" <<" at z = " << zpos_TR_PSC <<" layer with name "<< placement_name.str().c_str() << G4endl;
 				Is_TSC =1; // can by placed only 1 time  
 			}
@@ -505,54 +515,55 @@ std::string delimiter = ":";
 	
     } 
 
- //   //---------------
- //    // SENSITIVE DETECTOR
- //    //---------------
- //    G4SDManager* SDman = G4SDManager::GetSDMpointer();
+   // ---------------
+   //  SENSITIVE DETECTOR
+   //  ---------------
+    G4SDManager* SDman = G4SDManager::GetSDMpointer();
 
- //    // Initialize the Sensitive Detector
- //    SensDet = new LCSensitiveDetector("LumiCalSD",  // name
- //                                      Cell0_Rad,    // inner LC radius
- //                                      startPhi,     // start angle
- //                                      CellPitch,    // radial cell size
- //                                      sectorPhi,    // angular cell width
- //                                      nCells,       // # cells in the rad dir
- //                                      nSectors,     // # cells in the phi dir
-	// 			                              VirtualCell); // cell type real/virtual =  false/true
+    // Initialize the Sensitive Detector
+    LCSensitiveDetector *SensDet = new LCSensitiveDetector("LumiCalSD",  // name
+                                                            Cell0_Rad,    // inner LC radius
+                                                            startPhi,     // start angle
+                                                            CellPitch,    // radial cell size
+                                                            sectorPhi,    // angular cell width
+                                                            nCells,       // # cells in the rad dir
+                                                            nSectors,     // # cells in the phi dir
+                      				                              VirtualCell); // cell type real/virtual =  false/true
         
- //    SDman->AddNewDetector(SensDet);
- //    // the Cells are the sensitive detectors
-   
- //    logicSensorV->SetSensitiveDetector( SensDet );
+    SDman->AddNewDetector(SensDet);
+    // the Cells are the sensitive detectors
+    logicSensorV->SetSensitiveDetector(SensDet);
 
- //    // if ( VirtualCell )  logicSensorV->SetSensitiveDetector( SensDet );
- //    //   //logicCell->SetSensitiveDetector(SensDet);
- //    // else
- //    //   //logicSensorV->SetSensitiveDetector( SensDet );
- //    //   G4cout << "  there is no VirtualCell.... " << G4endl;
+    // if ( VirtualCell )  logicSensorV->SetSensitiveDetector( SensDet );
+    //   //logicCell->SetSensitiveDetector(SensDet);
+    // else
+    //   //logicSensorV->SetSensitiveDetector( SensDet );
+    //   G4cout << "  there is no VirtualCell.... " << G4endl;
 
 
 	// G4cout <<  " Test Beam setup done !  "  << G4endl;
 
-	G4Transform3D shift_toall ( G4RotationMatrix().rotateZ( 90.0*deg ),
-			   G4ThreeVector( -15.0*cm, 0.0, 3.*m));
 
-	new G4PVPlacement(shift_toall,
-		logicWorld,
-		"LumiCal", // an updated string
-		fLogicWorld,
-		0,
-		0); // copy number
 
-	G4Transform3D shift_toall2 ( G4RotationMatrix().rotateZ( -90.0*deg ),
-			   		G4ThreeVector( 15.0*cm, 0.0, 3.*m));
-  
-  	new G4PVPlacement(shift_toall2,
-		logicWorld,
-		"LumiCal", // an updated string
-		fLogicWorld,
-		0,
-		1); // copy number
+    G4Transform3D tr1( G4RotationMatrix().rotateZ( 90.0*deg ),
+                       G4ThreeVector( -13.5*cm, 0.0, 3.1*m));
+    new G4PVPlacement(tr1,
+    logicWorld,
+    "LumiCal", // an updated string
+    fLogicWorld,
+    false,
+    1,
+    overlap_check); // copy number
+
+    G4Transform3D tr2( G4RotationMatrix().rotateZ( -90.0*deg ),
+                       G4ThreeVector( 13.5*cm, 0.0, 3.1*m));
+    new G4PVPlacement(tr2,
+    logicWorld,
+    "LumiCal", // an updated string
+    fLogicWorld,
+    false,
+    2,
+    overlap_check); // copy number
     
   // SDman = G4SDManager::GetSDMpointer();
   // std::cout<<"@@@@@@@@@@@@@@@@@@@@@@@@@ Pointer from detector Construction: "<<SDman->GetCollectionID("LumiCalSD")<<"\n";
