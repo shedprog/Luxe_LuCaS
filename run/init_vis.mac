@@ -46,11 +46,11 @@
 /run/verbose 2
 /process/em/verbose 0
 
-#/lxphoton/gun/beamType   mono
+/lxphoton/gun/beamType   mono
 #/lxphoton/gun/beamType   gaussian
-/lxphoton/gun/beamType   mc
+#/lxphoton/gun/beamType   mc
 
-/lxphoton/gun/MCParticlesFileList mc_list_out.txt
+#/lxphoton/gun/MCParticlesFileList mc_list_out.txt
 
 /gun/particle  e-
 /gun/energy    15.0 GeV

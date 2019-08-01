@@ -10,11 +10,8 @@
 #include "LCRootOut.hh"
 
 
-class Run;
 class DetectorConstruction;
 class PrimaryGeneratorAction;
-class HistoManager;
-
 
 class RunAction : public G4UserRunAction
 {
@@ -22,10 +19,10 @@ class RunAction : public G4UserRunAction
 public:
 
     RunAction(DetectorConstruction* det, PrimaryGeneratorAction* prim=0);
-    RunAction(DetectorConstruction* det, LCRootOut* R0, PrimaryGeneratorAction* prim=0);
+    RunAction(DetectorConstruction* det, LCRootOut* R0, PrimaryGeneratorAction* prim);
    ~RunAction();
    
-    virtual G4Run* GenerateRun();    
+    // virtual G4Run* GenerateRun();    
     virtual void   BeginOfRunAction(const G4Run*);
     virtual void   EndOfRunAction(const G4Run*);
 
@@ -33,13 +30,10 @@ public:
 
   private:
     DetectorConstruction*   fDetector;
-    PrimaryGeneratorAction* fPrimary;
-    Run*                    fRun;        
-    HistoManager*           fHistoManager;
+    PrimaryGeneratorAction* fPrimary;    
 
     LCRootOut*              RootOut;
 
-    G4String  fFileName;
 };
 
 

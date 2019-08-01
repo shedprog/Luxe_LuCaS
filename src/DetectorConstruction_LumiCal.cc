@@ -83,15 +83,25 @@
 //// DESY 2016 Prototype test beam
 //----------------------------------------
 
+G4double SensorGap(G4double R, G4double r, G4double alpha)
+{
+    G4double b = -R * sqrt(4.0-2.0*r*r/(R*R)*(1.0-cos(alpha)));
+    G4double a = 1.0;
+    G4double c = R*R - r*r;
+    G4double dh = (-b-sqrt(b*b-4.0*a*c))/(2.0*a);
+    G4double res = r-R+dh;
+    return res;
+}
+
 void DetectorConstruction::BuildTBeamPT16(){
 
 // Detector parametrs:
 
 bool overlap_check = true;
 
-double base_airx = 70.*mm;
-double base_airy = 132.*mm;
-double base_airz = 50.*mm;
+double base_airx = 63.*mm;
+double base_airy = 120.*mm;
+double base_airz = 100.*mm;
 
 
 
@@ -232,8 +242,8 @@ G4cout<< ".......... done! " << G4endl;
 //	carbon fiber suppurt 
 //---------------------------------------------
  
-  G4double CFhx = 70.0 *mm;
-  G4double CFhy = 132.0 *mm;
+  // G4double CFhx = 70.0 *mm;
+  // G4double CFhy = 132.0 *mm;
   G4double CFhz = 0.395 *mm;
 
  std::cout << "-------------------------------------------------" << std::endl;
@@ -300,7 +310,7 @@ G4cout<< ".......... done! " << G4endl;
 //		placment of sensor part in CF
 //-------------------------------------------------------------
 //------placment of first sensor
-G4double ypos = -( SensRadMin + 0.5*(SensRadMax-SensRadMin)) - 70.0*mm;
+G4double ypos = - SensRadMax;
 // G4double ypos = 0.0;
 std::cout << "-------------------------------------------------" << std::endl;
 std::cout << "-----------  placment  sensor partrs  in CF suppurt : "    << std::endl;
@@ -335,8 +345,9 @@ std::cout << " 5.SensorAtCF : " << SensorAtCF <<  std::endl;
 new G4PVPlacement ( 0, G4ThreeVector(0.,ypos , ( SensorAtCF)),logicFanoutBack , "FunOut1", logicCF, false,1, overlap_check);
 
 // ------placement of second sensor
-double delta_NoOverlap = 2.*mm;
-ypos = -( SensRadMin - 0.5*(SensRadMax-SensRadMin)) - 70.0*mm + delta_NoOverlap;
+double delta_NoOverlap = SensorGap(SensRadMax,SensRadMin,dPhi);
+ypos = - SensRadMin + delta_NoOverlap;
+
 std::cout << "-------------------------------------------------" << std::endl;
 std::cout << "-----------  placment  sensor partrs  in CF suppurt : "    << std::endl;
 std::cout << "-------------------------------------------------" << std::endl;
@@ -388,11 +399,11 @@ new G4PVPlacement ( 0, G4ThreeVector(0.,ypos , ( SensorAtCF)),logicFanoutBack , 
   G4double zposLC =  0.0 *mm; // for 2016 from 4th Telescope plane to box 
   // G4double zyposLC = -(22./64.)*(SensRadMax-SensRadMin) *mm;
   G4double zyposLC = 0.0 *mm;
-  G4double DUTairhx = 100.0 *mm;
-  G4double DUTairhy = 100.0 *mm;
-  G4double DUTairhz = 54 *mm; // need to defint that  as Lcal_tungsten_hdz + C (spacer) 
+  // G4double DUTairhx = 100.0 *mm;
+  // G4double DUTairhy = 100.0 *mm;
+  // G4double DUTairhz = 54 *mm; // need to defint that  as Lcal_tungsten_hdz + C (spacer) 
   G4double DUTextrahz = 0.002 *mm; 
-  G4double ShiftForSigleMIP = 10 *mm; 
+  // G4double ShiftForSigleMIP = 10 *mm; 
 
 	G4double zpos_PSC = 1130. *mm; // for 2016 from 4th Telescope plane to Plastic scintilator  
 	G4double zpos_TR_PSC = 20. *mm; // for 2016 from 4th Telescope plane to TRiger Plastic scintilator  
@@ -408,7 +419,7 @@ new G4PVPlacement ( 0, G4ThreeVector(0.,ypos , ( SensorAtCF)),logicFanoutBack , 
 int Is_SC = 0; 
 int Is_TSC = 0; 
 int Is_stag = 0; 
-G4double ypos_stag[8] = {0,0,0,0,0,0,0,0} ; 
+G4double ypos_stag[30] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; 
 std::istringstream iss((std::string)Setup::TBeam_senrio);
 G4int iplacelayer = 0; // for sensors 
 G4int iplaceElements = 0; // for all 
@@ -439,8 +450,7 @@ std::string delimiter = ":";
 	if (sub == "AS") {
 			placement_name << "DUTAS" << iplacelayer;
 			new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC+ypos_stag[iplacelayer], zposLC + airhz),logicBaseUnit, placement_name.str().c_str(), logicWorld, 0, iplacelayer+1, overlap_check);
-      std::cout<< " placed "<<iplaceElements << " as sensor number  : " << iplacelayer<< " at z = " << zposLC<<" layer with name "<< placement_name.str().c_str() << G4endl;
-			// G4cout<< " placed "<<iplaceElements << " as sensor number  : " << iplacelayer<< " at z = " << zposLC<<" layer with name "<< placement_name.str().c_str() << G4endl;
+			G4cout<< " placed "<<iplaceElements << " as sensor number  : " << iplacelayer<< " at z = " << zposLC<<" layer with name "<< placement_name.str().c_str() << G4endl;
 			zposLC= zposLC+ 2*airhz + DUTextrahz;
 			iplacelayer++;
 			}
@@ -543,10 +553,11 @@ std::string delimiter = ":";
 
 	// G4cout <<  " Test Beam setup done !  "  << G4endl;
 
-
+    G4double fromedge_to_center = 3.0*cm;
+    G4double shift_y = base_airy + fromedge_to_center;
 
     G4Transform3D tr1( G4RotationMatrix().rotateZ( 90.0*deg ),
-                       G4ThreeVector( -13.5*cm, 0.0, 3.1*m));
+                       G4ThreeVector( -shift_y, 0.0, 3.1*m));
     new G4PVPlacement(tr1,
     logicWorld,
     "LumiCal", // an updated string
@@ -556,7 +567,7 @@ std::string delimiter = ":";
     overlap_check); // copy number
 
     G4Transform3D tr2( G4RotationMatrix().rotateZ( -90.0*deg ),
-                       G4ThreeVector( 13.5*cm, 0.0, 3.1*m));
+                       G4ThreeVector( shift_y, 0.0, 3.1*m));
     new G4PVPlacement(tr2,
     logicWorld,
     "LumiCal", // an updated string
@@ -568,6 +579,7 @@ std::string delimiter = ":";
   // SDman = G4SDManager::GetSDMpointer();
   // std::cout<<"@@@@@@@@@@@@@@@@@@@@@@@@@ Pointer from detector Construction: "<<SDman->GetCollectionID("LumiCalSD")<<"\n";
 
+   std::cout << "LumiCal Done! Size from the center to absorber: " << base_airy;
 
 }
 

@@ -35,26 +35,16 @@ public:
  
   void Init();                                                         // opens a file, creates a Tree 
   void ProcessEvent(const G4Event* event, LCHitsCollection *HitsColl);
-  // void ProcEventAccumulate( LCHitsCollection *HitsColl);
+
   void ClearData();
   void End();                                                         // writes to file and closes it
-  // void SetAddresses();                                                // sets branch addresses in "UPDATE" mode
-  // void CreateNewTree();                                               // creates new Tree
+
 
 
 private:
-  // root output file name 
   G4String RootOutFile;
-  // G4AnalysisManager* analysisManager;
  
-
 private:
-  // G4double vX, vY, vZ;
-  // G4int numPrim;       // number of primary particles
-  // G4int numHits;     // total number of hits
-  // //  caloHit
-  // G4double Etot[2];       // total energy deposit in arm per arm
-  // G4double Emax;          // max  energy deposit in cell
 
   std::vector<G4double> Tracks_pX;
   std::vector<G4double> Tracks_pY;
@@ -71,6 +61,7 @@ private:
   std::vector<G4double> Hits_yHit;
   std::vector<G4double> Hits_zHit;
   std::vector<G4double> Hits_TOF;
+  std::vector<G4int> Hits_Sensor;
 
 
   void Fill_Tracks_pX(const std::vector<G4double> &v){ Tracks_pX = v;};
@@ -88,8 +79,8 @@ private:
   void Fill_Hits_yHit(const std::vector<G4double> &v){ Hits_yHit = v;};
   void Fill_Hits_zHit(const std::vector<G4double> &v){ Hits_zHit = v;};
   void Fill_Hits_TOF(const std::vector<G4double> &v){ Hits_TOF = v;};
+  void Fill_Hits_Sensor(const std::vector<G4int> &v){ Hits_Sensor = v;};
 
-//------------------------------------------------------------------------
 };
 
 #endif;

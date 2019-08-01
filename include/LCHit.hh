@@ -14,11 +14,8 @@
  */
 
 #ifndef LCHIT_HH_
-#define LCHIT_HH_
+#define LCHIT_HH_ 1
 
-//#include "LCPrimaryContribution.hh"
-
-// from CalHit
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
 #include "G4Allocator.hh"
@@ -26,7 +23,6 @@
 #include "G4Circle.hh"
 #include <map>
 
-// from ExN04
 #include "G4LogicalVolume.hh"
 #include "G4Transform3D.hh"
 #include "G4RotationMatrix.hh"

@@ -57,7 +57,7 @@ int main(int argc,char** argv) {
 //          <<  runManager->GetNumberOfThreads() << " threads =====" << G4endl;
 // #else
 // G4VSteppingVerbose::SetInstance(new SteppingVerbose);
-G4RunManager* runManager = new G4RunManager;
+  G4RunManager* runManager = new G4RunManager;
 // #endif
 
 
@@ -88,15 +88,23 @@ G4RunManager* runManager = new G4RunManager;
 
   }else{
 
-    LCRootOut *theRootOut = new LCRootOut("test.root");
+  std::cout<<"@@@@@@@@@@@@@@@@@@@@ 1\n";
+  LCRootOut *theRootOut = new LCRootOut("test.root");
 
-    PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(detector);
-    runManager->SetUserAction(primary);
-    RunAction* runaction = new RunAction(detector,theRootOut,primary);
-    runManager->SetUserAction(runaction); 
-    EventAction* eventaction =  new EventAction(theRootOut);
-    runManager->SetUserAction(eventaction);
+  std::cout<<"@@@@@@@@@@@@@@@@@@@@ 2\n";
+  PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(detector);
+  runManager->SetUserAction(primary);
+  
+  std::cout<<"@@@@@@@@@@@@@@@@@@@@ 3\n";
+  RunAction* runaction = new RunAction(detector,theRootOut,primary);
+  runManager->SetUserAction(runaction); 
+
+  std::cout<<"@@@@@@@@@@@@@@@@@@@@ 4\n";
+  EventAction* eventaction =  new EventAction(theRootOut);
+  runManager->SetUserAction(eventaction);
+    
   }
+
 
 
 

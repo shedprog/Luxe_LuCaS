@@ -29,10 +29,6 @@
 
 #include "G4UserLimits.hh"
 
-// #include "LCDetectorConstruction.hh"
-
-// DetectorConstruction::DetectorConstruction
-
 DetectorConstruction::DetectorConstruction()
 
 :G4VUserDetectorConstruction(),
@@ -61,13 +57,7 @@ DetectorConstruction::DetectorConstruction()
   // LumiCal = new LCDetectorConstruction;
 }
 
-
-
-DetectorConstruction::~DetectorConstruction()
-{ 
-
-}
-
+DetectorConstruction::~DetectorConstruction(){ }
 
 
 G4VPhysicalVolume* DetectorConstruction::Construct()
@@ -127,13 +117,14 @@ G4VPhysicalVolume* DetectorConstruction::ConstructCalorimeter()
                                   0);                        //copy number
                                  
   
-
+  // std::cout<<"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DetectorConstruction::ConstructCalorimeter\n";
   InitDetectorParameters();                   
 
   BuildTBeamPT16();
 
   ConstructMagnet();
   
+  // std::cout<<"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DetectorConstruction::End\n";
   return fPhysiWorld;
 }
 
@@ -181,7 +172,7 @@ void DetectorConstruction::ConstructMagnet()
   fMagnetSizeY = 20*cm;
   fMagnetSizeZ = 100*cm;
   // fMagnetZPos = fZposAbs + 30*cm + fMagnetSizeZ/2.0 + fAbsorberThickness/2.0;
-  fMagnetZPos = 150*cm;
+  fMagnetZPos = 100*cm;
   
   G4ThreeVector  fieldVector( 0.0, fMagnetFieldValue, 0.0);  
   G4MagneticField *magField = new G4UniformMagField( fieldVector );    

@@ -15,8 +15,6 @@
 #include "G4NistManager.hh"
 
 
-// #include "LCDetectorConstruction.hh"
-
 class G4Box;
 class G4VSolid;
 class G4VPhysicalVolume;
@@ -26,7 +24,6 @@ class G4UniformMagField;
 class G4UserLimits;
 
 
-// class DetectorConstruction : public LCDetectorConstruction {};
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
   public:

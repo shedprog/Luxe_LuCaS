@@ -138,8 +138,10 @@ void PrimaryGeneratorAction::SetMCParticleFile(G4String val, const G4bool list)
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
+  // std::cout<<"@@@@@@@@@@@@@@@@@@@@ GeneratePrimaries\n";
   // this function is called at the begining of event
   if (fSpectra) fParticleGun->SetParticleEnergy(fSpectra->GetRandom());
+  // fParticleGun->SetParticleEnergy(fSpectra->GetRandom());
 
   if (fBeamType == beamGauss) {  
     GenerateGaussian(anEvent);
@@ -217,7 +219,7 @@ void PrimaryGeneratorAction::GenerateMono(G4Event* anEvent)
   */
 
   fz0=fy0 = 0.0;
-  fx0 = 14*cm;
+  fx0 = 0.0*cm;
 
 
   G4double mass = fParticleGun->GetParticleDefinition()->GetPDGMass();
@@ -251,7 +253,7 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
   
   std::vector < std::vector <double> > ptcls;
   int nscat = lxgen->GetEventFromFile(ptcls);
-//   std::cout << "GetEventFromFile "  << nscat << std::endl;
+  std::cout << "GetEventFromFile "  << nscat << std::endl;
   if (nscat > 1) {
       G4String msgstr("Error reading particle from a file! More than one were read, it is not supported!\n");
       G4Exception("PrimaryGeneratorAction::", "GeneratefromMC(Event)", FatalException, msgstr.c_str());
@@ -294,7 +296,7 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
 //     nfpart[hindx] += wght*pdata[8];
     if (pdata[8] >= 1)  wght = wght*pdata[8];
     //extern double weight_fromMC;
-    weight_fromMC = pdata[8]/1000.1;
+    weight_fromMC = pdata[8]/1000.0;
     //weight_fromMC = 1.0;
 
     std::copy(pdata.begin()+4, pdata.begin()+7, pp.begin()); 
@@ -308,6 +310,7 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
     fParticleGun->SetParticleEnergy(pp[3]*GeV);  
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(pp[0], pp[1], pp[2]));
     fParticleGun->SetParticlePosition(G4ThreeVector(vtx[0], vtx[1], vtx[2]));
+    
     //if (pid == 22) {
      // if (TestHitTarget(pp, vtx) < 1.2) {
      //   fParticleGun->SetNumberOfParticles(1);
@@ -337,14 +340,4 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
   //std::cout << std::endl;
 }
 }
-
-
-// G4double PrimaryGeneratorAction::TestHitTarget(const std::vector <double> &pp, const double *vtx)
-// {
-//    const DetectorConstruction  *det = dynamic_cast<const DetectorConstruction*>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-//    G4ThreeVector pv = G4ThreeVector(pp[0], pp[1], pp[2]);
-//    G4ThreeVector rv = G4ThreeVector(vtx[0], vtx[1], vtx[2]);
-//    G4ThreeVector rt = rv + pv.unit() * (det->GetAbsorberZpos() - vtx[2]);
-//    return std::fabs(2.0*rt.x()/det->GetAbsorberSizeX());
-// }
 

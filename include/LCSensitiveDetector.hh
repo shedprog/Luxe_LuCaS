@@ -31,7 +31,6 @@ class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
 
-//typedef G4THitsCollection<LCHit> LCHitsCollection; - defined in LCHit
 typedef std::map<G4int,LCHit*> LCHitMap;
 typedef LCHitMap::iterator LCHitMapIterator;
 typedef std::pair<G4int,LCHit*> LCHitMapPair;
@@ -106,14 +105,14 @@ private:
     // num cells in xy-directions
     G4int NumCellsRho, NumSectorsPhi;
 
-      // grid size
-  G4double cellDimRho, cellDimPhi;
+    // grid size
+    G4double cellDimRho, cellDimPhi;
 
-      // inner radius and phi offset size
-  G4double CalRhoMin, CalPhiOffset;
+    // inner radius and phi offset size
+    G4double CalRhoMin, CalPhiOffset;
 
-      // type of cell ( virtual =true -> segmentaion at SD driver level )
-  G4bool VirtualCell;
+    // type of cell ( virtual =true -> segmentaion at SD driver level )
+    G4bool VirtualCell;
 
 };
 

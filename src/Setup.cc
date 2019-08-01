@@ -66,7 +66,7 @@ G4double Setup::LHcal_Region_Cut = 1.;
 G4double Setup::BCal_Region_Cut  = 1.;
 G4double Setup::Mask_Region_Cut  = 1.;
 // G4String Setup::TBeam_senrio = "APS APS APS APS APS APS APS APS APS APS APS APS";
-G4String Setup::TBeam_senrio = "AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS";
+G4String Setup::TBeam_senrio = "AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS";
 //-----------------------------------------------------------
 //   for beam pipe
 //
@@ -84,7 +84,7 @@ G4int    Setup::Mask_VisSolid      = 1 ;
 // base LCAL
 G4bool   Setup::Lcal_virtual_cells = true;
 G4bool   Setup::Lcal_layer_fan = false;
-G4int    Setup::Lcal_n_layers   = 5;
+G4int    Setup::Lcal_n_layers   = 20;
 G4int    Setup::Lcal_n_tiles    = 1;
 G4int    Setup::Lcal_n_sectors  = 4;
 G4int    Setup::Lcal_n_rings    = 64;

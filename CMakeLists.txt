@@ -33,9 +33,8 @@ file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 file(GLOB headers ${ROOT_INCLUDE_DIR}/*.h)
 
-file(COPY ${PROJECT_SOURCE_DIR}/run/gui.mac DESTINATION ./)
+
 #file(COPY ${PROJECT_SOURCE_DIR}/luxe_e_gamma.mac DESTINATION ./)
-#file(COPY ${PROJECT_SOURCE_DIR}/hist_settings.mac DESTINATION ./)
 file(COPY ${PROJECT_SOURCE_DIR}/run/luxe_gamma_new.mac DESTINATION ./)
 file(COPY ${PROJECT_SOURCE_DIR}/run/IPstrong_luxe_Feb2019_Enelas_0.01J_trident_particles_run_000001.out DESTINATION ./)
 file(COPY ${PROJECT_SOURCE_DIR}/run/IPstrong_luxe_Feb2019_Enelas_0.01J_trident_particles_run_000002.out DESTINATION ./)
