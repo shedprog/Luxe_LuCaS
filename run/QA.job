@@ -1,7 +1,7 @@
 Universe	= vanilla
 
 #Notification	= Error
-Initialdir	= /nfs/dust/zeus/group/mykytaua/LUXE/2019.07.15/lxtsim_ma_myhist-build/
+Initialdir	= /nfs/dust/zeus/group/mykytaua/LUXE/2019.08.05/Luxe_LuCaS-build
 Executable      = /bin/sh
 Arguments       = run_condor.sh $(Process)
 #transfer_executable = True					     
@@ -9,9 +9,9 @@ Requirements    = CPU_Speed >=1
 Requirements    = OpSysAndVer == "SL6"
 #Priority	= +20
 #GetEnv		= True
-Output		= /nfs/dust/zeus/group/mykytaua/LUXE/2019.07.15/lxtsim_ma_myhist-build/condor_out/condor.$(Process).out
-Error		= /nfs/dust/zeus/group/mykytaua/LUXE/2019.07.15/lxtsim_ma_myhist-build/condor_out/condor.$(Process).err
-Log		= /nfs/dust/zeus/group/mykytaua/LUXE/2019.07.15/lxtsim_ma_myhist-build/condor_out/condor.$(Process).log
+Output		= /nfs/dust/zeus/group/mykytaua/LUXE/2019.08.05/Luxe_LuCaS-build/condor_out/condor.$(Process).out
+Error		= /nfs/dust/zeus/group/mykytaua/LUXE/2019.08.05/Luxe_LuCaS-build/condor_out/condor.$(Process).err
+Log		= /nfs/dust/zeus/group/mykytaua/LUXE/2019.08.05/Luxe_LuCaS-build/condor_out/condor.$(Process).log
 Notify_user	= mykyta.shchedrolosiev@desy.de
 
 Queue 1000

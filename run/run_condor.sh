@@ -8,7 +8,7 @@ WORKDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #LIST=($LIST_DIR/bppp*.out)
 
 LIST_FILE=/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_1.0J.out
-List=(`cat ./bppp_17.5GeV_5mfoiltoIP_Enelas_1.0J.out`)
+LIST=(`cat $LIST_FILE`)
 
 echo $TMP
 cd $TMP
@@ -22,7 +22,7 @@ file=${LIST[$(($1))]}
 # 	s|/analysis/setFileName.*|/analysis/setFileName  $(basename $file)\.root|g \
 #      " ${WORKDIR}/luxe_gamma_new.mac > ${TMP}/luxe_gamma_new.mac
 
-
+echo $file
 sed "s|/lxphoton/gun/MCParticlesFile.*|/lxphoton/gun/MCParticlesFile $file|g\
      " ${WORKDIR}/luxe_gamma_new.mac > ${TMP}/luxe_gamma_new.mac
 
@@ -31,7 +31,7 @@ sed "s|/lxphoton/gun/MCParticlesFile.*|/lxphoton/gun/MCParticlesFile $file|g\
 # cd ${WORKDIR}
 pwd
 
-${WORKDIR}/lxbeamsim .luxe_gamma_new.mac
+${WORKDIR}/lxbeamsim luxe_gamma_new.mac
 echo "Run done!"
 
 mkdir -p ${WORKDIR}/rootOUT
