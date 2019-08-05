@@ -123,7 +123,24 @@ G4VPhysicalVolume* DetectorConstruction::ConstructCalorimeter()
   BuildTBeamPT16();
 
   ConstructMagnet();
+
+
+  // TestPlane
+  G4Box* solidTestPlane = new G4Box("TestPlane",fWorldSizeXY/2,fWorldSizeXY/2,1*mm);   //its size
+
+  G4LogicalVolume* logicTestPlane = new G4LogicalVolume(solidTestPlane,
+                                                        Vacuum,
+                                                        "TestPlane");
+  G4ThreeVector testPlaneCenter = G4ThreeVector(0.,0.,3.0*m);
+  new G4PVPlacement(0,
+                    testPlaneCenter,
+                    "TestPlane",
+                    logicTestPlane,
+                    fPhysiWorld,
+                    false,
+                    0);
   
+
   // std::cout<<"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DetectorConstruction::End\n";
   return fPhysiWorld;
 }

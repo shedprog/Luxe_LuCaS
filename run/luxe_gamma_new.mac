@@ -33,9 +33,9 @@
 #/lxphoton/gun/MCParticlesFileList /data/Projects_physics/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_1.0J.out
 /lxphoton/gun/MCParticlesFile /data/Projects_physics/LUXE/IPstrong/bppp_17.5GeV/5mfoiltoIP/Enelas_1.0J/luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_run_000901_to_1000/IPstrong_luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_particles_run_001000.out
 
-#/gun/particle  e-
+/gun/particle  e-
 #/gun/particle  gamma
-#/gun/energy    15.0 GeV
+/gun/energy    15.0 GeV
 #
 
 # TTree output

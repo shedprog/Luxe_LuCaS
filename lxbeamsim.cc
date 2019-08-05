@@ -34,6 +34,8 @@
 #include "RunAction.hh"
 #include "EventAction.hh"
 
+#include "SteppingAction.hh"
+
 #include "LCRootOut.hh"
 bool isRoot = 1;
 
@@ -81,28 +83,29 @@ int main(int argc,char** argv) {
     
     PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(detector);
     runManager->SetUserAction(primary);
+
     RunAction* runaction = new RunAction(detector,primary);
     runManager->SetUserAction(runaction); 
+
     EventAction* eventaction =  new EventAction();
     runManager->SetUserAction(eventaction);
 
+
   }else{
 
-  std::cout<<"@@@@@@@@@@@@@@@@@@@@ 1\n";
-  LCRootOut *theRootOut = new LCRootOut("test.root");
+    LCRootOut *theRootOut = new LCRootOut("test.root");
 
-  std::cout<<"@@@@@@@@@@@@@@@@@@@@ 2\n";
-  PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(detector);
-  runManager->SetUserAction(primary);
-  
-  std::cout<<"@@@@@@@@@@@@@@@@@@@@ 3\n";
-  RunAction* runaction = new RunAction(detector,theRootOut,primary);
-  runManager->SetUserAction(runaction); 
+    PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(detector);
+    runManager->SetUserAction(primary);
 
-  std::cout<<"@@@@@@@@@@@@@@@@@@@@ 4\n";
-  EventAction* eventaction =  new EventAction(theRootOut);
-  runManager->SetUserAction(eventaction);
+    RunAction* runaction = new RunAction(detector,theRootOut,primary);
+    runManager->SetUserAction(runaction); 
+
+    EventAction* eventaction =  new EventAction(theRootOut);
+    runManager->SetUserAction(eventaction);
     
+    SteppingAction* steps = new SteppingAction(theRootOut);
+    runManager->SetUserAction(steps);
   }
 
 

@@ -74,6 +74,15 @@ void LCRootOut::Init()
   analysisManager->CreateNtupleDColumn(2,"Hits_TOF",Hits_TOF);	//    double TOF; 7
   analysisManager->CreateNtupleIColumn(2,"Hits_Sensor",Hits_Sensor);  //    double TOF; 7
   analysisManager->FinishNtuple(2);
+
+  analysisManager->CreateNtuple("Tracks_true", "Tracks before first absorber");
+  analysisManager->CreateNtupleDColumn(3,"x");
+  analysisManager->CreateNtupleDColumn(3,"y");
+  analysisManager->CreateNtupleDColumn(3,"z");
+  analysisManager->CreateNtupleDColumn(3,"E");
+  analysisManager->CreateNtupleIColumn(3,"PDG");
+  analysisManager->FinishNtuple(3);
+
   
   analysisManager->OpenFile();
 }
@@ -112,6 +121,9 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
     double vX,vY,vZ;
 
     for (int v = 0; v < nv ; v++) {
+      // Take trajectory before absorber
+      // auto track_vec = event->GetTrajectoryContainer()->GetVector();
+      // std::cout<<event->GetTrajectoryContainer()->GetVector()<<" "<<event->GetTrajectoryContainer()->GetVector()->size()<<"\n";
     
       G4PrimaryVertex *pv = event->GetPrimaryVertex(v);
     	vX = pv->GetX0();
@@ -158,7 +170,7 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
 
 
       cellID =(*collection)[i]->GetCellCode();
-      G4int    side = (cellID >> 24) & 0xff ;
+      // G4int    side = (cellID >> 24) & 0xff ;
       eHit  = (*collection)[i]->GetEnergy();
       
       //hit.xCell = (*collection)[i]->GetXcell();
@@ -222,6 +234,18 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
 	  analysisManager->AddNtupleRow(2);
 
     }
+
+}
+
+void LCRootOut::TestPlaneFill(G4double x ,G4double y ,G4double z,G4double E,G4int PDG){
+
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  analysisManager->FillNtupleDColumn(3,0, x);
+  analysisManager->FillNtupleDColumn(3,1, y);
+  analysisManager->FillNtupleDColumn(3,2, z);
+  analysisManager->FillNtupleDColumn(3,3, E);
+  analysisManager->FillNtupleIColumn(3,4, PDG);
+  analysisManager->AddNtupleRow(3);
 
 }
 

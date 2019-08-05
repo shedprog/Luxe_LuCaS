@@ -14,4 +14,4 @@ Error		= /nfs/dust/zeus/group/mykytaua/LUXE/2019.07.15/lxtsim_ma_myhist-build/co
 Log		= /nfs/dust/zeus/group/mykytaua/LUXE/2019.07.15/lxtsim_ma_myhist-build/condor_out/condor.$(Process).log
 Notify_user	= mykyta.shchedrolosiev@desy.de
 
-Queue 12
+Queue 1000

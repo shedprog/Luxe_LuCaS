@@ -219,7 +219,7 @@ void PrimaryGeneratorAction::GenerateMono(G4Event* anEvent)
   */
 
   fz0=fy0 = 0.0;
-  fx0 = 0.0*cm;
+  fx0 = 1.0*cm;
 
 
   G4double mass = fParticleGun->GetParticleDefinition()->GetPDGMass();
@@ -253,7 +253,7 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
   
   std::vector < std::vector <double> > ptcls;
   int nscat = lxgen->GetEventFromFile(ptcls);
-  std::cout << "GetEventFromFile "  << nscat << std::endl;
+  // std::cout << "GetEventFromFile "  << nscat << std::endl;
   if (nscat > 1) {
       G4String msgstr("Error reading particle from a file! More than one were read, it is not supported!\n");
       G4Exception("PrimaryGeneratorAction::", "GeneratefromMC(Event)", FatalException, msgstr.c_str());
@@ -296,7 +296,7 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
 //     nfpart[hindx] += wght*pdata[8];
     if (pdata[8] >= 1)  wght = wght*pdata[8];
     //extern double weight_fromMC;
-    weight_fromMC = pdata[8]/1000.0;
+    weight_fromMC = pdata[8];
     //weight_fromMC = 1.0;
 
     std::copy(pdata.begin()+4, pdata.begin()+7, pp.begin()); 
