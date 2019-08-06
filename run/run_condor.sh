@@ -31,11 +31,16 @@ sed "s|/lxphoton/gun/MCParticlesFile.*|/lxphoton/gun/MCParticlesFile $file|g\
 # cd ${WORKDIR}
 pwd
 
-${WORKDIR}/lxbeamsim luxe_gamma_new.mac
+mkdir -p ${WORKDIR}/rootOUT
+root_n=$((($1-1)/100)) 
+
+mkdir -p ${WORKDIR}/rootOUT/r_${root_n}
+
+cd ${WORKDIR}/rootOUT/r_${root_n}
+
+${WORKDIR}/lxbeamsim ${TMP}/luxe_gamma_new.mac
 echo "Run done!"
 
-mkdir -p ${WORKDIR}/rootOUT
- 
-cp -rf ./test.root ${WORKDIR}/rootOUT/$(basename $file).root
+#cp -rf ./test.root ${WORKDIR}/rootOUT/_root$(basename $file).root
 
-echo "Copy done!"
+#echo "Copy done!"

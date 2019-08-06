@@ -17,10 +17,18 @@
 #include "PrimarySpectra.hh"
 #include "LuxeTestGenerator.hh"
 #include "G4RunManager.hh"
-
+#include "G4String.hh"
 #include "GlobalVars.hh"
+#include <string>
 
+#include <iostream>
+//#include <filesystem>
+//namespace fs = std::filesystem;
+#include <libgen.h>
+
+std::string root_file_name;
 double weight_fromMC;
+
 
 PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* DC)
 :G4VUserPrimaryGeneratorAction(),
@@ -133,6 +141,13 @@ void PrimaryGeneratorAction::SetMCParticleFile(G4String val, const G4bool list)
   fMCList = list;
   if (fMCList) G4cout << "File with the list of files with primary MC particles" << fMCfile << G4endl;
   else         G4cout << "File with primary MC particles" << fMCfile << G4endl;
+
+  char *cstr = new char[val.length() + 1];
+  strcpy(cstr, val.c_str());
+  root_file_name = basename(cstr);
+  delete [] cstr;
+  std::cout<<"root file name: "<<root_file_name<<"\n";
+
 }
 
 
@@ -243,6 +258,7 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
 
     lxgen->SetFileType("out", 9, 9);
     std::cout << "File type is set "  << std::endl;
+    
   }
 
   if (fnfixparticles > 0) {

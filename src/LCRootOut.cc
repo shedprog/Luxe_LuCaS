@@ -20,6 +20,8 @@
 
 #include "G4SystemOfUnits.hh"
 #include "GlobalVars.hh"
+#include "PrimaryGeneratorAction.hh"
+
 
 LCRootOut::LCRootOut()
 { 
@@ -39,7 +41,9 @@ LCRootOut::~LCRootOut()
 void LCRootOut::Init()
 {
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-  analysisManager->SetFileName(RootOutFile);
+  //analysisManager->SetFileName(RootOutFile);
+  std::cout<<"Set File Name\n";
+  analysisManager->SetFileName(root_file_name+".root");
   analysisManager->SetVerboseLevel(1);
   analysisManager->SetActivation(true);    // enable inactivation of histograms
 

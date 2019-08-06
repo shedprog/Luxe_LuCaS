@@ -7,6 +7,7 @@ Arguments       = run_condor.sh $(Process)
 #transfer_executable = True					     
 Requirements    = CPU_Speed >=1
 Requirements    = OpSysAndVer == "SL6"
++RequestRuntime = 28800
 #Priority	= +20
 #GetEnv		= True
 Output		= /nfs/dust/zeus/group/mykytaua/LUXE/2019.08.05/Luxe_LuCaS-build/condor_out/condor.$(Process).out
