@@ -90,13 +90,12 @@ int main(int argc,char** argv) {
     EventAction* eventaction =  new EventAction();
     runManager->SetUserAction(eventaction);
 
-
   }else{
+
+    LCRootOut *theRootOut = new LCRootOut();
 
     PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(detector);
     runManager->SetUserAction(primary);
-
-    LCRootOut *theRootOut = new LCRootOut("test.root");
  
     RunAction* runaction = new RunAction(detector,theRootOut,primary);
     runManager->SetUserAction(runaction); 
@@ -106,10 +105,8 @@ int main(int argc,char** argv) {
     
     SteppingAction* steps = new SteppingAction(theRootOut);
     runManager->SetUserAction(steps);
+
   }
-
-
-
 
   // get the pointer to the User Interface manager 
   G4UImanager* UI = G4UImanager::GetUIpointer();  

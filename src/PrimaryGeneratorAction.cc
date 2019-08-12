@@ -174,9 +174,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
 void PrimaryGeneratorAction::GenerateGaussian(G4Event* anEvent)
 {
+  /*
   // it generate particle according to defined emittance drifting from fz0 towards an IP 
   // where the beam size is fsigmax, fsigmay, fsigmaz.
-  G4double zshift = -20.0*cm;
+  G4double zshift = 0.0*cm;
   // if (zshift > fDetector->GetzstartAbs() - 100.0*fsigmaz) {
   //   zshift = 0.5 * (fDetector->GetzstartAbs() - 0.5 * fDetector->GetWorldSizeZ());
   //   if (zshift > fDetector->GetzstartAbs() - 100.0*fsigmaz) {
@@ -209,7 +210,23 @@ void PrimaryGeneratorAction::GenerateGaussian(G4Event* anEvent)
 
   fParticleGun->SetParticlePosition(G4ThreeVector(x0, y0, z0 + 0.5 * fDetector->GetWorldSizeZ() ));
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(dx0*pz, dy0*pz, pz));
+  fParticleGun->GeneratePrimaryVertex(anEvent);*/
+
+  G4double x0=0.0;
+  G4double y0=0.0;
+  G4double z0=0.0;
+
+  G4double mass = fParticleGun->GetParticleDefinition()->GetPDGMass();
+  G4double E = fParticleGun->GetParticleEnergy();
+  E = G4RandFlat::shoot(4000.,13000);
+
+  // G4double pz = sqrt( (E*E - mass*mass) );
+
+  fParticleGun->SetParticlePosition(G4ThreeVector(x0, y0, z0));
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0, 0, 1));
+  fParticleGun-> SetParticleEnergy(E);
   fParticleGun->GeneratePrimaryVertex(anEvent);
+
 }
 
 

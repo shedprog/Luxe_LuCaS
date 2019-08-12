@@ -18,7 +18,127 @@
 #include "TInterpreter.h"
 // #include "gRoot.h"
 #include <vector>
+void build_tracks_flow(const Char_t *datapath= "") {
 
+   // gStyle->
+   // gROOT->SetStyle("ATLAS");
+
+   TFile *f = new TFile(datapath);
+
+   TTree *Events = (TTree*)f->Get("Events");
+   TTree *Track = (TTree*)f->Get("Tracks");
+   TTree *Hits = (TTree*)f->Get("Hits");
+   TTree *Track_true = (TTree*)f->Get("Tracks_true");
+
+   double Weight = 1;
+
+   // std::vector<double>* Hits_yHit = 0; 
+   std::vector<double>* Hits_zCell = 0;
+   std::vector<double>* Hits_xCell = 0;
+   std::vector<double>* Hits_yCell = 0;
+   std::vector<double>* Hits_eHit = 0;
+   std::vector<double>* Hits_Sensor = 0;
+   Hits->SetBranchAddress("Hits_xCell",&Hits_xCell);
+   Hits->SetBranchAddress("Hits_yCell",&Hits_yCell);
+   Hits->SetBranchAddress("Hits_zCell",&Hits_zCell);
+   Hits->SetBranchAddress("Hits_eHit",&Hits_eHit);
+   Hits->SetBranchAddress("Hits_Sensor",&Hits_Sensor);
+   TH1F* hist_E = new TH1F("hist","Flow of initial electrons before calorimeter weighted by deposit energy in 1-st layer",200,-300.,300.);
+
+   double xpos=0;
+   Track_true->SetBranchAddress("x",&xpos);
+   TH1F* hist_x = new TH1F("hist_x","Flow of initial electrons before calorimeter",200,-300.,300.);
+
+
+   //Filling of Hits
+   Int_t nentries = (Int_t)Hits->GetEntries();
+   // std::cout<<"Entries: "<<nentries<<" \n";
+   // for (Int_t i=0;i<nentries;i++) 
+   // {
+   //   Hits->GetEntry(i);
+
+   //   int Number_of_Hits = Hits_yCell->size();
+
+   //   if(Number_of_Hits!=0){
+   //    for (Int_t j=0;j<Number_of_Hits;j++){
+   //      int layer =  ((int) (*Hits_zCell)[j]);
+   //      if(layer==1){
+
+   //        int pad = (*Hits_yCell)[j];
+   //        int sector = (*Hits_xCell)[j];
+   //        int sensor = (*Hits_Sensor)[j];
+
+
+   //        double shift_x = 195.2 - 80.0 + 1.61;
+   //        double rho = 80. + 0.9 + 1.8 * pad;
+   //        double phi = - TMath::Pi()/12 + TMath::Pi()/48 + (sector - 1) * TMath::Pi()/24;
+
+   //        if(sensor <= 2) phi = phi + TMath::Pi();
+
+   //        double y = rho * TMath::Sin(phi);    
+   //        double x_ = rho * TMath::Cos(phi);
+
+   //        if(sensor == 4) x_ = x_ + shift_x;
+   //        else if(sensor == 2) x_ = x_ - shift_x;
+
+   //      // Cordinates start not in the center of curvature
+   //      // but in the begining of cordinates in Geant4
+   //        double cord_shift = 195.2 - 30.0 - 120.0;
+        
+   //        if(sensor <= 2) x_ = x_ + cord_shift;
+   //        else if(sensor >= 3) x_ = x_ - cord_shift; 
+
+   //        Weight = (*Hits_eHit)[j];
+
+   //        //~~~~~Have to be changed for one BX~~~~
+   //        //hist_E->Fill(x_,Weight);
+   //        hist_E->Fill(x_,Weight*0.001);
+
+   //      } 
+   //    }
+   //    }
+   // }
+
+
+   //Filling of track position
+   nentries = (Int_t)Track_true->GetEntries();
+   // std::cout<<"Entries: "<<nentries<<" \n";
+   for (Int_t i=0;i<nentries;i++) 
+   {
+     Track_true->GetEntry(i);
+
+     Hits->GetEntry(i);
+     int Number_of_Hits = Hits_eHit->size();
+
+     double E_weight = 0;
+
+     if(Number_of_Hits!=0){
+      for (Int_t j=0;j<Number_of_Hits;j++){
+        int layer =  ((int) (*Hits_zCell)[j]);
+        if(layer==1) E_weight = E_weight + (*Hits_eHit)[j];
+      }
+      }
+
+     //~~~~~Have to be changed for one BX~~~~
+     // hist_x->Fill(xpos);
+     hist_E->Fill(xpos,E_weight);
+     hist_x->Fill(xpos);
+   }
+
+  TCanvas *c1 = new TCanvas("c1","The Ntuple canvas",1500,1000);
+  c1->Divide(1,2);
+  c1->cd();
+
+  c1->cd(1);
+  hist_x->Draw("HIST");
+
+  c1->cd(2);
+  hist_E->Draw("HIST");
+
+  c1->Update();
+  c1->SaveAs("./Flow.png");
+
+}
 void Build_Occupancy(const Char_t *datapath= "") {
 
   TFile *f = new TFile(datapath);
@@ -245,5 +365,6 @@ void PlotLCOut(const Char_t *datapath= "")
   // Build_2DHIts(datapath);
   // EnergyOfx_reco(datapath);
   // EnergyOfx_detector(datapath);
-  Build_Occupancy(datapath);
+  // Build_Occupancy(datapath);
+  build_tracks_flow(datapath);
 }

@@ -31,12 +31,12 @@
 
 #/lxphoton/gun/MCParticlesFileList mc_list_out.txt
 #/lxphoton/gun/MCParticlesFileList /data/Projects_physics/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_1.0J.out
-#/lxphoton/gun/MCParticlesFile /data/Projects_physics/LUXE/IPstrong/bppp_17.5GeV/5mfoiltoIP/Enelas_1.0J/luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_run_000901_to_1000/IPstrong_luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_particles_run_001000.out
-/lxphoton/gun/MCParticlesFile /nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/./bppp_14GeV/5mfoiltoIP/Enelas_1.0J/luxe_Jan2019_Enelas_1.0J_14GeV_bppp_5mfoiltoIP_run_000901_to_1000/IPstrong_luxe_Jan2019_Enelas_1.0J_14GeV_bppp_5mfoiltoIP_particles_run_001000.out
+/lxphoton/gun/MCParticlesFile /data/Projects_physics/LUXE/IPstrong/bppp_17.5GeV/5mfoiltoIP/Enelas_1.0J/luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_run_000901_to_1000/IPstrong_luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_particles_run_001000.out
+#/lxphoton/gun/MCParticlesFile /nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/./bppp_14GeV/5mfoiltoIP/Enelas_1.0J/luxe_Jan2019_Enelas_1.0J_14GeV_bppp_5mfoiltoIP_run_000901_to_1000/IPstrong_luxe_Jan2019_Enelas_1.0J_14GeV_bppp_5mfoiltoIP_particles_run_001000.out
 
 /gun/particle  e-
 #/gun/particle  gamma
-/gun/energy    15.0 GeV
+/gun/energy    6.5 GeV
 #
 
 # TTree output
@@ -57,6 +57,6 @@
 #/run/printProgress 100000
 #/run/beamOn 1000
 #/run/beamOn 100000
-#/run/beamOn 10
+#/run/beamOn 100
 /run/beamOn 1000000000000000
 ####################################

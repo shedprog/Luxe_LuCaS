@@ -40,6 +40,7 @@ LCRootOut::~LCRootOut()
 
 void LCRootOut::Init()
 {
+  std::cout << "@@@@@@@@@@@@Create Ntuple\n";
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
   //analysisManager->SetFileName(RootOutFile);
   std::cout<<"Set File Name\n";
