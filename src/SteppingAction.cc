@@ -87,11 +87,15 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep)
 
     G4double E = theTrack->GetKineticEnergy();
     
+    G4ThreeVector theMomentumDirection = theTrack->GetDynamicParticle()->GetMomentumDirection();
+
+    G4double Mx = theMomentumDirection.x();
+    G4double My = theMomentumDirection.y();
+    G4double Mz = theMomentumDirection.z();
     // std::cout << "PDG" <<PDG <<" "<< theTrack->GetParentID() <<"\n";
     // std::cout<<"SteppingAction: "<< x << " " << y << " " << z;
 
-    RootOut->TestPlaneFill(x,y,z,E,PDG);
-    // G4ThreeVector theMomentumDirection = theTrack->GetDynamicParticle()->GetMomentumDirection();
+    RootOut->TestPlaneFill(x,y,z,Mx,My,Mz,E,PDG);
 
     return;
 

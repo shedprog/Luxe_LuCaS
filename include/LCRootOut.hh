@@ -38,7 +38,7 @@ public:
 
   void ClearData();
   void End();                                                         // writes to file and closes it
-  void TestPlaneFill(G4double ,G4double ,G4double,G4double,G4int);
+  void TestPlaneFill(G4double ,G4double ,G4double,G4double ,G4double ,G4double,G4double,G4int);
 
 
 

@@ -18,6 +18,7 @@
 #include "TInterpreter.h"
 // #include "gRoot.h"
 #include <vector>
+
 void build_tracks_flow(const Char_t *datapath= "") {
 
    // gStyle->
@@ -360,11 +361,200 @@ void EnergyOfx_detector(const Char_t *datapath= "")
   c1->SaveAs("./EnergyOfx_detector.png");
 }
 
+void EnergyProfile(const Char_t *datapath= "")
+{
+
+   // gStyle->
+   gROOT->SetStyle("ATLAS");
+
+   TFile *f = new TFile(datapath);
+
+   TTree *Events = (TTree*)f->Get("Events");
+   TTree *Track = (TTree*)f->Get("Tracks");
+   TTree *Track_true = (TTree*)f->Get("Tracks_true");
+   TTree *Hits = (TTree*)f->Get("Hits");
+
+   double Weight = 1;
+
+   std::vector<int>* Track_PDG = 0;
+
+   std::vector<double>* Hits_xCell = 0;
+   std::vector<double>* Hits_yCell = 0; 
+   std::vector<double>* Hits_zCell = 0;
+   std::vector<double>* Hits_eHit = 0;
+   std::vector<double>* Hits_Sensor = 0;
+   
+   // Events->SetBranchAddress("Weight",&Weight);
+
+   Track->SetBranchAddress("Tracks_PDG",&Track_PDG);
+   
+   Hits->SetBranchAddress("Hits_xCell",&Hits_xCell);
+   Hits->SetBranchAddress("Hits_yCell",&Hits_yCell);
+   Hits->SetBranchAddress("Hits_zCell",&Hits_zCell);
+   Hits->SetBranchAddress("Hits_Sensor",&Hits_Sensor);
+   Hits->SetBranchAddress("Hits_eHit",&Hits_eHit);
+
+   std::vector< std::vector<TH2F*> > Hists;
+
+   for (Int_t i = 1; i<=20; i++)
+   {
+    std::vector<TH2F*> one_layer;
+      // for (Int_t j = 1; j<=4; j++){
+      
+      TH2F* hist = new TH2F(Form("hist%d_%d",i,1),Form("layer %d sensor 1",i),64,0.5,64.5,4,0.5,4.5);
+      one_layer.push_back(hist);
+
+      hist = new TH2F(Form("hist%d_%d",i,2),Form("layer %d sensor 2",i),64,0.5,64.5,4,0.5,4.5);
+      one_layer.push_back(hist);
+
+      hist = new TH2F(Form("hist%d_%d",i,3),Form("layer %d sensor 3",i),64,-64.5,-0.5,4,-4.5,-0.5);
+      one_layer.push_back(hist);
+
+      hist = new TH2F(Form("hist%d_%d",i,4),Form("layer %d sensor 4",i),64,-64.5,-0.5,4,-4.5,-0.5);
+      one_layer.push_back(hist);
+      
+
+      // }
+    Hists.push_back(one_layer);
+   }
+
+   Int_t nentries = (Int_t)Events->GetEntries();
+   std::cout<<"Entries: "<<nentries<<" \n";
+
+   for (Int_t i=0;i<nentries;i++) 
+   {
+     Hits->GetEntry(i);
+
+
+     int Number_of_Hits = Hits_xCell->size();
+
+     if(Number_of_Hits!=0){
+      for (Int_t j=0;j<Number_of_Hits;j++){
+        int layer =  ((int) (*Hits_zCell)[j]) - 1;
+        int sensor = ((int) (*Hits_Sensor)[j]) - 1;
+    
+        if(sensor==0 or sensor==1)
+                Hists.at(layer).at(sensor)->Fill((*Hits_yCell)[j],
+                                                 (*Hits_xCell)[j],
+                                                 (*Hits_eHit)[j]*Weight);
+        else if(sensor==2 or sensor==3)
+                Hists.at(layer).at(sensor)->Fill(-(*Hits_yCell)[j],
+                                                 -(*Hits_xCell)[j],
+                                                 (*Hits_eHit)[j]*Weight);
+        }
+
+
+      }
+     }
+
+
+
+  for (Int_t i = 0; i<20; i++)
+  {
+    TCanvas *c1 = new TCanvas("c1","The Ntuple canvas",1500,900);
+    c1->Divide(4,1);
+    c1->cd();
+
+    c1->cd(1);
+    Hists.at(i).at(3)->Draw("colz");
+
+    c1->cd(2);
+    Hists.at(i).at(2)->Draw("colz");
+
+    c1->cd(3);
+    Hists.at(i).at(0)->Draw("colz");
+
+    c1->cd(4);
+    Hists.at(i).at(1)->Draw("colz");
+
+    c1->Update();
+    c1->SaveAs(Form("./output/layer_%d.png",i));
+  }  
+}
+
+void EnergyTower4(const Char_t *datapath= "")
+{
+   gROOT->SetStyle("ATLAS");
+
+   TFile *f = new TFile(datapath);
+
+   TTree *Hits = (TTree*)f->Get("Hits");
+
+   std::vector<double>* Hits_xCell = 0;
+   std::vector<double>* Hits_yCell = 0; 
+   // std::vector<double>* Hits_zCell = 0;
+   std::vector<double>* Hits_eHit = 0;
+   std::vector<double>* Hits_Sensor = 0;
+   
+   Hits->SetBranchAddress("Hits_xCell",&Hits_xCell);
+   Hits->SetBranchAddress("Hits_yCell",&Hits_yCell);
+   // Hits->SetBranchAddress("Hits_zCell",&Hits_zCell);
+   Hits->SetBranchAddress("Hits_Sensor",&Hits_Sensor);
+   Hits->SetBranchAddress("Hits_eHit",&Hits_eHit);
+
+   TH1F* hist = new TH1F("hist","Energies (joined by 4 sectors)",276,-60,-40);
+
+   Int_t nentries = (Int_t)Hits->GetEntries();
+   std::cout<<"Entries: "<<nentries<<" \n";
+
+   for (Int_t i=0;i<nentries;i++) 
+   {
+     Hits->GetEntry(i);
+     int Number_of_Hits = Hits_xCell->size();
+     if(Number_of_Hits!=0){
+      for (Int_t j=0;j<Number_of_Hits;j++){
+        // int layer =  ((int) (*Hits_zCell)[j]) - 1;
+        int sensor = ((int) (*Hits_Sensor)[j]);
+    
+        if(sensor==1)
+        {
+          hist->Fill(1+(*Hits_yCell)[j],(*Hits_eHit)[j]);
+        }
+
+        else if(sensor==2)
+        {
+          hist->Fill(1+(*Hits_yCell)[j]+64,(*Hits_eHit)[j]);
+        }
+
+        else if(sensor==3)
+        {
+          hist->Fill(-1-(*Hits_yCell)[j],(*Hits_eHit)[j]);
+        } 
+        else if(sensor==4)
+        {
+          hist->Fill(-1-(*Hits_yCell)[j]-64,(*Hits_eHit)[j]);
+        }
+
+       }
+      }
+     }
+
+    TFile *out = new TFile("TowerEnergy4.root","RECREATE");
+    out->cd();
+    TCanvas *c1 = new TCanvas("c1","The Ntuple canvas",1500,900);
+    c1->Divide(1,1);
+    c1->cd();
+    hist->Draw("HISTO");
+    hist->GetXaxis()->SetTitle("Number of pad");
+    hist->GetYaxis()->SetTitle("E [MeV]");
+    hist->SetLineColor(2);
+    hist->SetLineWidth(3);
+    c1->Update();
+    int l;
+    std::cin>>l;
+    // c1->SaveAs("./TowerEnergy4.pdf");
+    c1->Write();
+    out->Close();
+    f->Close();
+}
+
 void PlotLCOut(const Char_t *datapath= "") 
 {
   // Build_2DHIts(datapath);
   // EnergyOfx_reco(datapath);
   // EnergyOfx_detector(datapath);
   // Build_Occupancy(datapath);
-  build_tracks_flow(datapath);
+  // build_tracks_flow(datapath);
+  // EnergyProfile(datapath);
+  EnergyTower4(datapath);
 }

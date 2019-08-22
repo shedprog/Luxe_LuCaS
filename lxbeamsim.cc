@@ -92,7 +92,7 @@ int main(int argc,char** argv) {
 
   }else{
 
-    LCRootOut *theRootOut = new LCRootOut();
+    LCRootOut *theRootOut = new LCRootOut("test.root");
 
     PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(detector);
     runManager->SetUserAction(primary);

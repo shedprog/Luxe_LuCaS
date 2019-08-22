@@ -42,9 +42,9 @@ void LCRootOut::Init()
 {
   std::cout << "@@@@@@@@@@@@Create Ntuple\n";
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-  //analysisManager->SetFileName(RootOutFile);
-  std::cout<<"Set File Name\n";
-  analysisManager->SetFileName(root_file_name+".root");
+  analysisManager->SetFileName(RootOutFile);
+  // std::cout<<"Set File Name\n";
+  // analysisManager->SetFileName(root_file_name+".root");
   analysisManager->SetVerboseLevel(1);
   analysisManager->SetActivation(true);    // enable inactivation of histograms
 
@@ -84,6 +84,9 @@ void LCRootOut::Init()
   analysisManager->CreateNtupleDColumn(3,"x");
   analysisManager->CreateNtupleDColumn(3,"y");
   analysisManager->CreateNtupleDColumn(3,"z");
+  analysisManager->CreateNtupleDColumn(3,"Mx");
+  analysisManager->CreateNtupleDColumn(3,"My");
+  analysisManager->CreateNtupleDColumn(3,"Mz");
   analysisManager->CreateNtupleDColumn(3,"E");
   analysisManager->CreateNtupleIColumn(3,"PDG");
   analysisManager->FinishNtuple(3);
@@ -242,14 +245,17 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
 
 }
 
-void LCRootOut::TestPlaneFill(G4double x ,G4double y ,G4double z,G4double E,G4int PDG){
+void LCRootOut::TestPlaneFill(G4double x ,G4double y ,G4double z,G4double Mx ,G4double My ,G4double Mz,G4double E,G4int PDG){
 
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
   analysisManager->FillNtupleDColumn(3,0, x);
   analysisManager->FillNtupleDColumn(3,1, y);
   analysisManager->FillNtupleDColumn(3,2, z);
-  analysisManager->FillNtupleDColumn(3,3, E);
-  analysisManager->FillNtupleIColumn(3,4, PDG);
+  analysisManager->FillNtupleDColumn(3,3, Mx);
+  analysisManager->FillNtupleDColumn(3,4, My);
+  analysisManager->FillNtupleDColumn(3,5, Mz);
+  analysisManager->FillNtupleDColumn(3,6, E);
+  analysisManager->FillNtupleIColumn(3,7, PDG);
   analysisManager->AddNtupleRow(3);
 
 }
