@@ -33,14 +33,8 @@ file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 file(GLOB headers ${ROOT_INCLUDE_DIR}/*.h)
 
-
-#file(COPY ${PROJECT_SOURCE_DIR}/luxe_e_gamma.mac DESTINATION ./)
-file(COPY ${PROJECT_SOURCE_DIR}/run/luxe_gamma_new.mac DESTINATION ./)
-#file(COPY ${PROJECT_SOURCE_DIR}/run/IPstrong_luxe_Feb2019_Enelas_0.01J_trident_particles_run_000001.out DESTINATION ./)
-#file(COPY ${PROJECT_SOURCE_DIR}/run/IPstrong_luxe_Feb2019_Enelas_0.01J_trident_particles_run_000002.out DESTINATION ./)
-#file(COPY ${PROJECT_SOURCE_DIR}/run/mc_list_out.txt DESTINATION ./)
-#file(COPY ${PROJECT_SOURCE_DIR}/run/init_vis.mac DESTINATION ./)
-
+file(COPY ${PROJECT_SOURCE_DIR}/run/run_luxe.mac DESTINATION ./)
+file(COPY ${PROJECT_SOURCE_DIR}/run/run_vis.mac DESTINATION ./)
 file(COPY ${PROJECT_SOURCE_DIR}/run/QA.job DESTINATION ./)
 file(COPY ${PROJECT_SOURCE_DIR}/run/run_condor.sh DESTINATION ./)
 

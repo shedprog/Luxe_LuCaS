@@ -32,7 +32,7 @@ RunAction::RunAction(DetectorConstruction* det, LCRootOut *RO, PrimaryGeneratorA
 {
   // fDetector = det;
   // fPrimary = kin;
-  std::cout<<"@@@@@@@@@@@@@@@@@@@@ RunAction Init\n";
+  // std::cout<<"@@@@@@@@@@@@@@@@@@@@ RunAction Init\n";
   RootOut = RO;
 }
 

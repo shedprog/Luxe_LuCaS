@@ -46,7 +46,7 @@ DetectorConstruction::DetectorConstruction()
 
 {
 
-  fWorldSizeZ = 10.0*m; 
+  fWorldSizeZ = 15.0*m; 
   fWorldSizeXY= 2.0*m;
   
   DefineMaterials();
@@ -131,7 +131,8 @@ G4VPhysicalVolume* DetectorConstruction::ConstructCalorimeter()
   G4LogicalVolume* logicTestPlane = new G4LogicalVolume(solidTestPlane,
                                                         Vacuum,
                                                         "TestPlane");
-  G4ThreeVector testPlaneCenter = G4ThreeVector(0.,0.,3.0*m);
+  
+  G4ThreeVector testPlaneCenter = G4ThreeVector(0.,0.,4.8*m);
   new G4PVPlacement(0,
                     testPlaneCenter,
                     "TestPlane",
@@ -185,11 +186,11 @@ void DetectorConstruction::ConstructMagnet()
 {
    fMagnetFieldValue = 1.4*tesla;
 //  fMagnetFieldValue = 0.0*gauss;
-  fMagnetSizeX = 50*cm;
+  fMagnetSizeX = 60*cm;
   fMagnetSizeY = 20*cm;
-  fMagnetSizeZ = 100*cm;
+  fMagnetSizeZ = 150*cm;
   // fMagnetZPos = fZposAbs + 30*cm + fMagnetSizeZ/2.0 + fAbsorberThickness/2.0;
-  fMagnetZPos = 100*cm;
+  fMagnetZPos = 100*cm + fMagnetSizeZ/2;
   
   G4ThreeVector  fieldVector( 0.0, fMagnetFieldValue, 0.0);  
   G4MagneticField *magField = new G4UniformMagField( fieldVector );    

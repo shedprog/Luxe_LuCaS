@@ -20,21 +20,28 @@
 #include "LCSensitiveDetector.hh"
 #include "LCHit.hh"
 #include "g4root.hh"
+
+#include "G4UImessenger.hh"
+
+#include "G4UIcmdWithAString.hh"
 // namespaces
 using namespace std;
 // using namespace TMath;
+
+class LCRootMesseger;
 
 class LCRootOut
 {
 public:
     LCRootOut();
-    LCRootOut(const G4String fName );
+    // LCRootOut(const G4String fName );
    ~LCRootOut();
 
 public:
  
   void Init();                                                         // opens a file, creates a Tree 
   void ProcessEvent(const G4Event* event, LCHitsCollection *HitsColl);
+  void SetName(G4String newValue) {RootOutFile = newValue;}
 
   void ClearData();
   void End();                                                         // writes to file and closes it
@@ -43,6 +50,7 @@ public:
 
 
 private:
+  LCRootMesseger* fMessenger;
   G4String RootOutFile;
  
 private:
@@ -82,6 +90,21 @@ private:
   void Fill_Hits_TOF(const std::vector<G4double> &v){ Hits_TOF = v;};
   void Fill_Hits_Sensor(const std::vector<G4int> &v){ Hits_Sensor = v;};
 
+};
+
+class LCRootMesseger : public G4UImessenger
+{
+
+  public:
+    LCRootMesseger(LCRootOut* root);
+   ~LCRootMesseger();
+    
+    virtual void SetNewValue(G4UIcommand*, G4String);
+    
+  private:
+    LCRootOut* fHistManager;
+    G4UIcmdWithAString* fRootName;
+    
 };
 
 #endif;

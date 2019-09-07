@@ -21,8 +21,8 @@ PrimarySpectra::PrimarySpectra() : vx(0), vy(0), vfc(0), fverbose(0)
 
 
 PrimarySpectra::PrimarySpectra(const std::string fname) : vx(0), vy(0), vfc(0), fverbose(0)
-{ 
-  LoadData(fname);  
+{
+  LoadData(fname);
 }
 
 
@@ -44,15 +44,15 @@ int PrimarySpectra::LoadData(const std::string fname)
     std::getline(fin, datstr);
     if (fin.fail()) {
       if (!fin.eof()) { ++fioerr; std::cout << "Error reading data from the file " << fname << "!" << std::endl; }
-      break;    
+      break;
     }
     double xx, yy;
     std::stringstream sstr(datstr);
     sstr >> xx >> yy;
     if (sstr.fail()) {
-      ++fioerr; 
+      ++fioerr;
       std::cout << "Error exracting data from the file " << fname << "!" << std::endl;
-      break;    
+      break;
     }
 
     if (fverbose) {
@@ -64,9 +64,9 @@ int PrimarySpectra::LoadData(const std::string fname)
   }
   fin.close();
   if (fioerr) throw std::runtime_error(std::string("Error reding data from the file ") + fname);
-  
+
   FindCumulative();
-  
+
   if (fverbose) {
     std::cout << nlread << " rows were successfully read from the file " << fname << std::endl;
   }
@@ -83,7 +83,7 @@ void PrimarySpectra::FindCumulative()
     fc += 0.5 * (vy[i]+vy[i-1]) * (vx[i]-vx[i-1]);
     vfc[i] = fc;
   }
-  
+
   if (fc > 0.0) std::for_each(vfc.begin(), vfc.end(), [=](double &x) {x /= fc;});
 }
 
@@ -93,7 +93,7 @@ double PrimarySpectra::GetRandom()
 //   if (!vfc.size()) throw std::runtime_error("Can not generate a random number. The PDF was not loaded!");
 //   double x = gRandom->Uniform(1.0);
   double x = G4RandFlat::shoot();
-  
+
   auto itr = std::find_if( vfc.begin(), vfc.end(), std::bind1st(std::less_equal<double>(), x) );
   if (itr == vfc.begin())  return vx.front();
   if (itr == vfc.end()  )  return vx.back();
@@ -102,4 +102,3 @@ double PrimarySpectra::GetRandom()
   double res = (vx[ii]-vx[ii-1]) / (vfc[ii]-vfc[ii-1]) * (x - vfc[ii-1]) + vx[ii-1];
   return res * fscale;
 }
-

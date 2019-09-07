@@ -21,26 +21,30 @@
 #include "G4SystemOfUnits.hh"
 #include "GlobalVars.hh"
 #include "PrimaryGeneratorAction.hh"
+#include "G4EventManager.hh"
 
+#include "G4UIcmdWithAString.hh"
 
-LCRootOut::LCRootOut()
+LCRootOut::LCRootOut() : fMessenger(0), RootOutFile("Default.root")
 { 
-  RootOutFile = "Default.root";
+  fMessenger = new LCRootMesseger(this); 
 }
 
-LCRootOut::LCRootOut(const G4String name )
-{
-  RootOutFile = name;
-}
+// LCRootOut::LCRootOut(const G4String name )
+// {
+//   RootOutFile = name;
+// }
 
 LCRootOut::~LCRootOut()
 { 
   delete G4AnalysisManager::Instance();
+  delete RootOutFile;
+  delete fMessenger;
 }
 
 void LCRootOut::Init()
 {
-  std::cout << "@@@@@@@@@@@@Create Ntuple\n";
+  // std::cout << "@@@@@@@@@@@@Create Ntuple\n";
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
   analysisManager->SetFileName(RootOutFile);
   // std::cout<<"Set File Name\n";
@@ -57,6 +61,7 @@ void LCRootOut::Init()
   analysisManager->CreateNtupleDColumn("Etot_1"); //5
   analysisManager->CreateNtupleDColumn("Emax"); //6
   analysisManager->CreateNtupleDColumn("Weight"); //6
+  analysisManager->CreateNtupleIColumn("eventID");
   analysisManager->FinishNtuple(0);
   
   analysisManager->CreateNtuple("Tracks", "Tracks for LumCaL in LUXE");
@@ -65,6 +70,7 @@ void LCRootOut::Init()
   analysisManager->CreateNtupleDColumn(1, "Tracks_PZ",Tracks_pZ); //double pZ; 2
   analysisManager->CreateNtupleIColumn(1, "Tracks_ID",Tracks_ID); //int    ID; 3
   analysisManager->CreateNtupleIColumn(1, "Tracks_PDG",Tracks_PDG); //int   PDG; 4
+  analysisManager->CreateNtupleIColumn(1, "eventID");
   analysisManager->FinishNtuple(1);
 
   analysisManager->CreateNtuple("Hits", "Hits for LumCaL in LUXE");
@@ -77,10 +83,11 @@ void LCRootOut::Init()
   analysisManager->CreateNtupleDColumn(2,"Hits_yHit",Hits_yHit);	//    double yHit; 5
   analysisManager->CreateNtupleDColumn(2,"Hits_zHit",Hits_zHit);	//    double zHit; 6
   analysisManager->CreateNtupleDColumn(2,"Hits_TOF",Hits_TOF);	//    double TOF; 7
-  analysisManager->CreateNtupleIColumn(2,"Hits_Sensor",Hits_Sensor);  //    double TOF; 7
+  analysisManager->CreateNtupleIColumn(2,"Hits_Sensor",Hits_Sensor);  //    double TOF; 8
+  analysisManager->CreateNtupleIColumn(2,"eventID");
   analysisManager->FinishNtuple(2);
 
-  analysisManager->CreateNtuple("Tracks_true", "Tracks before first absorber");
+  analysisManager->CreateNtuple("Tracks_true", "Tracks in the first sensor");
   analysisManager->CreateNtupleDColumn(3,"x");
   analysisManager->CreateNtupleDColumn(3,"y");
   analysisManager->CreateNtupleDColumn(3,"z");
@@ -89,14 +96,32 @@ void LCRootOut::Init()
   analysisManager->CreateNtupleDColumn(3,"Mz");
   analysisManager->CreateNtupleDColumn(3,"E");
   analysisManager->CreateNtupleIColumn(3,"PDG");
+  analysisManager->CreateNtupleIColumn(3,"xCell");
+  analysisManager->CreateNtupleIColumn(3,"yCell");
+  analysisManager->CreateNtupleIColumn(3,"zCell");
+  analysisManager->CreateNtupleIColumn(3,"Sensor");
+  analysisManager->CreateNtupleIColumn(3,"eventID");
   analysisManager->FinishNtuple(3);
 
-  
+  analysisManager->CreateNtuple("Tracks_testplane", "Tracks in the test plane");
+  analysisManager->CreateNtupleDColumn(4,"x");
+  analysisManager->CreateNtupleDColumn(4,"y");
+  analysisManager->CreateNtupleDColumn(4,"z");
+  analysisManager->CreateNtupleDColumn(4,"Mx");
+  analysisManager->CreateNtupleDColumn(4,"My");
+  analysisManager->CreateNtupleDColumn(4,"Mz");
+  analysisManager->CreateNtupleDColumn(4,"E");
+  analysisManager->CreateNtupleIColumn(4,"PDG");
+  analysisManager->CreateNtupleIColumn(4,"eventID");
+  analysisManager->FinishNtuple(4);
+
   analysisManager->OpenFile();
 }
 
 void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
 {
+    G4int eventID = event->GetEventID();
+
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 
     double numHits = 0; 
@@ -220,6 +245,7 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
     analysisManager->FillNtupleDColumn(5, Etot);
     analysisManager->FillNtupleDColumn(6, Emax);
     analysisManager->FillNtupleDColumn(7, weight_fromMC);
+    analysisManager->FillNtupleIColumn(8, eventID);
     analysisManager->AddNtupleRow(0);
 
     Fill_Tracks_pX(Tracks_pX_);
@@ -227,6 +253,7 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
     Fill_Tracks_pZ(Tracks_pZ_);
     Fill_Tracks_ID(Tracks_ID_);
     Fill_Tracks_PDG(Tracks_PDG_);
+    analysisManager->FillNtupleIColumn(1,5, eventID);
     analysisManager->AddNtupleRow(1);
 
     Fill_Hits_cellID(Hits_cellID_);
@@ -239,6 +266,8 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
     Fill_Hits_zHit(Hits_zHit_);
     Fill_Hits_TOF(Hits_TOF_);
     Fill_Hits_Sensor(Hits_Sensor_);
+    // analysisManager->FillNtupleDColumn(2,7, weight_fromMC);
+    analysisManager->FillNtupleIColumn(2,10, eventID);
 	  analysisManager->AddNtupleRow(2);
 
     }
@@ -247,16 +276,18 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
 
 void LCRootOut::TestPlaneFill(G4double x ,G4double y ,G4double z,G4double Mx ,G4double My ,G4double Mz,G4double E,G4int PDG){
 
+  G4int evtNb = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-  analysisManager->FillNtupleDColumn(3,0, x);
-  analysisManager->FillNtupleDColumn(3,1, y);
-  analysisManager->FillNtupleDColumn(3,2, z);
-  analysisManager->FillNtupleDColumn(3,3, Mx);
-  analysisManager->FillNtupleDColumn(3,4, My);
-  analysisManager->FillNtupleDColumn(3,5, Mz);
-  analysisManager->FillNtupleDColumn(3,6, E);
-  analysisManager->FillNtupleIColumn(3,7, PDG);
-  analysisManager->AddNtupleRow(3);
+  analysisManager->FillNtupleDColumn(4,0, x);
+  analysisManager->FillNtupleDColumn(4,1, y);
+  analysisManager->FillNtupleDColumn(4,2, z);
+  analysisManager->FillNtupleDColumn(4,3, Mx);
+  analysisManager->FillNtupleDColumn(4,4, My);
+  analysisManager->FillNtupleDColumn(4,5, Mz);
+  analysisManager->FillNtupleDColumn(4,6, E);
+  analysisManager->FillNtupleIColumn(4,7, PDG);
+  analysisManager->FillNtupleIColumn(4,8, evtNb);
+  analysisManager->AddNtupleRow(4);
 
 }
 
@@ -268,4 +299,25 @@ void LCRootOut::End()
 	// if ( analysisManager->IsActive() ) {
 	analysisManager->Write();
 	analysisManager->CloseFile();
+}
+
+LCRootMesseger::LCRootMesseger(LCRootOut* histoM) :G4UImessenger(), fHistManager(histoM), fRootName()
+{ 
+  fRootName = new G4UIcmdWithAString("/analysis/filename",this);
+  fRootName->SetGuidance("Name of the root file for output");
+  fRootName->SetParameterName("rootname",false);
+  fRootName->AvailableForStates(G4State_PreInit, G4State_Idle);   
+}
+
+
+LCRootMesseger::~LCRootMesseger()
+{
+  delete fRootName;
+}
+
+
+void LCRootMesseger::SetNewValue(G4UIcommand* command, G4String newValue)
+{ 
+  if (command == fRootName)
+    { fHistManager->SetName(newValue);}
 }

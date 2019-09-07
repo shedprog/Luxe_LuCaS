@@ -46,6 +46,7 @@ void LCHit::AddEdep(G4int pPID, G4int pPDG, G4double de)
     NoOfContributingHits ++;
     Energy += de; // increment energy deposition per hit
     PrimaryIDMapIterator iter = trackIDs->find(pPID);
+    // std::cout<<pPID<<"\n";
     if (iter == trackIDs->end()) {
       trackIDs->insert( PrimaryIDPair(pPID, pPDG) );
     }

@@ -2,45 +2,66 @@
 
 #Setting env
 source /cvmfs/sft.cern.ch/lcg/views/setupViews.sh LCG_91 x86_64-slc6-gcc7-opt
-WORKDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+WORKDIR=
 
-#LIST_DIR=/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists
-#LIST=($LIST_DIR/bppp*.out)
+option=mono
+#option=true
 
-LIST_FILE=/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_1.0J.out
-LIST=(`cat $LIST_FILE`)
+if [ option == 'true' ]
+then
 
-echo $TMP
-cd $TMP
-pwd
+  LIST_FILE=/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_1.0J.out
+  LIST=(`cat $LIST_FILE`)
 
-echo "File for DATA: " ${LIST[$(($1))]}
+  echo $TMP
+  cd $TMP
+  pwd
 
-file=${LIST[$(($1))]}
+  echo "File for DATA: " ${LIST[$(($1))]}
 
-# sed "s|/lxphoton/gun/MCParticlesFileList.*|/lxphoton/gun/MCParticlesFileList $file|g;\
-# 	s|/analysis/setFileName.*|/analysis/setFileName  $(basename $file)\.root|g \
-#      " ${WORKDIR}/luxe_gamma_new.mac > ${TMP}/luxe_gamma_new.mac
+  file=${LIST[$(($1))]}
 
-echo $file
-sed "s|/lxphoton/gun/MCParticlesFile.*|/lxphoton/gun/MCParticlesFile $file|g\
-     " ${WORKDIR}/luxe_gamma_new.mac > ${TMP}/luxe_gamma_new.mac
+  echo $file
+  sed "s|/lxphoton/gun/MCParticlesFile.*|/lxphoton/gun/MCParticlesFile $file|g\
+       " ${WORKDIR}/run_luxe.mac > ${TMP}/run_luxe.mac
 
-# cp -rp ${WORKDIR}/hist_settings.mac $TMP
+  # mkdir -p ${WORKDIR}/rootOUT
+  root_n=$((($1-1)/100))
 
-# cd ${WORKDIR}
-pwd
+  mkdir -p ${WORKDIR}/output/out_${root_n}
 
-mkdir -p ${WORKDIR}/rootOUT
-root_n=$((($1-1)/100)) 
+  cd ${WORKDIR}/output/out_${root_n}
 
-mkdir -p ${WORKDIR}/rootOUT/r_${root_n}
+  ${WORKDIR}/lxbeamsim ${TMP}/run_luxe.mac
+  echo "Run true MC done!"
 
-cd ${WORKDIR}/rootOUT/r_${root_n}
+elif [ option == 'mono' ]
+then
+  #statements
 
-${WORKDIR}/lxbeamsim ${TMP}/luxe_gamma_new.mac
-echo "Run done!"
+  N=$1
+  NUMBER_OF_STEPS=10
+  E_START=5.0 #GeV
+  E_END=10.0 #GeV
 
-#cp -rf ./test.root ${WORKDIR}/rootOUT/_root$(basename $file).root
+  MC_NUMBER=5000
 
-#echo "Copy done!"
+  E_current=$(($E_START+($N-1)*($E_END-$E_START)/($NUMBER_OF_STEPS-2)))
+
+  echo $TMP
+  cd $TMP
+  pwd
+
+  sed "s|/lxphoton/gun/MCParticlesFile|#/lxphoton/gun/MCParticlesFile|g;\
+       s|/lxphoton/gun/beamType.*|#/lxphoton/gun/beamType mono|g;\
+       s|/analysis/filename.*|/analysis/filename mono_${E_current}_GeV.root|g;\
+       s|/gun/energy.*|/gun/energy $E_current|g;\
+       s|/run/beamOn.*|/run/beamOn $MC_NUMBER|g\
+       " ${WORKDIR}/run_luxe.mac > ${TMP}/run_luxe.mac
+
+  cd ${WORKDIR}/output
+  ${WORKDIR}/lxbeamsim ${TMP}/run_luxe.mac
+
+  echo $E_current "Run mono done!"
+
+fi

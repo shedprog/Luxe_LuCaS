@@ -168,6 +168,11 @@ G4cout<< ".......... done! " << G4endl;
  std::cout << "-------------------------------------------------" << std::endl;
  std::cout << "-----------    building air base units           : "    << std::endl;
  std::cout << "-------------------------------------------------" << std::endl;
+
+  G4Box *solidBaseUnit_S = new G4Box ( "solidBaseUnit_P", base_airx, base_airy, airhz ); 
+  G4LogicalVolume *logicBaseUnit_S = new G4LogicalVolume (solidBaseUnit_S, Air, "logicBaseUnit", 0, 0, 0);//1
+  logicBaseUnit_S->SetVisAttributes( G4VisAttributes::Invisible );
+
   G4Box *solidBaseUnit = new G4Box ( "solidBaseUnit", base_airx, base_airy, airhz );
   G4Box *solidBaseUnit_PL = new G4Box ( "solidBaseUnit_PL", base_airx, base_airy, airhz );  
   G4LogicalVolume *logicBaseUnit = new G4LogicalVolume (solidBaseUnit, Air, "logicBaseUnit", 0, 0, 0);//1
@@ -391,6 +396,7 @@ new G4PVPlacement ( 0, G4ThreeVector(0.,ypos , ( SensorAtCF)),logicFanoutBack , 
   new G4PVPlacement ( 0, G4ThreeVector(0., 0.,airhz - CFhz ),logicCF , "CF0",logicBaseUnit_PL , false, 0,overlap_check); //2
   new G4PVPlacement ( 0, G4ThreeVector(0., 0.,airhz1mm - CFhz ),logicCF , "CF0",logicBaseUnitFor1mm , false, 0,overlap_check); //5
 
+  new G4PVPlacement ( 0, G4ThreeVector(0., 0.,airhz - CFhz ),logicCF , "CF0",logicBaseUnit_S , false, 0,overlap_check); //1
 
      // put LCAL to world
      //
@@ -447,7 +453,14 @@ std::string delimiter = ":";
 		sub = tmpsub;
 	}
 
-	if (sub == "AS") {
+  if (sub == "S") {
+      placement_name << "DUTAS" << iplacelayer;
+      new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC+ypos_stag[iplacelayer], zposLC + airhz),logicBaseUnit_S, placement_name.str().c_str(), logicWorld, 0, iplacelayer+1, overlap_check);
+      G4cout<< " placed "<<iplaceElements << " as sensor number  : " << iplacelayer<< " at z = " << zposLC<<" layer with name "<< placement_name.str().c_str() << G4endl;
+      zposLC= zposLC+ 2*airhz + DUTextrahz;
+      iplacelayer++;
+      }
+	else if (sub == "AS") {
 			placement_name << "DUTAS" << iplacelayer;
 			new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC+ypos_stag[iplacelayer], zposLC + airhz),logicBaseUnit, placement_name.str().c_str(), logicWorld, 0, iplacelayer+1, overlap_check);
 			G4cout<< " placed "<<iplaceElements << " as sensor number  : " << iplacelayer<< " at z = " << zposLC<<" layer with name "<< placement_name.str().c_str() << G4endl;
@@ -553,11 +566,11 @@ std::string delimiter = ":";
 
 	// G4cout <<  " Test Beam setup done !  "  << G4endl;
 
-    G4double fromedge_to_center = 3.0*cm;
+    G4double fromedge_to_center = 14.0*cm;
     G4double shift_y = base_airy + fromedge_to_center;
 
     G4Transform3D tr1( G4RotationMatrix().rotateZ( 90.0*deg ),
-                       G4ThreeVector( -shift_y, 0.0, 3.1*m));
+                       G4ThreeVector( -shift_y, 0.0, 5.0*m));
     new G4PVPlacement(tr1,
     logicWorld,
     "LumiCal", // an updated string
@@ -567,7 +580,7 @@ std::string delimiter = ":";
     overlap_check); // copy number
 
     G4Transform3D tr2( G4RotationMatrix().rotateZ( -90.0*deg ),
-                       G4ThreeVector( shift_y, 0.0, 3.1*m));
+                       G4ThreeVector( shift_y, 0.0, 5.0*m));
     new G4PVPlacement(tr2,
     logicWorld,
     "LumiCal", // an updated string

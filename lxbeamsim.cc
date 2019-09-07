@@ -37,6 +37,7 @@
 #include "SteppingAction.hh"
 
 #include "LCRootOut.hh"
+
 bool isRoot = 1;
 
 int main(int argc,char** argv) {
@@ -92,7 +93,7 @@ int main(int argc,char** argv) {
 
   }else{
 
-    LCRootOut *theRootOut = new LCRootOut("test.root");
+    LCRootOut *theRootOut = new LCRootOut();
 
     PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(detector);
     runManager->SetUserAction(primary);

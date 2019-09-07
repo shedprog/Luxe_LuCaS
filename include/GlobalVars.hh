@@ -5,6 +5,6 @@
 #include <string>
 
 extern double weight_fromMC;
-extern std::string root_file_name;
+// extern std::string root_file_name;
 
 #endif

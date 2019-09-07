@@ -62,7 +62,49 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep)
   if(PDG==22) return;
   if(theTrack->GetParentID() != 0) return;
 
+  //Use Test plane
   fTestPlaneVolume = G4LogicalVolumeStore::GetInstance()->GetVolume("TestPlane");
+
+  // G4ParticleDefinition* particleType = theTrack->GetDefinition();
+
+  // // check if it is entering the test volume
+  // G4StepPoint* thePrePoint = theStep->GetPreStepPoint();
+  // G4VPhysicalVolume* thePrePV = thePrePoint->GetPhysicalVolume();
+  // G4LogicalVolume* thePreLV = thePrePV->GetLogicalVolume();
+
+  // G4LogicalVolume* thePostLV = 0;
+  // G4StepPoint* thePostPoint = theStep->GetPostStepPoint();
+  // if (thePostPoint) {
+  //    G4VPhysicalVolume* thePostPV = thePostPoint->GetPhysicalVolume();
+  //    if (thePostPV) thePostLV = thePostPV->GetLogicalVolume();
+  // }
+
+  // if (thePostLV == fTestPlaneVolume and
+  //     thePreLV  != fTestPlaneVolume) {
+
+  //   G4double x = theTrack->GetPosition().x();
+  //   G4double y = theTrack->GetPosition().y();
+  //   G4double z = theTrack->GetPosition().z();
+
+  //   G4double E = theTrack->GetKineticEnergy();
+    
+  //   G4ThreeVector theMomentumDirection = theTrack->GetDynamicParticle()->GetMomentumDirection();
+
+  //   G4double Mx = theMomentumDirection.x();
+  //   G4double My = theMomentumDirection.y();
+  //   G4double Mz = theMomentumDirection.z();
+  //   // std::cout << "PDG" <<PDG <<" "<< theTrack->GetParentID() <<"\n";
+  //   // std::cout<<"SteppingAction: "<< x << " " << y << " " << z;
+
+  //   RootOut->TestPlaneFill(x,y,z,Mx,My,Mz,E,PDG);
+
+  //   return;
+
+  // }
+
+  //Use First silicon layer as test plane
+  // fTestPlaneVolume = G4LogicalVolumeStore::GetInstance()->GetVolume("LumiCal");
+  // G4Track* theTrack = aStep->GetTrack();
 
   G4ParticleDefinition* particleType = theTrack->GetDefinition();
 
@@ -93,8 +135,11 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep)
     G4double My = theMomentumDirection.y();
     G4double Mz = theMomentumDirection.z();
     // std::cout << "PDG" <<PDG <<" "<< theTrack->GetParentID() <<"\n";
+    
     // std::cout<<"SteppingAction: "<< x << " " << y << " " << z;
-
+    // std::cout << "Press Enter to Continue";
+    // std::cin.ignore();
+    
     RootOut->TestPlaneFill(x,y,z,Mx,My,Mz,E,PDG);
 
     return;

@@ -16,8 +16,46 @@
 #include "TROOT.h"
 #include "TSystem.h"
 #include "TInterpreter.h"
+#include "TMath.h"
 // #include "gRoot.h"
 #include <vector>
+#include <typeinfo>
+
+std::string basename(const std::string &filename)
+{
+    if (filename.empty()) {
+        return {};
+    }
+
+    auto len = filename.length();
+    auto index = filename.find_last_of("/\\");
+
+    if (index == std::string::npos) {
+        return filename;
+    }
+
+    if (index + 1 >= len) {
+
+        len--;
+        index = filename.substr(0, len).find_last_of("/\\");
+
+        if (len == 0) {
+            return filename;
+        }
+
+        if (index == 0) {
+            return filename.substr(1, len - 1);
+        }
+
+        if (index == std::string::npos) {
+            return filename.substr(0, len);
+        }
+
+        return filename.substr(index + 1, len - index - 1);
+    }
+
+    return filename.substr(index + 1, len - index);
+}
 
 void build_tracks_flow(const Char_t *datapath= "") {
 
@@ -548,6 +586,207 @@ void EnergyTower4(const Char_t *datapath= "")
     f->Close();
 }
 
+void EnergyTower_andInputParticle(const Char_t *datapath= "")
+{
+   gROOT->SetStyle("ATLAS");
+
+   TFile *f = new TFile(datapath);
+
+   TTree *Tracks_true_test = (TTree*)f->Get("Tracks_testplane");
+
+   TTree *Hits = (TTree*)f->Get("Hits");
+   std::vector<double>* Hits_xCell = 0;
+   std::vector<double>* Hits_yCell = 0;
+   std::vector<double>* Hits_xHit = 0;
+   std::vector<double>* Hits_zHit = 0;
+   std::vector<double>* Hits_zCell = 0;
+   std::vector<double>* Hits_eHit = 0;
+   std::vector<double>* Hits_Sensor = 0;
+   Hits->SetBranchAddress("Hits_xCell",&Hits_xCell);
+   Hits->SetBranchAddress("Hits_yCell",&Hits_yCell);
+   Hits->SetBranchAddress("Hits_xHit",&Hits_xHit);
+   Hits->SetBranchAddress("Hits_zHit",&Hits_zHit);   
+   Hits->SetBranchAddress("Hits_zCell",&Hits_zCell);
+   Hits->SetBranchAddress("Hits_Sensor",&Hits_Sensor);
+   Hits->SetBranchAddress("Hits_eHit",&Hits_eHit);
+   TH1F* hist_energy = new TH1F("hist_energy","Energies (joined by 4 sectors)",2600,-130,130);
+
+   TTree *Tracks_true = (TTree*)f->Get("Tracks_true");
+   std::vector<double> x_first_layer;
+   std::vector<double> y_first_layer;
+   std::vector<double> x;
+   std::vector<double> y;
+   std::vector<double> z;
+   std::vector<double> Mx;
+   std::vector<double> My;
+   std::vector<double> Mz;
+   std::vector<double> E;
+   // Tracks_true->SetBranchAddress("x",&x);
+   // Tracks_true->SetBranchAddress("y",&y);
+   // Tracks_true->SetBranchAddress("z",&z);
+   // Tracks_true->SetBranchAddress("Mx",&Mx);
+   // Tracks_true->SetBranchAddress("My",&My);
+   // Tracks_true->SetBranchAddress("Mz",&Mz);
+   // Tracks_true->SetBranchAddress("E",&E);
+   TH1F* hist_initial_particle_E = new TH1F("hist_initial_particle_E","Energy for fixed pad",2600,-130,130);
+
+   Int_t nentries = (Int_t)Hits->GetEntries();
+   std::cout<<"Entries: "<<nentries<<" \n";
+   for (Int_t i=0;i<nentries;i++) 
+   {
+     Hits->GetEntry(i);
+     int Number_of_Hits = Hits_xCell->size();
+     if(Number_of_Hits!=0){
+      for (Int_t j=0;j<Number_of_Hits;j++){
+        // int layer =  ((int) (*Hits_zCell)[j]);
+        int sensor = ((int) (*Hits_Sensor)[j]);
+        if(sensor==1) hist_energy->Fill(1+(*Hits_yCell)[j],(*Hits_eHit)[j]*87);
+        else if(sensor==2) hist_energy->Fill(1+(*Hits_yCell)[j]+64,(*Hits_eHit)[j]*87);
+        else if(sensor==3) hist_energy->Fill(-1-(*Hits_yCell)[j],(*Hits_eHit)[j]*87);
+        else if(sensor==4) hist_energy->Fill(-1-(*Hits_yCell)[j]-64,(*Hits_eHit)[j]*87);
+       }
+      }
+     }
+
+   // Select Track coressponding to it's hit in the first layer of the callorimeter
+   // Because in the first layer there will be still some back-scattered particles
+   Int_t nentries_t = (Int_t)Tracks_true->GetEntries();
+   std::cout<<"Entries: "<<nentries_t<<" \n";
+   for (Int_t t=0;t<nentries_t;t++) 
+   {
+     Tracks_true->GetEntry(t);     
+     double E = Tracks_true->GetLeaf("E")->GetValue();
+     double sensor = Tracks_true->GetLeaf("Sensor")->GetValue();
+     double pad = Tracks_true->GetLeaf("xCell")->GetValue();
+
+      if(sensor==1) hist_initial_particle_E->Fill(1+pad,E);
+      else if(sensor==2) hist_initial_particle_E->Fill(1+pad+64,E);
+      else if(sensor==3) hist_initial_particle_E->Fill(-1-pad,E);
+      else if(sensor==4) hist_initial_particle_E->Fill(-1-pad-64,E);
+  
+
+    }
+
+
+
+
+    TFile *out = new TFile(Form("TowerEnergy_Tracks%s",basename(datapath)),"RECREATE");
+    out->cd();
+    TCanvas *c1 = new TCanvas("c1","The Ntuple canvas",1500,900);
+    c1->Divide(1,1);
+    c1->cd();
+
+    hist_initial_particle_E->SetTitle(Form("Energy for fixed pad, tracks: %d",nentries_t));
+    hist_initial_particle_E->GetXaxis()->SetTitle("Number of pad");
+    hist_initial_particle_E->GetYaxis()->SetTitle("E [MeV]");
+    hist_initial_particle_E->SetLineColor(3);
+    hist_initial_particle_E->SetLineWidth(1);
+    hist_initial_particle_E->Draw("HISTO");
+
+    hist_energy->GetXaxis()->SetTitle("Number of pad");
+    hist_energy->GetYaxis()->SetTitle("E [MeV]");
+    hist_energy->SetLineColor(2);
+    hist_energy->SetLineWidth(3);
+    hist_energy->Draw("HISTOSame");
+    
+    auto legend = new TLegend(0.17,0.83,0.37,0.93);
+    // legend->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+    legend->AddEntry(hist_initial_particle_E,"Energy of initial particle","l");
+    legend->AddEntry(hist_energy,"Energy absorbed in tower","l");
+    legend->AddEntry("",Form("number of e^{+}e^{-}: %d",(Int_t)Tracks_true_test->GetEntries()),"");
+    legend->AddEntry("",Form("number of e^{+}e^{-} in calorimeter: %d",(Int_t)Tracks_true->GetEntries()),"");
+    // legend->SetFillColor(0);
+    // legend->SetFillStyle(0);
+    legend->SetTextFont(42);
+    legend->SetTextSize(0.015);
+    // legend->SetBorderSize(0);
+    // legend->AddEntry("gr","Graph with error bars","lep");
+    legend->Draw("");
+
+    c1->Update();
+    std::cout << "Press Enter to Continue";
+    std::cin.ignore();
+    c1->SaveAs(Form("TowerEnergy_Tracks%s.png",basename(datapath)));
+    c1->Write();
+    out->Close();
+    f->Close();
+}
+
+void LongitudinalProfile(const Char_t *datapath= "")
+{
+
+   // gROOT->SetStyle("ATLAS");
+
+   TFile *f = new TFile(datapath);
+
+   TTree *Hits = (TTree*)f->Get("Hits");
+   std::vector<double>* Hits_eHit = 0;
+   int EventID;
+   Hits->SetBranchAddress("Hits_eHit",&Hits_eHit);
+   Hits->SetBranchAddress("eventID",&EventID);
+
+   TTree *True = (TTree*)f->Get("Tracks_true");
+
+   TH2F* LongitudinalProfile = new TH2F("LongitudinalProfile","Energies absorbed vs angle",200,400.0,1700,200,0,0.2);
+
+   double Energies[10000] = {0};
+   double Angles[10000] = {0};
+
+   Int_t nentries = (Int_t)Hits->GetEntries();
+   std::cout<<"Entries: "<<nentries<<" \n";
+   for (Int_t i=0;i<nentries;i++) 
+   {
+     Hits->GetEntry(i);
+     int Number_of_Hits = Hits_eHit->size();
+     if(Number_of_Hits!=0){
+      for (Int_t j=0;j<Number_of_Hits;j++){
+        // std::cout<<EventID<<"\n";
+        Energies[EventID] = Energies[EventID] + (*Hits_eHit)[j];
+        // std::cout<<Energies[EventID]<<"\n";
+       }
+      }
+     }
+
+   nentries = (Int_t)True->GetEntries();
+   std::cout<<"Entries: "<<nentries<<" \n";
+   for (Int_t i=0;i<nentries;i++) 
+   {
+     True->GetEntry(i);
+     int ID = True->GetLeaf("eventID")->GetValue();
+     double Mz = True->GetLeaf("Mz")->GetValue();
+     double Mx = True->GetLeaf("Mx")->GetValue();
+     Angles[ID] = TMath::Abs(TMath::ATan(Mx/Mz));
+     // std::cout<<Angles[ID]<<"\n";
+   }
+
+   for(int i=0; i<10000; ++i){
+    if(Angles[i]!=0.0){
+      // std::cout<<"Fill: "<<Energies[i]<<Angles[i]<<"\n";
+      LongitudinalProfile->Fill(Energies[i],Angles[i]);
+    }
+   }
+
+    TFile *out = new TFile("LongProf.root","RECREATE");
+    out->cd();
+    TCanvas *c1 = new TCanvas("c1","The Ntuple canvas",1500,900);
+    c1->Divide(1,1);
+    c1->cd();
+
+    LongitudinalProfile->GetXaxis()->SetTitle("E absorbed silicon [MeV]");
+    LongitudinalProfile->GetYaxis()->SetTitle("#phi [rad]");
+    LongitudinalProfile->Draw("colz");
+
+    c1->Update();
+    std::cout << "Press Enter to Continue";
+    std::cin.ignore();
+    c1->SaveAs("Phi_AbsorbedE.png");
+    c1->Write();
+    out->Close();
+    f->Close();
+
+
+}
+
 void PlotLCOut(const Char_t *datapath= "") 
 {
   // Build_2DHIts(datapath);
@@ -556,5 +795,7 @@ void PlotLCOut(const Char_t *datapath= "")
   // Build_Occupancy(datapath);
   // build_tracks_flow(datapath);
   // EnergyProfile(datapath);
-  EnergyTower4(datapath);
+  // EnergyTower4(datapath);
+  // EnergyTower_andInputParticle(datapath);
+  LongitudinalProfile(datapath);
 }

@@ -74,8 +74,6 @@ void EventAction::BeginOfEventAction(const G4Event* )
 
 }
 
-
-
 void EventAction::EndOfEventAction(const G4Event* event)
 {
 
@@ -88,8 +86,8 @@ void EventAction::EndOfEventAction(const G4Event* event)
 	//
 	if ( noTrackKilled > 0 )
 	{
-		G4cout << " Event: "<<evtnum + Setup::EventStartNumber 
-			   <<" Back Energy Leak : "<<LeakEnergy / GeV 
+		G4cout << " Event: "<<evtnum + Setup::EventStartNumber
+			   <<" Back Energy Leak : "<<LeakEnergy / GeV
 			   <<" GeV"<<G4endl;
 	}
 
@@ -99,13 +97,10 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
 	if (HCE) { HitsColl = (LCHitsCollection*)(HCE->GetHC(collID)); }
 
-	if (HitsColl) { 
+	if (HitsColl) {
 		// fill the ROOT Tree
 		if( RootOut ) { RootOut->ProcessEvent( event, HitsColl );}
 	}
 
 
 }
-
-
-
