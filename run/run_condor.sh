@@ -55,7 +55,7 @@ then
   pwd
 
   sed "s|/lxphoton/gun/MCParticlesFile|#/lxphoton/gun/MCParticlesFile|g;\
-       s|/lxphoton/gun/beamType.*|#/lxphoton/gun/beamType mono|g;\
+       s|/lxphoton/gun/beamType.*|/lxphoton/gun/beamType mono|g;\
        s|/analysis/filename.*|/analysis/filename mono_${E_current}_GeV.root|g;\
        s|/gun/energy.*|/gun/energy $E_current|g;\
        s|/run/beamOn.*|/run/beamOn $MC_NUMBER|g\
