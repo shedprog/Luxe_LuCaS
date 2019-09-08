@@ -7,7 +7,7 @@ WORKDIR=
 option=mono
 #option=true
 
-if [ option == 'true' ]
+if [ $option == 'true' ]
 then
 
   LIST_FILE=/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_1.0J.out
@@ -35,18 +35,20 @@ then
   ${WORKDIR}/lxbeamsim ${TMP}/run_luxe.mac
   echo "Run true MC done!"
 
-elif [ option == 'mono' ]
+elif [ $option == 'mono' ]
 then
   #statements
 
-  N=$1
+  N_NOW=$1
   NUMBER_OF_STEPS=10
   E_START=5.0 #GeV
   E_END=10.0 #GeV
 
-  MC_NUMBER=5000
+  MC_NUMBER=1000
 
-  E_current=$(($E_START+($N-1)*($E_END-$E_START)/($NUMBER_OF_STEPS-2)))
+  echo "State: " $E_START $N_NOW $E_END $E_START $NUMBER_OF_STEPS 
+  #E_current=$(( $E_START + $N * ($E_END-$E_START) / ($NUMBER_OF_STEPS-2) ))
+  E_current=$( echo $E_START $N_NOW $E_END $E_START $NUMBER_OF_STEPS | awk '{print $1+$2*($3-$4)/($5-1)}')
 
   echo $TMP
   cd $TMP
@@ -59,9 +61,15 @@ then
        s|/run/beamOn.*|/run/beamOn $MC_NUMBER|g\
        " ${WORKDIR}/run_luxe.mac > ${TMP}/run_luxe.mac
 
-  cd ${WORKDIR}/output
+  cd ${TMP}
   ${WORKDIR}/lxbeamsim ${TMP}/run_luxe.mac
 
-  echo $E_current "Run mono done!"
+  cp ${TMP}/mono_${E_current}_GeV.root ${WORKDIR}/output/ 
+  
+  #cd ${WORKDIR}/output
+  #${WORKDIR}/lxbeamsim ${TMP}/run_luxe.mac
 
+  echo $E_current "Run mono done!"
+else
+	echo "No such option!"
 fi

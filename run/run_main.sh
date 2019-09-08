@@ -15,15 +15,15 @@ LIST=/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_14GeV_5mfoiltoIP_Ene
 
 
 WORKDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-OUTDIR=/nfs/dust/zeus/group/mykytaua/LUXE/2019.09.07
+OUTDIR=${WORKDIR}/condor_out
 
 #Some stearing variables
 E_start=-999
 E_end=-999
 Number=-999
 
-while [ ! $# -eq 0 ]
-do
+while test $# -gt 0; do
+
     case "$1" in
 
         --run| -r)
@@ -61,25 +61,40 @@ do
             shift
             ;;
 
-        --E_start | -E1)
+        --E_start| -E1)
             shift
-            E_start=$1
-            shift
-            ;;
-
-        --E_end | -E2)
-            shift
-            E_end=$1
-            shift
-            ;;
-
-        --Number | -n)
-            shift
-            Number=$1
+	    if test $# -gt 0; then
+            export E_start=$1
+    	    else
+	    echo "no process specified"
+	    exit 1
+	    fi
             shift
             ;;
 
-        --run_mono | -m)
+    	--E_end| -E2)    
+            shift
+	    if test $# -gt 0; then
+            export E_end=$1
+    	    else
+	    echo "no process specified"
+	    exit 1
+	    fi
+            shift
+            ;;
+
+        --Number| -N)
+            shift
+	    if test $# -gt 0; then
+            export Number=$1
+    	    else
+	    echo "no process specified"
+	    exit 1
+	    fi
+            shift
+            ;;          
+
+        --run_mono| -m)
             #This part of the code runs mono-energetical spectrum from E_start to E_end
 
             mkdir -p $OUTDIR/output
@@ -88,14 +103,19 @@ do
             mkdir -p $OUTDIR/condor/err
             mkdir -p $OUTDIR/condor/out
 
+	    echo "Number: " $Number
+	    echo "Outdir: " $OUTDIR
+	    echo "Workdir: " $WORKDIR
+	    echo "E limits: " $E_start $E_end
 
             sed "s|JOBS_NUMBER|$Number|g;\
-            	   s|OUTDIR|$OUTDIR|g\
+            	 s|OUTDIR|$OUTDIR|g\
             	  " $WORKDIR/QA.job > $OUTDIR/QA.job
 
             sed "s|option=.*|option=mono|g;\
                  s|E_START=.*|E_START=$E_start|g;\
-                 s|E_END=.*|E_END=$E_end|g;\  
+	    	 s|E_END=.*|E_END=$E_end|g;\
+		 s|NUMBER_OF_STEPS=.*|NUMBER_OF_STEPS=$Number|g;\
                  s|WORKDIR=.*|WORKDIR=$OUTDIR|g\
             	  " $WORKDIR/run_condor.sh > $OUTDIR/run_condor.sh
 
@@ -115,5 +135,5 @@ do
             shift
             ;;
     esac
-    shift
+    #shift
 done

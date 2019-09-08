@@ -1,7 +1,7 @@
 Universe	= vanilla
 
 #Notification	= Error
-Initialdir	= /nfs/dust/zeus/group/mykytaua/LUXE/2019.08.05/Luxe_LuCaS-build
+Initialdir	= OUTDIR
 Executable      = /bin/sh
 Arguments       = run_condor.sh $(Process)
 #transfer_executable = True					     
@@ -10,9 +10,9 @@ Requirements    = OpSysAndVer == "SL6"
 +RequestRuntime = 28800
 #Priority	= +20
 #GetEnv		= True
-Output		= /nfs/dust/zeus/group/mykytaua/LUXE/2019.08.05/Luxe_LuCaS-build/condor_out/condor.$(Process).out
-Error		= /nfs/dust/zeus/group/mykytaua/LUXE/2019.08.05/Luxe_LuCaS-build/condor_out/condor.$(Process).err
-Log		= /nfs/dust/zeus/group/mykytaua/LUXE/2019.08.05/Luxe_LuCaS-build/condor_out/condor.$(Process).log
+Output		= OUTDIR/condor/out/condor.$(Process).out
+Error		= OUTDIR/condor/err/condor.$(Process).err
+Log			= OUTDIR/condor/log/condor.$(Process).log
 Notify_user	= mykyta.shchedrolosiev@desy.de
 
-Queue 1000
+Queue JOBS_NUMBER
