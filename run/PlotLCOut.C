@@ -71,7 +71,7 @@ void build_tracks_flow(const Char_t *datapath= "") {
 
    double Weight = 1;
 
-   // std::vector<double>* Hits_yHit = 0; 
+   // std::vector<double>* Hits_yHit = 0;
    std::vector<double>* Hits_zCell = 0;
    std::vector<double>* Hits_xCell = 0;
    std::vector<double>* Hits_yCell = 0;
@@ -92,7 +92,7 @@ void build_tracks_flow(const Char_t *datapath= "") {
    //Filling of Hits
    Int_t nentries = (Int_t)Hits->GetEntries();
    // std::cout<<"Entries: "<<nentries<<" \n";
-   // for (Int_t i=0;i<nentries;i++) 
+   // for (Int_t i=0;i<nentries;i++)
    // {
    //   Hits->GetEntry(i);
 
@@ -114,7 +114,7 @@ void build_tracks_flow(const Char_t *datapath= "") {
 
    //        if(sensor <= 2) phi = phi + TMath::Pi();
 
-   //        double y = rho * TMath::Sin(phi);    
+   //        double y = rho * TMath::Sin(phi);
    //        double x_ = rho * TMath::Cos(phi);
 
    //        if(sensor == 4) x_ = x_ + shift_x;
@@ -123,9 +123,9 @@ void build_tracks_flow(const Char_t *datapath= "") {
    //      // Cordinates start not in the center of curvature
    //      // but in the begining of cordinates in Geant4
    //        double cord_shift = 195.2 - 30.0 - 120.0;
-        
+
    //        if(sensor <= 2) x_ = x_ + cord_shift;
-   //        else if(sensor >= 3) x_ = x_ - cord_shift; 
+   //        else if(sensor >= 3) x_ = x_ - cord_shift;
 
    //        Weight = (*Hits_eHit)[j];
 
@@ -133,7 +133,7 @@ void build_tracks_flow(const Char_t *datapath= "") {
    //        //hist_E->Fill(x_,Weight);
    //        hist_E->Fill(x_,Weight*0.001);
 
-   //      } 
+   //      }
    //    }
    //    }
    // }
@@ -142,7 +142,7 @@ void build_tracks_flow(const Char_t *datapath= "") {
    //Filling of track position
    nentries = (Int_t)Track_true->GetEntries();
    // std::cout<<"Entries: "<<nentries<<" \n";
-   for (Int_t i=0;i<nentries;i++) 
+   for (Int_t i=0;i<nentries;i++)
    {
      Track_true->GetEntry(i);
 
@@ -180,23 +180,26 @@ void build_tracks_flow(const Char_t *datapath= "") {
 }
 void Build_Occupancy(const Char_t *datapath= "") {
 
+
   TFile *f = new TFile(datapath);
 
-  TTree *tree = (TTree*)f->Get("Tracks_true");
+  TTree *tree = (TTree*)f->Get("Tracks_testplane");
 
   double x[500],y[500];
 
   int n = tree->GetEntries();
   std::cout<<"Events: "<<n<<"\n";
 
-  TH2F* hist = new TH2F("hist","Occupancy",600,-300.,300.,200,-20.,20.);
+  TH2F* hist = new TH2F("hist",basename(datapath),400,-800.,800.,400,-8.,8.);
 
   for(int i=0; i<n; i++){
+  std::cout << i << " ";
   tree->GetEntry(i);
-  y[i] = tree->GetLeaf("y")->GetValue();
-  x[i] = tree->GetLeaf("x")->GetValue();
-  std::cout<<x[i]<<" "<<y[i]<<"\n"; 
-  hist->Fill(x[i],y[i]);
+  // y= tree->GetLeaf("y")->GetValue();
+  // x[i] = tree->GetLeaf("x")->GetValue();
+  // std::cout<<x[i]<<" "<<y[i]<<"\n";
+  double weight = tree->GetLeaf("Weight")->GetValue();
+  hist->Fill(tree->GetLeaf("x")->GetValue(),tree->GetLeaf("y")->GetValue(),weight/1000);
   }
 
   TCanvas *c1 = new TCanvas("c1","The Ntuple canvas",1500,900);
@@ -205,10 +208,15 @@ void Build_Occupancy(const Char_t *datapath= "") {
   c1->cd(1);
 
   hist->Draw("colz");
+  hist->GetXaxis()->SetTitle("x [mm]");
+  hist->GetYaxis()->SetTitle("y [mm]");
 
   c1->Update();
-  c1->SaveAs("./2D_Occupancy.png");
+  std::cout << "Press Enter to Continue";
+  std::cin.ignore();
 
+  c1->SaveAs(Form("./Occupancy%s.png",basename(datapath)));
+gROOT->SetStyle("ATLAS");
 }
 
 void Build_2DHIts(const Char_t *datapath= "") {
@@ -227,13 +235,13 @@ void Build_2DHIts(const Char_t *datapath= "") {
    std::vector<int>* Track_PDG = 0;
 
    std::vector<double>* Hits_xHit = 0;
-   std::vector<double>* Hits_yHit = 0; 
+   std::vector<double>* Hits_yHit = 0;
    std::vector<double>* Hits_zCell = 0;
-   
+
    // Events->SetBranchAddress("Weight",&Weight);
 
    Track->SetBranchAddress("Tracks_PDG",&Track_PDG);
-   
+
    Hits->SetBranchAddress("Hits_xHit",&Hits_xHit);
    Hits->SetBranchAddress("Hits_yHit",&Hits_yHit);
    Hits->SetBranchAddress("Hits_zCell",&Hits_zCell);
@@ -242,20 +250,20 @@ void Build_2DHIts(const Char_t *datapath= "") {
 
    for (Int_t i = 1; i<=20; i++)
    {
-    TH2F* hist = new TH2F(Form("hist%d",i),Form("Occupancy of Hits layer %d",i),200,-300.,300.,50,-100.,100.);
+    TH2F* hist = new TH2F(Form("hist%d",i),Form("Occupancy of Hits layer %d",i),200,-1500.,1500.,200,-5.,5.);
     Hists.push_back(hist);
    }
 
    Int_t nentries = (Int_t)Events->GetEntries();
    std::cout<<"Entries: "<<nentries<<" \n";
-   for (Int_t i=0;i<nentries;i++) 
+   for (Int_t i=0;i<nentries;i++)
    {
      Events->GetEntry(i);
      Track->GetEntry(i);
      Hits->GetEntry(i);
 
      // if((*Track_PDG)[0]==11 or (*Track_PDG)[0]==-11){
-     //      std::cout << Weight << "\n"; 
+     //      std::cout << Weight << "\n";
      // }
 
      int Number_of_Hits = Hits_xHit->size();
@@ -281,7 +289,7 @@ void Build_2DHIts(const Char_t *datapath= "") {
   {
     c1->cd(i+1);
     Hists.at(i)->Draw("colz");
-  }  
+  }
   c1->Update();
   c1->SaveAs("./layers1.png");
 
@@ -293,7 +301,7 @@ void Build_2DHIts(const Char_t *datapath= "") {
   {
     c2->cd(i+1);
     Hists.at(i+4)->Draw("colz");
-  }  
+  }
   c2->Update();
   c2->SaveAs("./layers2.png");
 
@@ -305,7 +313,7 @@ void Build_2DHIts(const Char_t *datapath= "") {
   {
     c3->cd(i+1);
     Hists.at(i+8)->Draw("colz");
-  }  
+  }
   c3->Update();
   c3->SaveAs("./layers3.png");
 
@@ -317,7 +325,7 @@ void Build_2DHIts(const Char_t *datapath= "") {
   {
     c4->cd(i+1);
     Hists.at(i+12)->Draw("colz");
-  }  
+  }
   c4->Update();
   c4->SaveAs("./layers4.png");
 
@@ -334,7 +342,7 @@ void Build_2DHIts(const Char_t *datapath= "") {
   c5->SaveAs("./layers5.png");
 }
 
-void EnergyOfx_reco(const Char_t *datapath= "") 
+void EnergyOfx_reco(const Char_t *datapath= "")
 {
    TFile *f = new TFile(datapath);
 
@@ -350,8 +358,8 @@ void EnergyOfx_reco(const Char_t *datapath= "")
    std::cout<<"Clasters: "<<cal_n_clusters<<"\n";
 
    for(int i=0; i<cal_n_clusters; i++){
-   E[i] = tree->GetLeaf("cal_cluster_energy")->GetValue(i)/1000; 
-   x[i] = tree->GetLeaf("cal_cluster_x")->GetValue(i); 
+   E[i] = tree->GetLeaf("cal_cluster_energy")->GetValue(i)/1000;
+   x[i] = tree->GetLeaf("cal_cluster_x")->GetValue(i);
    }
    TGraph* gr = new TGraph(cal_n_clusters,x,E);
    gr->SetTitle("Cluster Energy (x) - no calibration");
@@ -366,7 +374,7 @@ void EnergyOfx_reco(const Char_t *datapath= "")
   c1->SaveAs("./EnergyOfx_reco.png");
 }
 
-void EnergyOfx_detector(const Char_t *datapath= "") 
+void EnergyOfx_detector(const Char_t *datapath= "")
 {
    TFile *f = new TFile(datapath);
 
@@ -417,15 +425,15 @@ void EnergyProfile(const Char_t *datapath= "")
    std::vector<int>* Track_PDG = 0;
 
    std::vector<double>* Hits_xCell = 0;
-   std::vector<double>* Hits_yCell = 0; 
+   std::vector<double>* Hits_yCell = 0;
    std::vector<double>* Hits_zCell = 0;
    std::vector<double>* Hits_eHit = 0;
    std::vector<double>* Hits_Sensor = 0;
-   
+
    // Events->SetBranchAddress("Weight",&Weight);
 
    Track->SetBranchAddress("Tracks_PDG",&Track_PDG);
-   
+
    Hits->SetBranchAddress("Hits_xCell",&Hits_xCell);
    Hits->SetBranchAddress("Hits_yCell",&Hits_yCell);
    Hits->SetBranchAddress("Hits_zCell",&Hits_zCell);
@@ -438,7 +446,7 @@ void EnergyProfile(const Char_t *datapath= "")
    {
     std::vector<TH2F*> one_layer;
       // for (Int_t j = 1; j<=4; j++){
-      
+
       TH2F* hist = new TH2F(Form("hist%d_%d",i,1),Form("layer %d sensor 1",i),64,0.5,64.5,4,0.5,4.5);
       one_layer.push_back(hist);
 
@@ -450,7 +458,7 @@ void EnergyProfile(const Char_t *datapath= "")
 
       hist = new TH2F(Form("hist%d_%d",i,4),Form("layer %d sensor 4",i),64,-64.5,-0.5,4,-4.5,-0.5);
       one_layer.push_back(hist);
-      
+
 
       // }
     Hists.push_back(one_layer);
@@ -459,7 +467,7 @@ void EnergyProfile(const Char_t *datapath= "")
    Int_t nentries = (Int_t)Events->GetEntries();
    std::cout<<"Entries: "<<nentries<<" \n";
 
-   for (Int_t i=0;i<nentries;i++) 
+   for (Int_t i=0;i<nentries;i++)
    {
      Hits->GetEntry(i);
 
@@ -470,7 +478,7 @@ void EnergyProfile(const Char_t *datapath= "")
       for (Int_t j=0;j<Number_of_Hits;j++){
         int layer =  ((int) (*Hits_zCell)[j]) - 1;
         int sensor = ((int) (*Hits_Sensor)[j]) - 1;
-    
+
         if(sensor==0 or sensor==1)
                 Hists.at(layer).at(sensor)->Fill((*Hits_yCell)[j],
                                                  (*Hits_xCell)[j],
@@ -507,7 +515,7 @@ void EnergyProfile(const Char_t *datapath= "")
 
     c1->Update();
     c1->SaveAs(Form("./output/layer_%d.png",i));
-  }  
+  }
 }
 
 void EnergyTower4(const Char_t *datapath= "")
@@ -519,11 +527,11 @@ void EnergyTower4(const Char_t *datapath= "")
    TTree *Hits = (TTree*)f->Get("Hits");
 
    std::vector<double>* Hits_xCell = 0;
-   std::vector<double>* Hits_yCell = 0; 
+   std::vector<double>* Hits_yCell = 0;
    // std::vector<double>* Hits_zCell = 0;
    std::vector<double>* Hits_eHit = 0;
    std::vector<double>* Hits_Sensor = 0;
-   
+
    Hits->SetBranchAddress("Hits_xCell",&Hits_xCell);
    Hits->SetBranchAddress("Hits_yCell",&Hits_yCell);
    // Hits->SetBranchAddress("Hits_zCell",&Hits_zCell);
@@ -535,7 +543,7 @@ void EnergyTower4(const Char_t *datapath= "")
    Int_t nentries = (Int_t)Hits->GetEntries();
    std::cout<<"Entries: "<<nentries<<" \n";
 
-   for (Int_t i=0;i<nentries;i++) 
+   for (Int_t i=0;i<nentries;i++)
    {
      Hits->GetEntry(i);
      int Number_of_Hits = Hits_xCell->size();
@@ -543,7 +551,7 @@ void EnergyTower4(const Char_t *datapath= "")
       for (Int_t j=0;j<Number_of_Hits;j++){
         // int layer =  ((int) (*Hits_zCell)[j]) - 1;
         int sensor = ((int) (*Hits_Sensor)[j]);
-    
+
         if(sensor==1)
         {
           hist->Fill(1+(*Hits_yCell)[j],(*Hits_eHit)[j]);
@@ -557,7 +565,7 @@ void EnergyTower4(const Char_t *datapath= "")
         else if(sensor==3)
         {
           hist->Fill(-1-(*Hits_yCell)[j],(*Hits_eHit)[j]);
-        } 
+        }
         else if(sensor==4)
         {
           hist->Fill(-1-(*Hits_yCell)[j]-64,(*Hits_eHit)[j]);
@@ -605,7 +613,7 @@ void EnergyTower_andInputParticle(const Char_t *datapath= "")
    Hits->SetBranchAddress("Hits_xCell",&Hits_xCell);
    Hits->SetBranchAddress("Hits_yCell",&Hits_yCell);
    Hits->SetBranchAddress("Hits_xHit",&Hits_xHit);
-   Hits->SetBranchAddress("Hits_zHit",&Hits_zHit);   
+   Hits->SetBranchAddress("Hits_zHit",&Hits_zHit);
    Hits->SetBranchAddress("Hits_zCell",&Hits_zCell);
    Hits->SetBranchAddress("Hits_Sensor",&Hits_Sensor);
    Hits->SetBranchAddress("Hits_eHit",&Hits_eHit);
@@ -632,7 +640,7 @@ void EnergyTower_andInputParticle(const Char_t *datapath= "")
 
    Int_t nentries = (Int_t)Hits->GetEntries();
    std::cout<<"Entries: "<<nentries<<" \n";
-   for (Int_t i=0;i<nentries;i++) 
+   for (Int_t i=0;i<nentries;i++)
    {
      Hits->GetEntry(i);
      int Number_of_Hits = Hits_xCell->size();
@@ -652,9 +660,9 @@ void EnergyTower_andInputParticle(const Char_t *datapath= "")
    // Because in the first layer there will be still some back-scattered particles
    Int_t nentries_t = (Int_t)Tracks_true->GetEntries();
    std::cout<<"Entries: "<<nentries_t<<" \n";
-   for (Int_t t=0;t<nentries_t;t++) 
+   for (Int_t t=0;t<nentries_t;t++)
    {
-     Tracks_true->GetEntry(t);     
+     Tracks_true->GetEntry(t);
      double E = Tracks_true->GetLeaf("E")->GetValue();
      double sensor = Tracks_true->GetLeaf("Sensor")->GetValue();
      double pad = Tracks_true->GetLeaf("xCell")->GetValue();
@@ -663,7 +671,7 @@ void EnergyTower_andInputParticle(const Char_t *datapath= "")
       else if(sensor==2) hist_initial_particle_E->Fill(1+pad+64,E);
       else if(sensor==3) hist_initial_particle_E->Fill(-1-pad,E);
       else if(sensor==4) hist_initial_particle_E->Fill(-1-pad-64,E);
-  
+
 
     }
 
@@ -688,7 +696,7 @@ void EnergyTower_andInputParticle(const Char_t *datapath= "")
     hist_energy->SetLineColor(2);
     hist_energy->SetLineWidth(3);
     hist_energy->Draw("HISTOSame");
-    
+
     auto legend = new TLegend(0.17,0.83,0.37,0.93);
     // legend->SetHeader("The Legend Title","C"); // option "C" allows to center the header
     legend->AddEntry(hist_initial_particle_E,"Energy of initial particle","l");
@@ -734,7 +742,7 @@ void LongitudinalProfile(const Char_t *datapath= "")
 
    Int_t nentries = (Int_t)Hits->GetEntries();
    std::cout<<"Entries: "<<nentries<<" \n";
-   for (Int_t i=0;i<nentries;i++) 
+   for (Int_t i=0;i<nentries;i++)
    {
      Hits->GetEntry(i);
      int Number_of_Hits = Hits_eHit->size();
@@ -749,7 +757,7 @@ void LongitudinalProfile(const Char_t *datapath= "")
 
    nentries = (Int_t)True->GetEntries();
    std::cout<<"Entries: "<<nentries<<" \n";
-   for (Int_t i=0;i<nentries;i++) 
+   for (Int_t i=0;i<nentries;i++)
    {
      True->GetEntry(i);
      int ID = True->GetLeaf("eventID")->GetValue();
@@ -787,15 +795,15 @@ void LongitudinalProfile(const Char_t *datapath= "")
 
 }
 
-void PlotLCOut(const Char_t *datapath= "") 
+void PlotLCOut(const Char_t *datapath= "")
 {
   // Build_2DHIts(datapath);
   // EnergyOfx_reco(datapath);
   // EnergyOfx_detector(datapath);
-  // Build_Occupancy(datapath);
+  Build_Occupancy(datapath);
   // build_tracks_flow(datapath);
   // EnergyProfile(datapath);
   // EnergyTower4(datapath);
   // EnergyTower_andInputParticle(datapath);
-  LongitudinalProfile(datapath);
+  //LongitudinalProfile(datapath);
 }

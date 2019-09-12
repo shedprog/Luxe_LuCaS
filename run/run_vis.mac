@@ -8,8 +8,6 @@
 
 /run/initialize
 
-#/control/macroPath /home/FoxWise/Documents/FCAL/LUCAS/
-
 /vis/open OGL 600x600-0+0
 
 /vis/viewer/set/autoRefresh false
@@ -57,4 +55,4 @@
 
 #/run/beamOn 6250000000
 
-##RUN /control/execute init_vis.mac
+##RUN /control/execute run_vis.mac

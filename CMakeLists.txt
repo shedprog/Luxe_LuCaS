@@ -38,6 +38,7 @@ file(COPY ${PROJECT_SOURCE_DIR}/run/run_vis.mac DESTINATION ./)
 file(COPY ${PROJECT_SOURCE_DIR}/run/QA.job DESTINATION ./)
 file(COPY ${PROJECT_SOURCE_DIR}/run/run_condor.sh DESTINATION ./)
 file(COPY ${PROJECT_SOURCE_DIR}/run/run_main.sh DESTINATION ./)
+file(COPY ${PROJECT_SOURCE_DIR}/run/run_local.sh DESTINATION ./)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/condor_out)
 

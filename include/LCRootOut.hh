@@ -38,8 +38,8 @@ public:
    ~LCRootOut();
 
 public:
- 
-  void Init();                                                         // opens a file, creates a Tree 
+
+  void Init();                                                         // opens a file, creates a Tree
   void ProcessEvent(const G4Event* event, LCHitsCollection *HitsColl);
   void SetName(G4String newValue) {RootOutFile = newValue;}
 
@@ -52,7 +52,7 @@ public:
 private:
   LCRootMesseger* fMessenger;
   G4String RootOutFile;
- 
+
 private:
 
   std::vector<G4double> Tracks_pX;
@@ -72,6 +72,10 @@ private:
   std::vector<G4double> Hits_TOF;
   std::vector<G4int> Hits_Sensor;
 
+  std::vector<G4double>Hits_xCellpos;
+  std::vector<G4double>Hits_yCellpos;
+  std::vector<G4double>Hits_zCellpos;
+
 
   void Fill_Tracks_pX(const std::vector<G4double> &v){ Tracks_pX = v;};
   void Fill_Tracks_pY(const std::vector<G4double> &v){ Tracks_pY = v;};
@@ -87,8 +91,14 @@ private:
   void Fill_Hits_xHit(const std::vector<G4double> &v){ Hits_xHit = v;};
   void Fill_Hits_yHit(const std::vector<G4double> &v){ Hits_yHit = v;};
   void Fill_Hits_zHit(const std::vector<G4double> &v){ Hits_zHit = v;};
+
   void Fill_Hits_TOF(const std::vector<G4double> &v){ Hits_TOF = v;};
   void Fill_Hits_Sensor(const std::vector<G4int> &v){ Hits_Sensor = v;};
+
+  void Fill_Hits_xCellpos(const std::vector<G4double> &v){ Hits_xCellpos = v;};
+  void Fill_Hits_yCellpos(const std::vector<G4double> &v){ Hits_yCellpos = v;};
+  void Fill_Hits_zCellpos(const std::vector<G4double> &v){ Hits_zCellpos = v;};
+
 
 };
 
@@ -98,13 +108,13 @@ class LCRootMesseger : public G4UImessenger
   public:
     LCRootMesseger(LCRootOut* root);
    ~LCRootMesseger();
-    
+
     virtual void SetNewValue(G4UIcommand*, G4String);
-    
+
   private:
     LCRootOut* fHistManager;
     G4UIcmdWithAString* fRootName;
-    
+
 };
 
 #endif;

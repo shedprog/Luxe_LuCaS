@@ -31,6 +31,9 @@ public:
   // Public setup parameters
   //-----------------------------------------------
 public:
+  //New calorimeter setups
+  static G4double pix_x_size;
+  static G4double pix_y_size;
   //-----------------------------------
   //  globals
   //-----------------------------------
@@ -42,7 +45,7 @@ public:
   static G4double StepSizeMin;
   static G4int    PrintLevel;
   static G4bool   batchMode;
-  static G4String PhysicsListName; 
+  static G4String PhysicsListName;
   static G4String macroName;
   static G4String RootFileName;
   static G4String RootFileMode;
@@ -51,7 +54,7 @@ public:
   static G4double Beam_Crossing_Angle;
   static G4double lorentzTransAngle;
   static G4double Nominal_Field_value;
-  static G4String Particle_Generator; 
+  static G4String Particle_Generator;
   static G4int    NoOfEventsToProcess;
   static G4bool   AccumulateEvents;
   static G4String Build_Beampipe;
@@ -70,8 +73,8 @@ public:
   static G4double        world_hdz;
 
   // for beampipe
-  static G4double Beam_pipe_thickness;    
-  static G4double Beam_pipe_zend; 
+  static G4double Beam_pipe_thickness;
+  static G4double Beam_pipe_zend;
   static G4double Lcal_to_BeamPipe_clearance;
   static G4int    Beam_pipe_VisSolid;
   // for LHcal
@@ -80,7 +83,7 @@ public:
   static G4int    BCal_VisSolid;
   // for mask
   static G4int    Mask_VisSolid;
-     
+
   //-------------------------------------
   // for LCAL
   //-------------------------------------
@@ -93,8 +96,8 @@ public:
   static G4int    Lcal_n_tiles;
   static G4int    Lcal_n_sectors;
   static G4int    Lcal_n_rings;
-  static G4String TBeam_senrio; // itamar add for determin the senrio to build for test beam  in the string : A For just absorber (3.5 mm + 1mm gup);  
-                                // AA is for absorber with gup (3.5 mm +5.5 mm gup); AS for sensor and absorber ib 4.5 mm gap; APS (for sensor absorbe and PCB in 9 mm gup;   
+  static G4String TBeam_senrio; // itamar add for determin the senrio to build for test beam  in the string : A For just absorber (3.5 mm + 1mm gup);
+                                // AA is for absorber with gup (3.5 mm +5.5 mm gup); AS for sensor and absorber ib 4.5 mm gap; APS (for sensor absorbe and PCB in 9 mm gup;
   static G4double Lcal_z_end;
   static G4double Lcal_inner_radius;
   static G4double Lcal_outer_radius;
@@ -153,7 +156,7 @@ public:
   static G4double Lcal_fanoutF_thickness;
   static G4double Lcal_fanoutB_thickness;
   static G4double Lcal_fanoutF_hdz;       // half thickness fanout front
-  static G4double Lcal_fanoutB_hdz;       // half thickness fanout back 
+  static G4double Lcal_fanoutB_hdz;       // half thickness fanout back
   static G4double Lcal_tungsten_hdz;     // half thickness absorber
   static G4double Lcal_sector_dphi;
   static G4double Lcal_surface_area;
@@ -161,29 +164,29 @@ public:
   //
   // materials
   //
-  static G4Material *Vacuum;  
-  static G4Material *Air;  
+  static G4Material *Vacuum;
+  static G4Material *Air;
   static G4Material *PLASTIC_SC;
-  static G4Material *Silicon;  
-  static G4Material *Alu;  
-  static G4Material *Tungsten;  
-  static G4Material *Copper;  
-  static G4Material *Iron;  
-  static G4Material *Beryllium;  
-  static G4Material *Graphite; 
+  static G4Material *Silicon;
+  static G4Material *Alu;
+  static G4Material *Tungsten;
+  static G4Material *Copper;
+  static G4Material *Iron;
+  static G4Material *Beryllium;
+  static G4Material *Graphite;
   static G4Material *Carbon;
-  static G4Material *Kapton;  
-  static G4Material *Epoxy;  
-  static G4Material *FanoutMatF;  
+  static G4Material *Kapton;
+  static G4Material *Epoxy;
+  static G4Material *FanoutMatF;
   static G4Material *FanoutMatB;
   static G4Material *FR4;
   static G4Material *Wabsorber;
-  static G4Material *Wabsorber_MGS;  // for 2014 TB plate 
-  static G4Material *Wabsorber_PL;	// for 2014 TB plate	
-  static G4Material *C_fiber;	// for 2015-6 TB 
+  static G4Material *Wabsorber_MGS;  // for 2014 TB plate
+  static G4Material *Wabsorber_PL;	// for 2014 TB plate
+  static G4Material *C_fiber;	// for 2015-6 TB
 private:
 
-  Setup(); 
+  Setup();
   static Setup* theSetup;
   void SetDerivedParameters();
   void Usage( const char *name );

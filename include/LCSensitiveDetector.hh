@@ -40,14 +40,13 @@ class LCSensitiveDetector : public G4VSensitiveDetector
 {
 public:
 
-    LCSensitiveDetector(G4String sdname,        // name of SD
-                        G4double CalRhoMin,     // LumiCal inner radius
-                        G4double PhiOffset,     // phi angle offset
-                        G4double gridRho,       // cell # in sector
-                        G4double gridPhi,       // sector # in layer
-                        G4int    nCellRho,      // total # cells along radius
-                        G4int    nCellPhi,
-			G4bool   cellvirtual);     // total # cells along phi
+  LCSensitiveDetector(G4String,
+                      G4double,
+                      G4double,
+                      G4int,
+                      G4int,
+                      G4bool);
+
     ~LCSensitiveDetector();
 
 
@@ -56,26 +55,26 @@ public:
     void   Initialize(G4HCofThisEvent *HCE);
     G4bool ProcessHits(G4Step *aStep, G4TouchableHistory *ROhist);
     void   EndOfEvent(G4HCofThisEvent *HCE);
-    void   clear();
+    // void   clear();
 
     // Return the collection name, so you don't have to hard-code it in
     inline G4String GetCollName() {return collName;}
 
     // not sure about the next 3
-    void DrawAll();
-    void PrintAll();
-    void SaveAll();
+    // void DrawAll();
+    // void PrintAll();
+    // void SaveAll();
 
 private:
 	G4String collName; // the name of the collection - "LumiCalSD_HC"
 
     // Set methods for SD primary parameters - the volumes that make up LC
-    void SetNCellPhi(G4int nx);
-    void SetNCellRho( G4int ny);
-    void SetRhoCellDim(G4double c1);
-    void SetPhiCellDim( G4double c2);
-    void SetRhoMin(G4double c);
-    void SetPhiOffset(G4double phi);
+    // void SetNCellPhi(G4int nx);
+    // void SetNCellRho( G4int ny);
+    // void SetRhoCellDim(G4double c1);
+    // void SetPhiCellDim( G4double c2);
+    // void SetRhoMin(G4double c);
+    // void SetPhiOffset(G4double phi);
 
     // find if hit exists already and ++edep if it does
     // don't think I need TID
@@ -103,16 +102,25 @@ private:
     G4ThreeVector origin;
 
     // num cells in xy-directions
-    G4int NumCellsRho, NumSectorsPhi;
+    // G4int NumCellsRho, NumSectorsPhi;
 
     // grid size
-    G4double cellDimRho, cellDimPhi;
+    // G4double cellDimRho, cellDimPhi;
 
     // inner radius and phi offset size
-    G4double CalRhoMin, CalPhiOffset;
+    // G4double CalRhoMin, CalPhiOffset;
 
     // type of cell ( virtual =true -> segmentaion at SD driver level )
     G4bool VirtualCell;
+
+    G4double f_CalX_half;
+    G4double f_CalY_half;
+
+    G4double f_dCellX;
+    G4double f_dCellY;
+
+    G4double f_nCellX;
+    G4double f_nCellY;
 
 };
 

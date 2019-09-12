@@ -21,13 +21,13 @@
 #include "G4EventManager.hh"
 #include "G4Event.hh"
 
+#include "GlobalVars.hh"
+
 LCSensitiveDetector::LCSensitiveDetector(G4String sdname,
-                                         G4double CalRhoMin,
-                                         G4double CalPhiOffset,
-                                         G4double cellDimRho,
-                                         G4double cellDimPhi,
-                                         G4int    nCellRho,
-                                         G4int    nCellPhi,
+                                         G4double CalX_half,
+                                         G4double CalY_half,
+                                         G4int    dCellX,
+                                         G4int    dCellY,
                                          G4bool   cellvirtual)
     : G4VSensitiveDetector(sdname),
       HCID(-1),
@@ -44,25 +44,34 @@ LCSensitiveDetector::LCSensitiveDetector(G4String sdname,
 
     // set primary args - this is how you tell LCSensDet
     // the geometric parameters of LumiCal
-		SetRhoMin(CalRhoMin);
-		SetPhiOffset(CalPhiOffset);
-		SetRhoCellDim(cellDimRho);
-		SetPhiCellDim( cellDimPhi);
-		SetNCellRho(nCellRho);
-		SetNCellPhi(nCellPhi);
+		// SetRhoMin(CalRhoMin);
+		// SetPhiOffset(CalPhiOffset);
+		// SetRhoCellDim(cellDimRho);
+		// SetPhiCellDim( cellDimPhi);
+		// SetNCellRho(nCellRho);
+		// SetNCellPhi(nCellPhi);
+
+    f_CalX_half = CalX_half;
+    f_CalY_half = CalY_half;
+
+    f_dCellX = dCellX;
+    f_dCellY = dCellY;
+
+    f_nCellX = (G4int)floor(2 * CalX_half / dCellX);
+    f_nCellY = (G4int)floor(2 * CalY_half / dCellY);
 
     G4cout << "SD created <" << sdname << ">" << G4endl;
-    std::cout  << "Parametrs -->>"
-               << "CalRhoMin:    " << CalRhoMin << "\n"
-               << "CalPhiOffset: " << CalPhiOffset << "\n"
-               << "cellDimRho:   " << cellDimRho << "\n"
-               << "cellDimPhi:   " << cellDimPhi << "\n"
-               << "nCellRho:     " << nCellRho << "\n"
-               << "nCellPhi:     " << nCellPhi << "\n"
+    std::cout  << "Parametrs -->>" << "\n"
+               << "f_CalX_half:    " << f_CalX_half   << "\n"
+               << "f_CalY_half: "    << f_CalY_half   << "\n"
+               << "f_dCellX:     " << f_dCellX    << "\n"
+               << "f_dCellY:     " << f_dCellY    << "\n"
+               << "f_nCellX:     " << f_nCellX    << "\n"
+               << "f_nCellY:     " << f_nCellY    << "\n"
                << "cellvirtual:  " << cellvirtual << "\n";
 
     // std::cout << "Press Enter to Continue";
-    // std::cin.ignore(); 
+    // std::cin.ignore();
 }
 
 LCSensitiveDetector::~LCSensitiveDetector()
@@ -85,7 +94,7 @@ void LCSensitiveDetector::Initialize(G4HCofThisEvent *HCE)
     // Would be sufficient to add the collection at the end of the event, but
     // doing it here suppresses a warning during compilation
     HCE->AddHitsCollection(HCID, hitsColl);
-    primaryID = 0; 
+    primaryID = 0;
     //Reset the hit map
     hitMap->clear();
 }
@@ -150,143 +159,106 @@ G4bool LCSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *)
     // std::cout << "GlobalHitPosition " << GlobalHitPos/mm << " mm " <<G4endl;
     // std::cout << "Press Enter to Continue";
     // std::cin.ignore();
-    
+
     G4int LC_num = 0;
     G4int layer_num = 0;
     G4int sector_num = 0;
     G4int cell_num = 0;
-    G4int pad_number = 0; // 1 - closer to the center
-                          // 2 - farther from center 
+    // G4int sensor_number = 0; // 1 - closer to the center
+    //                       // 2 - farther from center
 
-    
+
     // Use the touchable handle to get the volume hierarchy for the hit
     G4TouchableHandle theTouchable = preStepPoint->GetTouchableHandle();
     // LC_num     = theTouchable->GetHistory()->GetVolume(1)->GetCopyNo();
     // layer_num  = theTouchable->GetHistory()->GetVolume(2)->GetCopyNo();
     // sector_num = theTouchable->GetReplicaNumber(1);
-    // cell_num   = theTouchable->GetReplicaNumber(0); 
+    // cell_num   = theTouchable->GetReplicaNumber(0);                     G4double CalXMin,
+
     // std::cout << "touchable: " << LC_num << " "
     //                            << layer_num << " "
-    //                            << sector_num << " "
+    //                            << sector_num << " "/data/Projects_physics/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_1.0J.out
     //                            << cell_num << "\n";
-
-    // std::cout << theTouchable->GetHistory()->GetVolume(0)->GetName() << " "
-    //           << theTouchable->GetHistory()->GetVolume(0)->GetCopyNo()<<'\n';
-
-    // std::cout << theTouchable->GetHistory()->GetVolume(1)->GetName() << " "
-    //           << theTouchable->GetHistory()->GetVolume(1)->GetCopyNo()<<'\n';
-
-    // std::cout << theTouchable->GetHistory()->GetVolume(2)->GetName() << " "
-    //           << theTouchable->GetHistory()->GetVolume(2)->GetCopyNo()<<'\n';
-    
-    // std::cout << theTouchable->GetHistory()->GetVolume(3)->GetName() << " "
-    //           << theTouchable->GetHistory()->GetVolume(3)->GetCopyNo()<<'\n';
-    
-    // std::cout << theTouchable->GetHistory()->GetVolume(4)->GetName() << " "
-    //           << theTouchable->GetHistory()->GetVolume(4)->GetCopyNo()<<'\n';
-
-    // std::cout << theTouchable->GetHistory()->GetVolume(5)->GetCopyNo()<<'\n';
-    // std::cout << theTouchable->GetHistory()->GetVolume(6)->GetCopyNo()<<'\n';
-    // std::cout << theTouchable->GetHistory()->GetVolume(7)->GetCopyNo()<<'\n';
-    // std::cout << theTouchable->GetHistory()->GetVolume(8)->GetCopyNo()<<'\n';
-    // std::cout << theTouchable->GetHistory()->GetVolume(9)->GetCopyNo()<<'\n';
 
     // std::cout << "Press Enter to Continue";
     // std::cin.ignore();
 
 
-    pad_number = theTouchable->GetHistory()->GetVolume(4)->GetCopyNo();
+    // sensor_number = theTouchable->GetHistory()->GetVolume(4)->GetCopyNo();
 
     // Find the unique volume path for a cell which has a hit
     // Which copy of LumiCal?
     if (Setup::LcalTBeam)
-    { 
+    {
       LC_num = 1;
       layer_num  = theTouchable->GetHistory()->GetVolume(1)->GetCopyNo();
     }
     else{
-      LC_num     = theTouchable->GetHistory()->GetVolume(1)->GetCopyNo(); 
+      LC_num     = theTouchable->GetHistory()->GetVolume(1)->GetCopyNo();
       // Which layer inside LumiCal?
       layer_num  = theTouchable->GetHistory()->GetVolume(2)->GetCopyNo();
     }
 
-    // Convert pad number to LC_num --> now ot os 1, 2, 3 and 4
-    // std::cout << "PDG: " << PDG << "\n";
-    // std::cout << "LC_num: " << LC_num<<"\n";
-    // std::cout << "pad_number: " << pad_number<<"\n";
-    LC_num = (LC_num==1) ? pad_number : pad_number + 2 ;
 
     if ( !VirtualCell ){
 
         // Which sector inside the tile? (sectors are replicated *after* the cells)
         sector_num = theTouchable->GetReplicaNumber(1);
         // Which cell inside sector?
-        cell_num   = theTouchable->GetReplicaNumber(0); 
-        // G4cout << "LCAL arm : " << LC_num 
-        //       << " Layer: "     << layer_num
-        //       << " Sector: "    << sector_num 
-        //       << " Cell: "      << cell_num
-        //       <<G4endl;
+        cell_num   = theTouchable->GetReplicaNumber(0);
 
-                  
+
 
     }else{
 
         G4ThreeVector LocalHitPos = theTouchable->GetHistory()->GetTopTransform().TransformPoint(GlobalHitPos) ;
         //
         //G4cout << "LocalHitPosition " << LocalHitPos/mm <<" mm" << G4endl;
-        //  
+        //
+        //~~~~~~~~~~~~~~~~~~~~~~LocalHitPos~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ rectamgle calorimeter START
 
-        G4double rho = LocalHitPos.getRho();
-        G4double phi = LocalHitPos.getPhi();
+        // Pay Attention that cordinates are reversed
+        G4double Y = LocalHitPos.x() + f_CalY_half;
+        G4double X = LocalHitPos.y() + f_CalX_half;
 
-        // std::cout <<"Local rho "<< rho << " phi " << phi /deg << '\n';
-        // std::cout << "Press Enter to Continue";
-        // std::cin.ignore();
+        cell_num = (G4int)floor( X / f_dCellX );
+        sector_num = (G4int)floor( Y / f_dCellY );
 
-        phi = phi - M_PI/2.; //It is needed due to new cordinate system which is under 90*deg
-        assert( cellDimPhi*2 >= abs(phi));
-        sector_num = (G4int)floor((phi + cellDimPhi*2) / cellDimPhi) + 1;
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ rectamgle calorimeter END
+        // std::cout << "LocalHitPosition " << LocalHitPos/mm <<" mm" << G4endl;
+        // std::cout << "GlobalHitPosition " << GlobalHitPos/mm <<" mm" << G4endl;
+        // std::cout << "My x y:" << X <<" " << Y << G4endl;
 
-        // phi = ( phi < 0. ) ? phi + 2.* M_PI : phi;
-
-        cell_num   = (G4int)floor(( rho - (CalRhoMin-cellDimRho/2.) ) / cellDimRho );
-        cell_num = ( cell_num < 0 ) ? 0 : cell_num; 
-        cell_num = ( cell_num >NumCellsRho  ) ? NumCellsRho : cell_num;
-
-        // sector_num = (G4int)floor ( phi / cellDimPhi ) + 1;
-
-        // G4cout << " LCAL arm : " << LC_num 
-        //        << " Layer: "     << layer_num
-        //        << " Sector: "    << sector_num 
-        //        << " Cell: "      << cell_num 
-        //        << "\n";
-        // std::cout << "GlobalHitPosition " << GlobalHitPos/mm << " mm " <<G4endl;
+        // std::cout << "LCAL arm : " << LC_num
+        //           << " Layer: "     << layer_num
+        //           << " Sector: "    << sector_num
+        //           << " Cell: "      << cell_num
+        //           << G4endl;
+        //
         // std::cout << "Press Enter to Continue";
         // std::cin.ignore();
     }
-
 
     // ENCODE THE HIT ---------------------------------
 
     // Use bitwise operations to store the location of a cell in a single
     // 32-bit word
-    // 4 bytes, 4 levels in the volume tree - 1 byte per volume
+    // 4 bytes, 4 levels in the volume tree - 1 byte per volumeGlobalCellPos
     // | LC number | Layer number | Sector number | Cell number |
     // note - this only works because no volume will have a number > 255 (2^8)
     cell_code cellID;
     cellID.id0 = 0; cellID.id1 = 0;   // 32 0's in a row per member
         // LumiCal only uses id0; id1 is a legacy from the Mokka version
 
-    cellID.id0 |= (cell_num   <<  0); // store the cell # in the lowest 8 digits
-    cellID.id0 |= (sector_num <<  8); // shift the sector # to the next byte up
+    cellID.id0 |= ((cell_num+1)   <<  0); // store the cell # in the lowest 8 digits
+    cellID.id0 |= ((sector_num+1) <<  8); // shift the sector # to the next byte up
     cellID.id0 |= (layer_num  << 16); // shift the layer # to the next byte up
     cellID.id0 |= (LC_num     << 24); // shift the LumiCal # to the highest byte
 
     // get local and global position using touchable
     // check if the cell has been hit before, and check the indices
     if (!FindHit(cellID.id0, edep, primaryID, PDG) &&
-        !( (cell_num > NumCellsRho) || (sector_num > NumSectorsPhi) ) )  {
+        !( (cell_num > f_nCellX) || (sector_num > f_nCellY) ) )  {
 
         // Global hit coordinates
 
@@ -295,22 +267,34 @@ G4bool LCSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *)
         //     the origin is at the center of the disk
         //     hence the position of the cell center in its coordinate system is
         //     given by:
-        G4ThreeVector localCellPos(CalRhoMin+((G4double)cell_num)*cellDimRho,
-                                   0. , 0. );
-       
-	if ( VirtualCell ) localCellPos.setPhi( (0.5000 + ((G4double)sector_num-1))*cellDimPhi );
-	else localCellPos.setPhi(0.5000 * cellDimPhi);
+  //       G4ThreeVector localCellPos(CalRhoMin+((G4double)cell_num)*cellDimRho, 0. , 0. );
+  //
+	// if ( VirtualCell ) localCellPos.setPhi( (0.5000 + ((G4double)sector_num-1))*cellDimPhi );Global Cell Position (212,0.5,5021.92) mm
+
+
+	// else localCellPos.setPhi(0.5000 * cellDimPhi);
+G4ThreeVector LocalHitPos = theTouchable->GetHistory()->GetTopTransform().TransformPoint(GlobalHitPos);
+
+G4ThreeVector localCellPos( f_dCellY/2.0 + ((G4double)sector_num)*f_dCellY - f_CalY_half,
+                            f_dCellX/2.0 + ((G4double)cell_num)*f_dCellX - f_CalX_half,
+                            LocalHitPos.z() );
+
 	//
 	//		  G4cout << "LCP1 " << localCellPos << G4endl;
 	//
 
         // compute GlobalCellPos based on touchable with localCellPos
-        G4ThreeVector GlobalCellPos =
-                    theTouchable->GetHistory()->GetTopTransform().
-                        Inverse().TransformPoint(localCellPos);
+G4ThreeVector GlobalCellPos = theTouchable->GetHistory()->GetTopTransform().Inverse().TransformPoint(localCellPos);
 	//
 	//		  G4cout << "GCP1 " << GlobalCellPos << G4endl;
 	//
+    // std::cout << "OUTPUT:\n";
+    // std::cout << f_dCellY/2 << " " << (G4double)sector_num << " " << f_dCellY << " " << f_CalY_half << "\n";
+    // std::cout << "pad cell: " << sector_num << " " << cell_num << "\n";
+    // std::cout << "Global Cell Position " << GlobalCellPos/mm << " mm " <<G4endl;
+    // std::cout << "Local Cell Position " << localCellPos/mm <<" mm" << G4endl;
+    // std::cout << "Press Enter to Continue";
+    // std::cin.ignore();
 
         // assert id w/in valid range using bitwise ops
         // (0xff = 255 in hex)
@@ -320,7 +304,7 @@ G4bool LCSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *)
         // Use all this information to create an LCHit instance
         LCHit *theHit = new LCHit(GlobalHitPos.x(),    // global hit position
                                   GlobalHitPos.y(),    //
-                                  GlobalHitPos.z(),     // 
+                                  GlobalHitPos.z(),     //
                                   GlobalCellPos.x(),   // GlobalCellPosRho
                                   GlobalCellPos.y(),   // GlobalCellPosPhi
                                   GlobalCellPos.z(),   // GlobalCellPosZ
@@ -329,7 +313,7 @@ G4bool LCSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *)
                                   primaryPDG,          // PDG encoding
                                   cellID,              // Cell ID code
                                   ToF);                // time since event begin
-                                                     
+
 
         //Insert the hit and cellID into the hitmap
         hitMap->insert(LCHitMapPair(cellID.id0, theHit));
@@ -358,7 +342,6 @@ G4bool LCSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *)
         PDG!=22 and
         layer_num==1) {
 
-
           G4double x = theTrack->GetPosition().x();
           G4double y = theTrack->GetPosition().y();
           G4double z = theTrack->GetPosition().z();
@@ -370,13 +353,13 @@ G4bool LCSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *)
           G4double Mx = theMomentumDirection.x();
           G4double My = theMomentumDirection.y();
           G4double Mz = theMomentumDirection.z();
-          
+
           // std::cout << "PDG" <<PDG <<" "<< theTrack->GetParentID() <<"\n";
           // std::cout<<"SteppingAction: "<< x << " " << y << " " << z<<"\n";
           // std::cout << "Press Enter to Continue";
           // std::cin.ignore();
 
-          
+
           G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
           analysisManager->FillNtupleDColumn(3,0, x);
           analysisManager->FillNtupleDColumn(3,1, y);
@@ -390,7 +373,8 @@ G4bool LCSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *)
           analysisManager->FillNtupleIColumn(3,9, sector_num);
           analysisManager->FillNtupleIColumn(3,10,layer_num);
           analysisManager->FillNtupleIColumn(3,11,LC_num);
-          analysisManager->FillNtupleIColumn(3,12,eventNb);
+          analysisManager->FillNtupleDColumn(3,12,weight_fromMC);
+          analysisManager->FillNtupleIColumn(3,13,eventNb);
           analysisManager->AddNtupleRow(3);
 
     }
@@ -420,49 +404,8 @@ G4bool LCSensitiveDetector::FindHit(G4int    cellID,
     // If you find the hit already in hitMap (as indexed by the cellID),
     // increment its energy!
     if(iter != hitMap->end()) {
-         (iter->second)->AddEdep(TID, PDG, edep) ; 
+         (iter->second)->AddEdep(TID, PDG, edep) ;
          return true;
      }
     return false;
-}
-
-void LCSensitiveDetector::SetRhoMin(G4double rmin){
-    CalRhoMin = rmin;
-}
-void LCSensitiveDetector::SetPhiOffset(G4double phi0){
-    CalPhiOffset = phi0;
-}
-void LCSensitiveDetector::SetNCellRho(G4int nx )
-{
-    // set number of cellS in a sector
-    NumCellsRho = nx;
-    assert(nx > 0 );
-}
-void LCSensitiveDetector::SetNCellPhi( G4int ny)
-{
-    // set number of sectors in a layer (= # cells in phi dir)
-    NumSectorsPhi = ny;
-    assert(ny > 0 );
-}
-void LCSensitiveDetector::SetRhoCellDim(G4double c1)
-{
-    cellDimRho = c1;
-    assert(cellDimRho > 0 );
-}
-void LCSensitiveDetector::SetPhiCellDim(G4double c1)
-{
-    cellDimPhi = c1;
-    assert(cellDimPhi > 0 );
-}
-
-void LCSensitiveDetector::clear()
-{
-}
-
-void LCSensitiveDetector::DrawAll()
-{
-}
-
-void LCSensitiveDetector::PrintAll()
-{
 }

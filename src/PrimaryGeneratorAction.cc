@@ -310,9 +310,10 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4ParticleDefinition* particle = 0;
-
+  // std::cout << nscat << "\n";
   for (int ip = 0; ip < nscat; ++ip) {
     // std::cout<<ip<<"\n";
+    // if (ip%1000==0 and ip!=0) std::cout << "processed: " << ip << "\n";
     std::vector <double> pdata = ptcls[ip];
     std::vector <double> pp(4);
     int pid = static_cast<int>(pdata[7]);
@@ -321,7 +322,8 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
     double vtxtomm = 1.0;
     double  vtx[3];
 
-//    int hindx = 1;
+//    int hindx = 1;1000000
+
     if (pid == 11)  { particle = particleTable->FindParticle("e-"); }
     else if (pid == -11) { particle = particleTable->FindParticle("e+"); }
     else if (pid == 22)  { particle = particleTable->FindParticle("gamma"); }

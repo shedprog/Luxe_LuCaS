@@ -26,8 +26,8 @@
 #include "G4UIcmdWithAString.hh"
 
 LCRootOut::LCRootOut() : fMessenger(0), RootOutFile("Default.root")
-{ 
-  fMessenger = new LCRootMesseger(this); 
+{
+  fMessenger = new LCRootMesseger(this);
 }
 
 // LCRootOut::LCRootOut(const G4String name )
@@ -36,7 +36,7 @@ LCRootOut::LCRootOut() : fMessenger(0), RootOutFile("Default.root")
 // }
 
 LCRootOut::~LCRootOut()
-{ 
+{
   delete G4AnalysisManager::Instance();
   delete RootOutFile;
   delete fMessenger;
@@ -63,7 +63,7 @@ void LCRootOut::Init()
   analysisManager->CreateNtupleDColumn("Weight"); //6
   analysisManager->CreateNtupleIColumn("eventID");
   analysisManager->FinishNtuple(0);
-  
+
   analysisManager->CreateNtuple("Tracks", "Tracks for LumCaL in LUXE");
   analysisManager->CreateNtupleDColumn(1, "Tracks_pX",Tracks_pX); //double pX; 0
   analysisManager->CreateNtupleDColumn(1, "Tracks_PY",Tracks_pY); //double pY; 1
@@ -75,7 +75,7 @@ void LCRootOut::Init()
 
   analysisManager->CreateNtuple("Hits", "Hits for LumCaL in LUXE");
   analysisManager->CreateNtupleIColumn(2,"Hits_cellID",Hits_cellID);	// int    cellID;
-  analysisManager->CreateNtupleDColumn(2,"Hits_eHit",Hits_eHit);	//    double eHit; 0 
+  analysisManager->CreateNtupleDColumn(2,"Hits_eHit",Hits_eHit);	//    double eHit; 0
   analysisManager->CreateNtupleDColumn(2,"Hits_xCell",Hits_xCell);	//    double xCell; 1
   analysisManager->CreateNtupleDColumn(2,"Hits_yCell",Hits_yCell);	//    double yCell; 2
   analysisManager->CreateNtupleDColumn(2,"Hits_zCell",Hits_zCell);	//    double zCell; 3
@@ -85,6 +85,10 @@ void LCRootOut::Init()
   analysisManager->CreateNtupleDColumn(2,"Hits_TOF",Hits_TOF);	//    double TOF; 7
   analysisManager->CreateNtupleIColumn(2,"Hits_Sensor",Hits_Sensor);  //    double TOF; 8
   analysisManager->CreateNtupleIColumn(2,"eventID");
+  analysisManager->CreateNtupleDColumn(2,"Hits_xCellpos",Hits_xCellpos);	//    double xCell; 1
+  analysisManager->CreateNtupleDColumn(2,"Hits_yCellpos",Hits_yCellpos);	//    double yCell; 2
+  analysisManager->CreateNtupleDColumn(2,"Hits_zCellpos",Hits_zCellpos);	//    double zCell; 3
+
   analysisManager->FinishNtuple(2);
 
   analysisManager->CreateNtuple("Tracks_true", "Tracks in the first sensor");
@@ -100,6 +104,7 @@ void LCRootOut::Init()
   analysisManager->CreateNtupleIColumn(3,"yCell");
   analysisManager->CreateNtupleIColumn(3,"zCell");
   analysisManager->CreateNtupleIColumn(3,"Sensor");
+  analysisManager->CreateNtupleDColumn(3,"Weight"); //6
   analysisManager->CreateNtupleIColumn(3,"eventID");
   analysisManager->FinishNtuple(3);
 
@@ -112,6 +117,7 @@ void LCRootOut::Init()
   analysisManager->CreateNtupleDColumn(4,"Mz");
   analysisManager->CreateNtupleDColumn(4,"E");
   analysisManager->CreateNtupleIColumn(4,"PDG");
+  analysisManager->CreateNtupleDColumn(4,"Weight"); //8
   analysisManager->CreateNtupleIColumn(4,"eventID");
   analysisManager->FinishNtuple(4);
 
@@ -124,7 +130,7 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
 
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 
-    double numHits = 0; 
+    double numHits = 0;
     double numPrim = 0;
     double Etot = 0.0 ;
     double Emax  = 0. ;
@@ -146,6 +152,10 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
     std::vector<G4double> Hits_TOF_;
     std::vector<G4int> Hits_Sensor_;
 
+    std::vector<G4double> Hits_xCellpos_;
+    std::vector<G4double> Hits_yCellpos_;
+    std::vector<G4double> Hits_zCellpos_;
+
     //
     // get all primary MC particles
     G4int nv = event->GetNumberOfPrimaryVertex();
@@ -157,7 +167,7 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
       // Take trajectory before absorber
       // auto track_vec = event->GetTrajectoryContainer()->GetVector();
       // std::cout<<event->GetTrajectoryContainer()->GetVector()<<" "<<event->GetTrajectoryContainer()->GetVector()->size()<<"\n";
-    
+
       G4PrimaryVertex *pv = event->GetPrimaryVertex(v);
     	vX = pv->GetX0();
     	vY = pv->GetY0();
@@ -167,7 +177,7 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
 
 
       while (pp) {
-  	 
+
     	  Tracks_pX_.push_back(pp->GetMomentum().getX());
     	  Tracks_pY_.push_back(pp->GetMomentum().getY());
     	  Tracks_pZ_.push_back(pp->GetMomentum().getZ());
@@ -176,7 +186,7 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
 
     	  k++;
     	  pp = pp->GetNext();
-            
+
       }
       }
 
@@ -201,16 +211,24 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
       double TOF;
       double Sensor;
 
+      double xCellpos;
+      double yCellpos;
+      double zCellpos;
+
 
       cellID =(*collection)[i]->GetCellCode();
       // G4int    side = (cellID >> 24) & 0xff ;
       eHit  = (*collection)[i]->GetEnergy();
-      
-      //hit.xCell = (*collection)[i]->GetXcell();
-      //hit.yCell = (*collection)[i]->GetYcell();
-      //hit.zCell = (*collection)[i]->GetZcell();
-      xCell = (cellID >> 8) & 0xFF;
-      yCell = (cellID     ) & 0xFF;
+
+      xCellpos = (*collection)[i]->GetXcell();
+      yCellpos = (*collection)[i]->GetYcell();
+      zCellpos = (*collection)[i]->GetZcell();
+      // std::cout << "readout position of hit: " << xCellpos << " "
+      //                                          << yCellpos << " "
+      //                                          << zCellpos << "\n";
+
+      yCell = (cellID >> 8) & 0xFF;
+      xCell = (cellID     ) & 0xFF;
       zCell = (cellID >> 16) & 0xFF;
       Sensor =  (cellID >> 24) & 0xFF;
       xHit  = (*collection)[i]->GetXhit();
@@ -221,7 +239,7 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
 
 		  Etot += eHit ;
 		  if ( Emax < eHit  ) Emax = eHit;
-		
+
       Hits_cellID_.push_back(cellID);
       Hits_eHit_.push_back(eHit);
       Hits_xCell_.push_back(xCell);
@@ -233,7 +251,10 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
       Hits_TOF_.push_back(TOF);
       Hits_Sensor_.push_back(Sensor);
 
-      
+      Hits_xCellpos_.push_back(xCellpos);
+      Hits_yCellpos_.push_back(yCellpos);
+      Hits_zCellpos_.push_back(zCellpos);
+
       i++;
     }
 
@@ -268,6 +289,11 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
     Fill_Hits_Sensor(Hits_Sensor_);
     // analysisManager->FillNtupleDColumn(2,7, weight_fromMC);
     analysisManager->FillNtupleIColumn(2,10, eventID);
+
+    Fill_Hits_xCellpos(Hits_xCellpos_);
+    Fill_Hits_yCellpos(Hits_yCellpos_);
+    Fill_Hits_zCellpos(Hits_zCellpos_);
+
 	  analysisManager->AddNtupleRow(2);
 
     }
@@ -286,7 +312,8 @@ void LCRootOut::TestPlaneFill(G4double x ,G4double y ,G4double z,G4double Mx ,G4
   analysisManager->FillNtupleDColumn(4,5, Mz);
   analysisManager->FillNtupleDColumn(4,6, E);
   analysisManager->FillNtupleIColumn(4,7, PDG);
-  analysisManager->FillNtupleIColumn(4,8, evtNb);
+  analysisManager->FillNtupleDColumn(4,8, weight_fromMC);
+  analysisManager->FillNtupleIColumn(4,9, evtNb);
   analysisManager->AddNtupleRow(4);
 
 }
@@ -302,11 +329,11 @@ void LCRootOut::End()
 }
 
 LCRootMesseger::LCRootMesseger(LCRootOut* histoM) :G4UImessenger(), fHistManager(histoM), fRootName()
-{ 
+{
   fRootName = new G4UIcmdWithAString("/analysis/filename",this);
   fRootName->SetGuidance("Name of the root file for output");
   fRootName->SetParameterName("rootname",false);
-  fRootName->AvailableForStates(G4State_PreInit, G4State_Idle);   
+  fRootName->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
 
 
@@ -317,7 +344,7 @@ LCRootMesseger::~LCRootMesseger()
 
 
 void LCRootMesseger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
+{
   if (command == fRootName)
     { fHistManager->SetName(newValue);}
 }

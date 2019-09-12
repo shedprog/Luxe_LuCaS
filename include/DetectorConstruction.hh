@@ -56,11 +56,11 @@ class DetectorConstruction : public G4VUserDetectorConstruction
      const G4VPhysicalVolume* GetphysiWorld() {return fPhysiWorld;};
 
      G4double GetMagnetZend() { return fMagnetZPos + fMagnetSizeZ/2.0; };
-     
+
   protected:
-     enum tTargetType : G4int {tfoil, twire};  
-     
-                             
+     enum tTargetType : G4int {tfoil, twire};
+
+
   private:
 
 
@@ -74,7 +74,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
      G4LogicalVolume*   fLogicWorld;
      G4VPhysicalVolume* fPhysiWorld;
 
-     
+
      G4double           fMagnetFieldValue; //2000 - 13000 Gauss
      G4Box*             fSolidMagnet;
      G4LogicalVolume*   fLogicMagnet;
@@ -91,7 +91,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
   private:
-    
+
     void ConstructLumiCal();
     void InitDetectorParameters();
     void BuildTBeamPT16();
@@ -127,10 +127,10 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
     // Metallization mother volume
     G4LogicalVolume *logicMetSec;
-    G4LogicalVolume *logicMetalV;   
+    G4LogicalVolume *logicMetalV;
     G4LogicalVolume *MetSector1;
     G4LogicalVolume *MetSector2;
-    G4LogicalVolume *MetSector4; 
+    G4LogicalVolume *MetSector4;
 
     // SECTOR
     // 48 sectors per sensor; contains cells
@@ -139,7 +139,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume *logicPCB;
     G4LogicalVolume *logicSector1;
     G4LogicalVolume *logicSector2;
-    G4LogicalVolume *logicSector4; 
+    G4LogicalVolume *logicSector4;
 
     // Cell and pad metalization volumes
     // 64 cells per sector
@@ -171,9 +171,11 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     *Mask_Mat,
     *WorldMat;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ LUMUCAL Matirial~~~~~~~~~~~~~~! End
-
+    //New calorimeter setups
+    G4double pix_x_size;
+    G4double pix_y_size;
     // G4 regions created to set production cuts
-    // 
+    //
     G4Region *regionLCal, *regionBCal, *regionLHcal, *regionMask;
     G4bool VirtualCell;
     // rotation angle
@@ -206,9 +208,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double hMetalDZ;         // half thickness of pad metallization
     G4double hSensorDZ;
     G4double hFanoutFrontDZ;       // half thickness fanout front
-    G4double hFanoutBackDZ;       // half thickness fanout back 
+    G4double hFanoutBackDZ;       // half thickness fanout back
     G4double hTungstenDZ;      // half thickness absorber
-    G4double hAbsorberPitchDZ;// pitch between absorber layer defulte 1 mm 
+    G4double hAbsorberPitchDZ;// pitch between absorber layer defulte 1 mm
     G4double sectorPhi;
     G4double tilePhi;
     G4double FECave_hDZ;
@@ -235,19 +237,19 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double BCal_rmin;
     G4double BCal_rmax;
     G4double BCal_zbegin;
-    G4double BCal_dPairMoni;   
-    G4double BCal_dgraphite;   
+    G4double BCal_dPairMoni;
+    G4double BCal_dgraphite;
     G4double BCal_zlength;
-    G4double BCal_sphi;    
-    G4double BCal_dphi;    
+    G4double BCal_sphi;
+    G4double BCal_dphi;
     // mask
     G4double Mask_zstart;
     G4double Mask_thickness;
     G4double Mask_hDX;
     G4double Mask_hDY;
-    G4double Mask_rmin_at_zstart; 
+    G4double Mask_rmin_at_zstart;
     //
-     
+
 };
 
 class LCCellParam : public G4VPVParameterisation
@@ -301,4 +303,3 @@ private:
 
 
 #endif
-
