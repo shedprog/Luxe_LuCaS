@@ -43,8 +43,8 @@ public:
   LCSensitiveDetector(G4String,
                       G4double,
                       G4double,
-                      G4int,
-                      G4int,
+                      G4double,
+                      G4double,
                       G4bool);
 
     ~LCSensitiveDetector();

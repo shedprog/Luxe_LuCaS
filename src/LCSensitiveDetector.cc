@@ -26,8 +26,8 @@
 LCSensitiveDetector::LCSensitiveDetector(G4String sdname,
                                          G4double CalX_half,
                                          G4double CalY_half,
-                                         G4int    dCellX,
-                                         G4int    dCellY,
+                                         G4double dCellX,
+                                         G4double dCellY,
                                          G4bool   cellvirtual)
     : G4VSensitiveDetector(sdname),
       HCID(-1),

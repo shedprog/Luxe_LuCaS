@@ -17,6 +17,7 @@
 #include "TSystem.h"
 #include "TInterpreter.h"
 #include "TMath.h"
+#include "TMarker.h"
 // #include "gRoot.h"
 #include <vector>
 #include <typeinfo>
@@ -794,16 +795,119 @@ void LongitudinalProfile(const Char_t *datapath= "")
 
 
 }
+void EnergyTower2D_Tracks(const Char_t *datapath= "")
+{
+   // gROOT->SetStyle("ATLAS");
+
+   TFile *f = new TFile(datapath);
+
+   TTree *Hits = (TTree*)f->Get("Hits");
+   TTree *Tracks = (TTree*)f->Get("Tracks_true");
+
+   std::vector<double>* Hits_xCellpos = 0;
+   std::vector<double>* Hits_yCellpos = 0;
+   std::vector<double>* Hits_zCellpos = 0;
+   std::vector<double>* Hits_eHit = 0;
+   std::vector<double>* Hits_Sensor = 0;
+
+   Hits->SetBranchAddress("Hits_xCellpos",&Hits_xCellpos);
+   Hits->SetBranchAddress("Hits_yCellpos",&Hits_yCellpos);
+   Hits->SetBranchAddress("Hits_zCellpos",&Hits_zCellpos);
+   Hits->SetBranchAddress("Hits_Sensor",&Hits_Sensor);
+   Hits->SetBranchAddress("Hits_eHit",&Hits_eHit);
+
+   double Track_x;
+   double Track_y;
+
+   Tracks->SetBranchAddress("x",&Track_x);
+   Tracks->SetBranchAddress("y",&Track_y);
+
+   TH2F* hist_s1 = new TH2F("hist_s1","Energies (joined by 4 sectors)",110,90,640,11,-27.5,27.5);
+   // TH1F* hist_s2 = new TH1F("hist","Energies (joined by 4 sectors)",220,90,640,22,-2.75,2.75);
+
+   Int_t nentries = (Int_t)Hits->GetEntries();
+   std::cout<<"Entries: "<<nentries<<" \n";
+   for (Int_t i=0;i<nentries;i++)
+   {
+     Hits->GetEntry(i);
+     int Number_of_Hits = Hits_xCellpos->size();
+     if(Number_of_Hits!=0){
+      for (Int_t j=0;j<Number_of_Hits;j++){
+        // int layer =  ((int) (*Hits_zCell)[j]) - 1;
+        int sensor = ((int) (*Hits_Sensor)[j]);
+        // std::cout<<sensor<<"\n";
+        if(sensor==2)
+        {
+          hist_s1->Fill((*Hits_xCellpos)[j],(*Hits_yCellpos)[j],(*Hits_eHit)[j]);
+          std::cout<<(*Hits_xCellpos)[j]<<"\t"<<(*Hits_yCellpos)[j]<<"\t"<<(*Hits_eHit)[j]<<"\n";
+        }
+
+
+       }
+      }
+     }
+
+
+
+    TFile *out = new TFile("TowerEnergy2D_Tracks.root","RECREATE");
+    out->cd();
+    TCanvas *c1 = new TCanvas("c1","The Ntuple canvas",1500,900);
+    c1->Divide(1,1);
+    c1->cd();
+    c1->SetLogz();
+    hist_s1->SetTitle("Energy Per Tower");
+    hist_s1->GetXaxis()->SetTitle("x [mm]");
+    hist_s1->GetYaxis()->SetTitle("y [mm]");
+    hist_s1->Draw("colz");
+
+    int tr = 0;
+    //Tracks
+    std::vector<TMarker*> Marks;
+    nentries = (Int_t)Tracks->GetEntries();
+    std::cout<<"Entries: "<<nentries<<" \n";
+    for (Int_t i=0;i<nentries;i++)
+    {
+      Tracks->GetEntry(i);
+      std::cout<<Track_x<<"\t"<<Track_y<<"\n";
+      TMarker *m = new TMarker(Track_x, Track_y, 20);
+      Marks.push_back(m);
+      Marks[i]->SetMarkerColor(2);
+      Marks[i]->SetMarkerSize(1);
+      Marks[i]->Draw("same");
+      // std::cout << "Press Enter to Continue";
+      // std::cin.ignore();
+      if(Track_x>0.0) tr++;
+    }
+
+    auto legend = new TLegend(0.7,0.5,0.8,0.6);
+    legend->AddEntry("",Form("Tracks: %d",tr),"");
+    // legend->AddEntry("",Form("number of e^{+}e^{-} in calorimeter: %d",(Int_t)Tracks_true->GetEntries()),"");
+    legend->SetBorderSize(0);
+    legend->SetTextFont(42);
+    legend->SetTextSize(0.04);
+    legend->Draw("");
+
+    c1->Update();
+    std::cout << "Press Enter to Continue";
+    std::cin.ignore();
+    c1->SaveAs("./TowerEnergy2D_Tracks.pdf");
+    c1->Write();
+    out->Close();
+    f->Close();
+}
 
 void PlotLCOut(const Char_t *datapath= "")
 {
+  // const Char_t *datapath = argv[0];
+  // std::cout << argv[0];
   // Build_2DHIts(datapath);
   // EnergyOfx_reco(datapath);
   // EnergyOfx_detector(datapath);
-  Build_Occupancy(datapath);
+  // Build_Occupancy(datapath);
   // build_tracks_flow(datapath);
   // EnergyProfile(datapath);
   // EnergyTower4(datapath);
   // EnergyTower_andInputParticle(datapath);
   //LongitudinalProfile(datapath);
+  EnergyTower2D_Tracks(datapath);
 }

@@ -1,7 +1,8 @@
 #!/bin/zsh
 
 #Setting env
-source /cvmfs/sft.cern.ch/lcg/views/setupViews.sh LCG_91 x86_64-slc6-gcc7-opt
+#source /cvmfs/sft.cern.ch/lcg/views/setupViews.sh LCG_91 x86_64-slc6-gcc7-opt
+source /cvmfs/sft.cern.ch/lcg/views/setupViews.sh LCG_95 x86_64-slc6-gcc7-opt
 WORKDIR=
 
 option=mono
@@ -44,7 +45,7 @@ then
   E_START=5.0 #GeV
   E_END=10.0 #GeV
 
-  MC_NUMBER=1000
+  MC_NUMBER=5000
 
   echo "State: " $E_START $N_NOW $E_END $E_START $NUMBER_OF_STEPS 
   #E_current=$(( $E_START + $N * ($E_END-$E_START) / ($NUMBER_OF_STEPS-2) ))
@@ -57,17 +58,17 @@ then
   sed "s|/lxphoton/gun/MCParticlesFile|#/lxphoton/gun/MCParticlesFile|g;\
        s|/lxphoton/gun/beamType.*|/lxphoton/gun/beamType mono|g;\
        s|/analysis/filename.*|/analysis/filename mono_${E_current}_GeV.root|g;\
-       s|/gun/energy.*|/gun/energy $E_current|g;\
+       s|/gun/energy.*|/gun/energy $E_current GeV|g;\
        s|/run/beamOn.*|/run/beamOn $MC_NUMBER|g\
        " ${WORKDIR}/run_luxe.mac > ${TMP}/run_luxe.mac
 
-  cd ${TMP}
-  ${WORKDIR}/lxbeamsim ${TMP}/run_luxe.mac
-
-  cp ${TMP}/mono_${E_current}_GeV.root ${WORKDIR}/output/ 
-  
-  #cd ${WORKDIR}/output
+  #cd ${TMP}
   #${WORKDIR}/lxbeamsim ${TMP}/run_luxe.mac
+
+  #cp ${TMP}/mono_${E_current}_GeV.root ${WORKDIR}/output/ 
+  
+  cd ${WORKDIR}/output
+  ${WORKDIR}/lxbeamsim ${TMP}/run_luxe.mac
 
   echo $E_current "Run mono done!"
 else

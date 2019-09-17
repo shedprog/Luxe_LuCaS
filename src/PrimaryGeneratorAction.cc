@@ -25,7 +25,7 @@
 //#include <filesystem>
 //namespace fs = std::filesystem;
 #include <libgen.h>
-
+#include "Setup.hh"
 // std::string root_file_name;
 double weight_fromMC;
 
@@ -251,9 +251,15 @@ void PrimaryGeneratorAction::GenerateMono(G4Event* anEvent)
   fParticleGun->GeneratePrimaryVertex(anEvent);
   */
 
-  fz0=fy0 = 0.0;
-  fx0 = 0.0*cm;
+  fz0 = 0.0;
+  //fy0 = 0.0*cm + G4RandFlat::shoot(-Setup::pix_y_size/2.0, Setup::pix_y_size/2.0);;
+  //fx0 = 270.0*mm + G4RandFlat::shoot(-Setup::pix_x_size/2.0, Setup::pix_x_size/2.0);;
 
+  // fy0 = 0.0*cm + G4RandFlat::shoot(-10*mm,10*mm);
+  // fx0 = 270.0*mm + G4RandFlat::shoot(-10*mm, 10*mm);
+
+  fy0 = 0.0;
+  fx0 = 0.0;
 
   G4double mass = fParticleGun->GetParticleDefinition()->GetPDGMass();
   G4double E = fParticleGun->GetParticleEnergy();
