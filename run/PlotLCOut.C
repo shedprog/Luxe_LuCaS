@@ -896,6 +896,58 @@ void EnergyTower2D_Tracks(const Char_t *datapath= "")
     f->Close();
 }
 
+void AllEnergyAbsorbedCheck(const Char_t *datapath= "")
+{
+  // This function check sum of the energy per event
+  // for mono-energetic particles when all the callorimeter
+  // is sat as a sensetice detector
+  // build the difference of hole energy absorbed vs. true
+
+  TFile *f = new TFile(datapath);
+
+  TTree *Hits = (TTree*)f->Get("Hits");
+  TTree *Tracks = (TTree*)f->Get("Tracks_true");
+
+  std::vector<double>* Hits_eHit = 0;
+  Hits->SetBranchAddress("Hits_eHit",&Hits_eHit);
+
+  double track_E;
+  Tracks->SetBranchAddress("E",&track_E);
+
+  TH1F* Ediff = new TH1F("Ediff"," E absorbed - E true for electorns 6.5GeV",100,-3,1);
+
+  Int_t nentries = (Int_t)Hits->GetEntries();
+  std::cout<<"Entries: "<<nentries<<" \n";
+  for (Int_t i=0;i<nentries;i++)
+  {
+    double E_sum = 0.0;
+
+    Hits->GetEntry(i);
+    Tracks->GetEntry(i);
+    int Number_of_Hits = Hits_eHit->size();
+    if(Number_of_Hits!=0){
+     for (Int_t j=0;j<Number_of_Hits;j++){
+
+         E_sum = E_sum + (*Hits_eHit)[j];
+
+      }
+     }
+    std::cout << E_sum << " " << track_E <<"\n";
+    Ediff->Fill(E_sum/1000 - 6.50);
+  }
+
+  TCanvas *c1 = new TCanvas("c1","The Ntuple canvas",1500,900);
+  c1->cd();
+  Ediff->GetXaxis()->SetTitle("E_{true}-E_{track} [GeV]");
+  Ediff->GetYaxis()->SetTitle("Entries");
+  Ediff->Draw();
+  c1->Update();
+  std::cout << "Press Enter to Continue";
+  std::cin.ignore();
+  c1->SaveAs("./AbsorbedVsTrue.pdf");
+
+}
+
 void PlotLCOut(const Char_t *datapath= "")
 {
   // const Char_t *datapath = argv[0];
@@ -909,5 +961,6 @@ void PlotLCOut(const Char_t *datapath= "")
   // EnergyTower4(datapath);
   // EnergyTower_andInputParticle(datapath);
   //LongitudinalProfile(datapath);
-  EnergyTower2D_Tracks(datapath);
+  // EnergyTower2D_Tracks(datapath);
+  AllEnergyAbsorbedCheck(datapath);
 }
