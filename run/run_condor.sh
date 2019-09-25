@@ -23,7 +23,16 @@ then
   file=${LIST[$(($1))]}
 
   echo $file
-  sed "s|/lxphoton/gun/MCParticlesFile.*|/lxphoton/gun/MCParticlesFile $file|g\
+#  sed "s|/lxphoton/gun/MCParticlesFile.*|/lxphoton/gun/MCParticlesFile $file|g\
+#       " ${WORKDIR}/run_luxe.mac > ${TMP}/run_luxe.mac
+  filename=$(basename $file)
+
+
+  sed "s|/lxphoton/gun/MCParticlesFile.*|/lxphoton/gun/MCParticlesFile $file|g;\
+       s|/lxphoton/gun/beamType.*|/lxphoton/gun/beamType mc|g;\
+       s|/analysis/filename.*|/analysis/filename ${filename}.root|g;\
+       s|/gun/energy.*|#/gun/energy|g;\
+       s|/run/beamOn.*|/run/beamOn 1000000000|g\
        " ${WORKDIR}/run_luxe.mac > ${TMP}/run_luxe.mac
 
   # mkdir -p ${WORKDIR}/rootOUT

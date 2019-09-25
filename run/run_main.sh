@@ -40,8 +40,8 @@ while test $# -gt 0; do
             mkdir -p $OUTDIR/condor/err
             mkdir -p $OUTDIR/condor/out
 
-            # number=`cat $LIST | wc -l`
-            number=200
+            number=`cat $LIST | wc -l`
+            #number=200
             echo 'number of file: '$number
 
             sed "s|JOBS_NUMBER|$number|g;\
@@ -54,7 +54,7 @@ while test $# -gt 0; do
             	  " $WORKDIR/run_condor.sh > $OUTDIR/run_condor.sh
 
 	        ln -s $WORKDIR/lxbeamsim $OUTDIR/
-	        cp $WORKDIR/luxe_gamma_new.mac $OUTDIR/
+	        cp $WORKDIR/run_luxe.mac $OUTDIR/
 
             cd $OUTDIR
            	condor_submit $OUTDIR/QA.job

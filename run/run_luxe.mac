@@ -11,23 +11,15 @@
 #/lxphoton/gun/beamType   gaussian
 /lxphoton/gun/beamType   mc
 
-#/lxphoton/gun/MCParticlesFileList mc_list_out.txt
+
 #/lxphoton/gun/MCParticlesFileList /data/Projects_physics/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_1.0J.out
-#/lxphoton/gun/MCParticlesFile /data/Projects_physics/LUXE/IPstrong/bppp_17.5GeV/5mfoiltoIP/Enelas_1.0J/luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_run_000901_to_1000/IPstrong_luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_particles_run_001000.out
-
-# /lxphoton/gun/MCParticlesFile /data/Projects_physics/LUXE/IPstrong/./bppp_17.5GeV/5mfoiltoIP/Enelas_1.0J/luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_run_000901_to_1000/IPstrong_luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_particles_run_000999.out
-# /lxphoton/gun/MCParticlesFile/data/Projects_physics/LUXE/IPstrong/./bppp_17.5GeV/5mfoiltoIP/Enelas_1.0J/luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_run_000901_to_1000/IPstrong_luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_particles_run_000987.out
-
-# ~~~~~~~~~~~~~~~~~Try 3 different~~~~~~~~~~~~~~~~~~~
-/lxphoton/gun/MCParticlesFile /data/Projects_physics/LUXE/IPstrong/bppp_17.5GeV/5mfoiltoIP/Enelas_1.0J/luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_run_000001_to_100/IPstrong_luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_particles_run_000001.out
-#/lxphoton/gun/MCParticlesFile /data/Projects_physics/LUXE/IPstrong/./bppp_17.5GeV/5mfoiltoIP/Enelas_0.85J/luxe_Jan2019_Enelas_0.85J_bppp_5mfoiltoIP_run_000001_to_100/IPstrong_luxe_Jan2019_Enelas_0.85J_bppp_5mfoiltoIP_particles_run_000001.out
-#/lxphoton/gun/MCParticlesFile /data/Projects_physics/LUXE/IPstrong/bppp_17.5GeV/5mfoiltoIP/Enelas_0.7J/luxe_Jan2019_Enelas_0.7J_bppp_5mfoiltoIP_run_000001_to_100/IPstrong_luxe_Jan2019_Enelas_0.7J_bppp_5mfoiltoIP_particles_run_000001.out
+/lxphoton/gun/MCParticlesFile /data/Projects_physics/LUXE/IPstrong/bppp_17.5GeV/5mfoiltoIP/Enelas_1.0J/luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_run_000901_to_1000/IPstrong_luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_particles_run_001000.out
 
 /analysis/filename IPstrong_luxe_Jan2019_Enelas_1.0J_bppp_5mfoiltoIP_particles_run_000001.root
 
-/gun/particle  e-
+#/gun/particle  e-
 #/gun/particle  gamma
-/gun/energy    6.5 GeV
+#/gun/energy    6.5 GeV
 
 
 # Run
