@@ -78,7 +78,7 @@
 #include "LCSensitiveDetector.hh"
 #include "DetectorConstruction.hh"
 // #include "DetectorMessenger.hh"
-
+#include "G4LogicalVolumeStore.hh"
 //----------------------------------------
 //// DESY 2016 Prototype test beam
 //----------------------------------------
@@ -168,6 +168,14 @@ G4cout<< ".......... done! " << G4endl;
  std::cout << "-------------------------------------------------" << std::endl;
  std::cout << "-----------    building air base units           : "    << std::endl;
  std::cout << "-------------------------------------------------" << std::endl;
+
+  //Test Plane "Telescope"
+  G4Box *solidBaseUnit_T = new G4Box ( "solidBaseUnit_T", base_airx, base_airy, airhz );
+  G4LogicalVolume *logicBaseUnit_T = new G4LogicalVolume (solidBaseUnit_T, Air, "logicBaseUnit_T", 0, 0, 0);//1
+  logicBaseUnit_T->SetVisAttributes( G4VisAttributes::Invisible );
+  G4VisAttributes *TestPlane = new G4VisAttributes(G4Colour(0.0,1.0,0.0));
+  logicBaseUnit_T->SetVisAttributes(TestPlane);
+
 
   G4Box *solidBaseUnit_S = new G4Box ( "solidBaseUnit_P", base_airx, base_airy, airhz );
   G4LogicalVolume *logicBaseUnit_S = new G4LogicalVolume (solidBaseUnit_S, Air, "logicBaseUnit", 0, 0, 0);//1
@@ -474,6 +482,13 @@ std::string delimiter = ":";
       zposLC= zposLC+ 2*airhz + DUTextrahz;
       iplacelayer++;
       }
+  else if (sub == "T") {
+      placement_name << "DUTAS" << iplacelayer;
+      new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC+ypos_stag[iplacelayer], zposLC + airhz),logicBaseUnit_T, placement_name.str().c_str(), logicWorld, 0, iplacelayer+1, overlap_check);
+      G4cout<< " placed "<<iplaceElements << " as sensor number  : " << iplacelayer<< " at z = " << zposLC<<" layer with name "<< placement_name.str().c_str() << G4endl;
+      zposLC= zposLC+ 2*airhz + DUTextrahz;
+      iplacelayer++;
+      }
 	else if (sub == "AS") {
 			placement_name << "DUTAS" << iplacelayer;
 			new  G4PVPlacement ( 0, G4ThreeVector( 0., zyposLC+ypos_stag[iplacelayer], zposLC + airhz),logicBaseUnit, placement_name.str().c_str(), logicWorld, 0, iplacelayer+1, overlap_check);
@@ -568,6 +583,7 @@ std::string delimiter = ":";
     SDman->AddNewDetector(SensDet);
     // the Cells are the sensitive detectors
     logicSensorV->SetSensitiveDetector(SensDet);
+    // logicBaseUnit_T->SetSensitiveDetector(SensDet);
 
     // if ( VirtualCell )  logicSensorV->SetSensitiveDetector( SensDet );
     //   //logicCell->SetSensitiveDetector(SensDet);

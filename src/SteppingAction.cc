@@ -33,7 +33,7 @@
 #include "SteppingAction.hh"
 #include "G4LogicalVolumeStore.hh"
 #include "G4LogicalVolume.hh"
-
+#include "GlobalVars.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -62,50 +62,7 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep)
   if(PDG==22) return;
   if(theTrack->GetParentID() != 0) return;
 
-  //Use Test plane
   fTestPlaneVolume = G4LogicalVolumeStore::GetInstance()->GetVolume("TestPlane");
-
-  // G4ParticleDefinition* particleType = theTrack->GetDefinition();
-
-  // // check if it is entering the test volume
-  // G4StepPoint* thePrePoint = theStep->GetPreStepPoint();
-  // G4VPhysicalVolume* thePrePV = thePrePoint->GetPhysicalVolume();
-  // G4LogicalVolume* thePreLV = thePrePV->GetLogicalVolume();
-
-  // G4LogicalVolume* thePostLV = 0;
-  // G4StepPoint* thePostPoint = theStep->GetPostStepPoint();
-  // if (thePostPoint) {
-  //    G4VPhysicalVolume* thePostPV = thePostPoint->GetPhysicalVolume();
-  //    if (thePostPV) thePostLV = thePostPV->GetLogicalVolume();
-  // }
-
-  // if (thePostLV == fTestPlaneVolume and
-  //     thePreLV  != fTestPlaneVolume) {
-
-  //   G4double x = theTrack->GetPosition().x();
-  //   G4double y = theTrack->GetPosition().y();
-  //   G4double z = theTrack->GetPosition().z();
-
-  //   G4double E = theTrack->GetKineticEnergy();
-    
-  //   G4ThreeVector theMomentumDirection = theTrack->GetDynamicParticle()->GetMomentumDirection();
-
-  //   G4double Mx = theMomentumDirection.x();
-  //   G4double My = theMomentumDirection.y();
-  //   G4double Mz = theMomentumDirection.z();
-  //   // std::cout << "PDG" <<PDG <<" "<< theTrack->GetParentID() <<"\n";
-  //   // std::cout<<"SteppingAction: "<< x << " " << y << " " << z;
-
-  //   RootOut->TestPlaneFill(x,y,z,Mx,My,Mz,E,PDG);
-
-  //   return;
-
-  // }
-
-  //Use First silicon layer as test plane
-  // fTestPlaneVolume = G4LogicalVolumeStore::GetInstance()->GetVolume("LumiCal");
-  // G4Track* theTrack = aStep->GetTrack();
-
   G4ParticleDefinition* particleType = theTrack->GetDefinition();
 
   // check if it is entering the test volume
@@ -128,21 +85,65 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep)
     G4double z = theTrack->GetPosition().z();
 
     G4double E = theTrack->GetKineticEnergy();
-    
+
     G4ThreeVector theMomentumDirection = theTrack->GetDynamicParticle()->GetMomentumDirection();
 
     G4double Mx = theMomentumDirection.x();
     G4double My = theMomentumDirection.y();
     G4double Mz = theMomentumDirection.z();
     // std::cout << "PDG" <<PDG <<" "<< theTrack->GetParentID() <<"\n";
-    
+
     // std::cout<<"SteppingAction: "<< x << " " << y << " " << z;
     // std::cout << "Press Enter to Continue";
     // std::cin.ignore();
-    
-    RootOut->TestPlaneFill(x,y,z,Mx,My,Mz,E,PDG);
 
-    return;
+    RootOut->TestPlaneFill(x,y,z,Mx,My,Mz,E,PDG);
+  }
+
+
+  auto event = G4EventManager::GetEventManager()->GetConstCurrentEvent();
+  // auto evtNb = event->GetEventID();
+  auto eventNb = event->GetEventID();
+
+  auto SensorTestPlaneVolume = G4LogicalVolumeStore::GetInstance()->GetVolume("logicBaseUnit_T");
+
+  if (thePostLV == SensorTestPlaneVolume and
+      thePreLV  != SensorTestPlaneVolume) {
+
+        G4double x = theTrack->GetPosition().x();
+        G4double y = theTrack->GetPosition().y();
+        G4double z = theTrack->GetPosition().z();
+
+        G4double E = theTrack->GetKineticEnergy();
+
+        G4ThreeVector theMomentumDirection = theTrack->GetDynamicParticle()->GetMomentumDirection();
+
+        G4double Mx = theMomentumDirection.x();
+        G4double My = theMomentumDirection.y();
+        G4double Mz = theMomentumDirection.z();
+
+        // std::cout << "PDG" <<PDG <<" "<< theTrack->GetParentID() <<"\n";
+        // std::cout<<"SteppingAction: "<< x << " " << y << " " << z<<"\n";
+        // std::cout << "Press Enter to Continue";
+        // std::cin.ignore();
+
+
+        G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+        analysisManager->FillNtupleDColumn(3,0, x);
+        analysisManager->FillNtupleDColumn(3,1, y);
+        analysisManager->FillNtupleDColumn(3,2, z);
+        analysisManager->FillNtupleDColumn(3,3, Mx);
+        analysisManager->FillNtupleDColumn(3,4, My);
+        analysisManager->FillNtupleDColumn(3,5, Mz);
+        analysisManager->FillNtupleDColumn(3,6, E);
+        analysisManager->FillNtupleIColumn(3,7, PDG);
+        // analysisManager->FillNtupleIColumn(3,8, cell_num);
+        // analysisManager->FillNtupleIColumn(3,9, sector_num);
+        // analysisManager->FillNtupleIColumn(3,10,layer_num);
+        // analysisManager->FillNtupleIColumn(3,11,LC_num);
+        analysisManager->FillNtupleDColumn(3,12,weight_fromMC);
+        analysisManager->FillNtupleIColumn(3,13,eventNb);
+        analysisManager->AddNtupleRow(3);
 
   }
 

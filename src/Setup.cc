@@ -70,7 +70,7 @@ G4double Setup::LHcal_Region_Cut = 1.;
 G4double Setup::BCal_Region_Cut  = 1.;
 G4double Setup::Mask_Region_Cut  = 1.;
 // G4String Setup::TBeam_senrio = "APS APS APS APS APS APS APS APS APS APS APS APS";
-G4String Setup::TBeam_senrio = "S AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS";
+G4String Setup::TBeam_senrio = "T AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS AS";
 //-----------------------------------------------------------
 //   for beam pipe
 //

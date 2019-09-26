@@ -20,6 +20,7 @@
 #include "g4root.hh"
 #include "G4EventManager.hh"
 #include "G4Event.hh"
+#include "G4LogicalVolumeStore.hh"
 
 #include "GlobalVars.hh"
 
@@ -319,65 +320,78 @@ G4ThreeVector GlobalCellPos = theTouchable->GetHistory()->GetTopTransform().Inve
         hitMap->insert(LCHitMapPair(cellID.id0, theHit));
     }
 
-    // ~~~~~~~~~~~~~~~~~~Added "Tracker" as the first layer of silicon~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    auto event = G4EventManager::GetEventManager()->GetConstCurrentEvent();
-    // auto evtNb = event->GetEventID();
-    auto eventNb = event->GetEventID();
-
-    G4Track* theTrack = aStep->GetTrack();
-    // check if it is entering the test volume
-    G4StepPoint* thePrePoint = aStep->GetPreStepPoint();
-    G4VPhysicalVolume* thePrePV = thePrePoint->GetPhysicalVolume();
-    G4LogicalVolume* thePreLV = thePrePV->GetLogicalVolume();
-
-    G4LogicalVolume* thePostLV = 0;
-    G4StepPoint* thePostPoint = aStep->GetPostStepPoint();
-    if (thePostPoint) {
-       G4VPhysicalVolume* thePostPV = thePostPoint->GetPhysicalVolume();
-       if (thePostPV) thePostLV = thePostPV->GetLogicalVolume();
-    }
-
-    if (thePostLV != thePreLV and
-        theTrack->GetParentID()==0 and
-        PDG!=22 and
-        layer_num==1) {
-
-          G4double x = theTrack->GetPosition().x();
-          G4double y = theTrack->GetPosition().y();
-          G4double z = theTrack->GetPosition().z();
-
-          G4double E = theTrack->GetKineticEnergy();
-
-          G4ThreeVector theMomentumDirection = theTrack->GetDynamicParticle()->GetMomentumDirection();
-
-          G4double Mx = theMomentumDirection.x();
-          G4double My = theMomentumDirection.y();
-          G4double Mz = theMomentumDirection.z();
-
-          // std::cout << "PDG" <<PDG <<" "<< theTrack->GetParentID() <<"\n";
-          // std::cout<<"SteppingAction: "<< x << " " << y << " " << z<<"\n";
-          // std::cout << "Press Enter to Continue";
-          // std::cin.ignore();
-
-
-          G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-          analysisManager->FillNtupleDColumn(3,0, x);
-          analysisManager->FillNtupleDColumn(3,1, y);
-          analysisManager->FillNtupleDColumn(3,2, z);
-          analysisManager->FillNtupleDColumn(3,3, Mx);
-          analysisManager->FillNtupleDColumn(3,4, My);
-          analysisManager->FillNtupleDColumn(3,5, Mz);
-          analysisManager->FillNtupleDColumn(3,6, E);
-          analysisManager->FillNtupleIColumn(3,7, PDG);
-          analysisManager->FillNtupleIColumn(3,8, cell_num);
-          analysisManager->FillNtupleIColumn(3,9, sector_num);
-          analysisManager->FillNtupleIColumn(3,10,layer_num);
-          analysisManager->FillNtupleIColumn(3,11,LC_num);
-          analysisManager->FillNtupleDColumn(3,12,weight_fromMC);
-          analysisManager->FillNtupleIColumn(3,13,eventNb);
-          analysisManager->AddNtupleRow(3);
-
-    }
+    // // ~~~~~~~~~~~~~~~~~~Added "Tracker" as the first layer of silicon~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // auto event = G4EventManager::GetEventManager()->GetConstCurrentEvent();
+    // // auto evtNb = event->GetEventID();
+    // auto eventNb = event->GetEventID();
+    //
+    // G4Track* theTrack = aStep->GetTrack();
+    // // check if it is entering the test volume
+    // G4StepPoint* thePrePoint = aStep->GetPreStepPoint();
+    // G4VPhysicalVolume* thePrePV = thePrePoint->GetPhysicalVolume();
+    // G4LogicalVolume* thePreLV = thePrePV->GetLogicalVolume();
+    //
+    // G4LogicalVolume* thePostLV = 0;
+    // G4StepPoint* thePostPoint = aStep->GetPostStepPoint();
+    // if (thePostPoint) {
+    //    G4VPhysicalVolume* thePostPV = thePostPoint->GetPhysicalVolume();
+    //    if (thePostPV) thePostLV = thePostPV->GetLogicalVolume();
+    // }
+    // auto fTestPlaneVolume = G4LogicalVolumeStore::GetInstance()->GetVolume("logicBaseUnit_T");
+    //
+    // if (thePostLV == fTestPlaneVolume)
+    // {
+    //   std::cout << "GlobalHitPosition " << GlobalHitPos/mm <<" mm" << G4endl;
+    //
+    //   std::cout << "LCAL arm : " << LC_num
+    //             << " Layer: "     << layer_num
+    //             << " Sector: "    << sector_num
+    //             << " Cell: "      << cell_num
+    //             << G4endl;
+    //
+    //   std::cout << "Press Enter to Continue";
+    //   std::cin.ignore();
+    // }
+    //
+    // if (thePostLV == fTestPlaneVolume and
+    //     thePreLV  != fTestPlaneVolume) {
+    //
+    //       G4double x = theTrack->GetPosition().x();
+    //       G4double y = theTrack->GetPosition().y();
+    //       G4double z = theTrack->GetPosition().z();
+    //
+    //       G4double E = theTrack->GetKineticEnergy();
+    //
+    //       G4ThreeVector theMomentumDirection = theTrack->GetDynamicParticle()->GetMomentumDirection();
+    //
+    //       G4double Mx = theMomentumDirection.x();
+    //       G4double My = theMomentumDirection.y();
+    //       G4double Mz = theMomentumDirection.z();
+    //
+    //       // std::cout << "PDG" <<PDG <<" "<< theTrack->GetParentID() <<"\n";
+    //       // std::cout<<"SteppingAction: "<< x << " " << y << " " << z<<"\n";
+    //       // std::cout << "Press Enter to Continue";
+    //       // std::cin.ignore();
+    //
+    //
+    //       G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+    //       analysisManager->FillNtupleDColumn(3,0, x);
+    //       analysisManager->FillNtupleDColumn(3,1, y);
+    //       analysisManager->FillNtupleDColumn(3,2, z);
+    //       analysisManager->FillNtupleDColumn(3,3, Mx);
+    //       analysisManager->FillNtupleDColumn(3,4, My);
+    //       analysisManager->FillNtupleDColumn(3,5, Mz);
+    //       analysisManager->FillNtupleDColumn(3,6, E);
+    //       analysisManager->FillNtupleIColumn(3,7, PDG);
+    //       analysisManager->FillNtupleIColumn(3,8, cell_num);
+    //       analysisManager->FillNtupleIColumn(3,9, sector_num);
+    //       analysisManager->FillNtupleIColumn(3,10,layer_num);
+    //       analysisManager->FillNtupleIColumn(3,11,LC_num);
+    //       analysisManager->FillNtupleDColumn(3,12,weight_fromMC);
+    //       analysisManager->FillNtupleIColumn(3,13,eventNb);
+    //       analysisManager->AddNtupleRow(3);
+    //
+    // }
 
 
     return true;

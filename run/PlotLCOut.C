@@ -948,6 +948,63 @@ void AllEnergyAbsorbedCheck(const Char_t *datapath= "")
 
 }
 
+void Build3DShowers(const Char_t *datapath= "")
+{
+
+  gROOT->SetStyle("ATLAS");
+
+  TFile *f = new TFile(datapath);
+
+  TTree *Hits = (TTree*)f->Get("Hits");
+
+  std::vector<double>* Hits_xHit = 0;
+  std::vector<double>* Hits_yHit = 0;
+  std::vector<double>* Hits_zHit = 0;
+  std::vector<double>* Hits_eHit = 0;
+  std::vector<double>* Hits_Sensor = 0;
+
+  Hits->SetBranchAddress("Hits_xHit",&Hits_xHit);
+  Hits->SetBranchAddress("Hits_yHit",&Hits_yHit);
+  Hits->SetBranchAddress("Hits_zHit",&Hits_zHit);
+  Hits->SetBranchAddress("Hits_Sensor",&Hits_Sensor);
+  Hits->SetBranchAddress("Hits_eHit",&Hits_eHit);
+
+  auto h3scat = new TH3F("h3scat","Option SCAT (default) ",110,100.0,650.0,110,-275,275,21,5000,5100);
+
+  Int_t nentries = (Int_t)Hits->GetEntries();
+  std::cout<<"Entries: "<<nentries<<" \n";
+  for (Int_t i=0;i<nentries;i++)
+  {
+    Hits->GetEntry(i);
+    int Number_of_Hits = Hits_xHit->size();
+    if(Number_of_Hits!=0){
+     for (Int_t j=0;j<Number_of_Hits;j++){
+       // int layer =  ((int) (*Hits_zCell)[j]) - 1;
+       int sensor = ((int) (*Hits_Sensor)[j]);
+       // std::cout<<sensor<<"\n";
+       if(sensor==2)
+       {
+        h3scat->Fill((*Hits_xHit)[j],(*Hits_yHit)[j],(*Hits_zHit)[j]);
+       }
+
+
+      }
+     }
+    }
+
+  auto c1= new TCanvas("c06","c06",1000,1000);
+  // c1->cd();
+  gStyle->SetOptStat(kFALSE);
+  // h3scat->SetMarkerColor(2);
+  // h3scat->SetMarkerSize(0.5);
+  // h3scat->SetMarkerStyle(8);
+  h3scat->Draw("BOX2 Z");
+  c1->Update();
+  std::cout << "Press Enter to Continue";
+  std::cin.ignore();
+  c1->SaveAs("test.root");
+}
+
 void PlotLCOut(const Char_t *datapath= "")
 {
   // const Char_t *datapath = argv[0];
@@ -962,5 +1019,6 @@ void PlotLCOut(const Char_t *datapath= "")
   // EnergyTower_andInputParticle(datapath);
   //LongitudinalProfile(datapath);
   // EnergyTower2D_Tracks(datapath);
-  AllEnergyAbsorbedCheck(datapath);
+  // AllEnergyAbsorbedCheck(datapath);
+  Build3DShowers(datapath);
 }
