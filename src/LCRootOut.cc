@@ -128,6 +128,10 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
 {
     G4int eventID = event->GetEventID();
 
+    // std::cout<<"Processed ProcessEvent with eventID: "<< eventID << "\n";
+    // std::cout << "Press Enter to Continue";
+    // std::cin.ignore();
+
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 
     double numHits = 0;
@@ -195,7 +199,7 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
     if( collection ){
 
     numHits = collection->entries();
-    //std::cout<<numHits<<"\n";
+    // std::cout<<numHits<<"\n";
     G4int i = 0;
 
     while ( i < numHits){
@@ -255,6 +259,8 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
       Hits_yCellpos_.push_back(yCellpos);
       Hits_zCellpos_.push_back(zCellpos);
 
+      // std::cout<<eHit<<"\n";
+
       i++;
     }
 
@@ -303,6 +309,10 @@ void LCRootOut::ProcessEvent(const G4Event* event, LCHitsCollection *collection)
 void LCRootOut::TestPlaneFill(G4double x ,G4double y ,G4double z,G4double Mx ,G4double My ,G4double Mz,G4double E,G4int PDG){
 
   G4int evtNb = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
+  // std::cout<<"Processed TestPlaneFill with eventID: "<< evtNb << "\n";
+  // std::cout << "Press Enter to Continue";
+  // std::cin.ignore();
+
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
   analysisManager->FillNtupleDColumn(4,0, x);
   analysisManager->FillNtupleDColumn(4,1, y);

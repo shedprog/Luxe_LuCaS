@@ -58,9 +58,32 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep)
 
   G4Track* theTrack = theStep->GetTrack();
   G4int PDG = theTrack->GetDynamicParticle()->GetPDGcode();
+  // if(PDG!=-11 and PDG!=11){
+  //   std::cout << "initial non electron detected!\n" << PDG << "\n";
+  //   G4ThreeVector theMomentumDirection = theTrack->GetDynamicParticle()->GetMomentumDirection();
+  //   G4double Mx = theMomentumDirection.x();
+  //   G4double My = theMomentumDirection.y();
+  //   G4double Mz = theMomentumDirection.z();
+  //   std::cout<<"Moment: "<< Mx << " " << My << " " << Mz<<"\n";
+  //
+  //   G4ThreeVector vertex_pos = theTrack->GetVertexPosition();
+  //   G4double x = vertex_pos.x();
+  //   G4double y = vertex_pos.y();
+  //   G4double z = vertex_pos.z();
+  //   std::cout<<"Vertex: " << x << " " << y << " " << z<<"\n";
+  //
+  //   G4double xp = theTrack->GetPosition().x();
+  //   G4double yp = theTrack->GetPosition().y();
+  //   G4double zp = theTrack->GetPosition().z();
+  //   std::cout<<"Pos: "<< xp << " " << yp << " " << zp <<"\n";
+  //
+  //   std::cout << "Press Enter to Continue";
+  //   std::cin.ignore();
+  // };
 
-  if(PDG==22) return;
-  if(theTrack->GetParentID() != 0) return;
+  if(theTrack->GetDynamicParticle()->GetMomentumDirection().z()<=0.0) return;
+  // if(PDG==22) return;
+  // if(theTrack->GetParentID() != 0) return;
 
   fTestPlaneVolume = G4LogicalVolumeStore::GetInstance()->GetVolume("TestPlane");
   G4ParticleDefinition* particleType = theTrack->GetDefinition();
@@ -91,11 +114,14 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep)
     G4double Mx = theMomentumDirection.x();
     G4double My = theMomentumDirection.y();
     G4double Mz = theMomentumDirection.z();
-    // std::cout << "PDG" <<PDG <<" "<< theTrack->GetParentID() <<"\n";
 
-    // std::cout<<"SteppingAction: "<< x << " " << y << " " << z;
+    // if(PDG!=11 and PDG!=-11 and Mz>=0.0){
+    // std::cout << "\n PDG: " <<PDG <<" "<< theTrack->GetParentID() <<"\n";
+    // std::cout<<"Moment: "<< Mx << " " << My << " " << Mz<<"\n";
+    // std::cout<<"SteppingAction: "<< x << " " << y << " " << z<<"\n";
     // std::cout << "Press Enter to Continue";
     // std::cin.ignore();
+    // }
 
     RootOut->TestPlaneFill(x,y,z,Mx,My,Mz,E,PDG);
   }
@@ -110,19 +136,30 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep)
   if (thePostLV == SensorTestPlaneVolume and
       thePreLV  != SensorTestPlaneVolume) {
 
+        // std::cout<<"Taken logicBaseUnit_T Track with eventID: "<< eventNb << "\n";
+        // std::cout << "Press Enter to Continue";
+        // std::cin.ignore();
+
         G4double x = theTrack->GetPosition().x();
         G4double y = theTrack->GetPosition().y();
         G4double z = theTrack->GetPosition().z();
 
         G4double E = theTrack->GetKineticEnergy();
 
-        G4ThreeVector theMomentumDirection = theTrack->GetDynamicParticle()->GetMomentumDirection();
+        // G4ThreeVector theMomentumDirection = theTrack->GetDynamicParticle()->GetMomentumDirection();
+        //
+        // G4double Mx = theMomentumDirection.x();
+        // G4double My = theMomentumDirection.y();
+        // G4double Mz = theMomentumDirection.z();
 
+        G4ThreeVector theMomentumDirection = theTrack->GetDynamicParticle()->GetMomentumDirection();
         G4double Mx = theMomentumDirection.x();
         G4double My = theMomentumDirection.y();
         G4double Mz = theMomentumDirection.z();
 
-        // std::cout << "PDG" <<PDG <<" "<< theTrack->GetParentID() <<"\n";
+
+        // std::cout << "\n PDG: " <<PDG <<" "<< theTrack->GetParentID() <<"\n";
+        // std::cout<<"Moment: "<< Mx << " " << My << " " << Mz<<"\n";
         // std::cout<<"SteppingAction: "<< x << " " << y << " " << z<<"\n";
         // std::cout << "Press Enter to Continue";
         // std::cin.ignore();

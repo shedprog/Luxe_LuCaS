@@ -225,6 +225,16 @@ G4bool LCSensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *)
         cell_num = (G4int)floor( X / f_dCellX );
         sector_num = (G4int)floor( Y / f_dCellY );
 
+        //~~~~~~~~~Simulaton of dead areas~~~~~~~~~~~
+        if (Setup::isDeadAreas)
+        {
+          G4double deadX_ = Setup::deadX;
+          G4double deadY_ = Setup::deadY;
+
+          if( (X < ( f_dCellX*cell_num + deadX_)) || (X > ( f_dCellX*(cell_num+1) - deadX_))) return true;
+          if( (Y < ( f_dCellY*sector_num + deadY_ )) || (Y > ( f_dCellY*(sector_num+1) - deadY_ ))) return true;
+        }
+
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ rectamgle calorimeter END
         // std::cout << "LocalHitPosition " << LocalHitPos/mm <<" mm" << G4endl;
         // std::cout << "GlobalHitPosition " << GlobalHitPos/mm <<" mm" << G4endl;

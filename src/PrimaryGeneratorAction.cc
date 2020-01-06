@@ -217,8 +217,8 @@ void PrimaryGeneratorAction::GenerateGaussian(G4Event* anEvent)
   G4double z0=0.0;
 
   G4double mass = fParticleGun->GetParticleDefinition()->GetPDGMass();
-  G4double E = fParticleGun->GetParticleEnergy();
-  E = G4RandFlat::shoot(4000.,13000);
+  // G4double E = fParticleGun->GetParticleEnergy();
+  G4double E = G4RandFlat::shoot(4000.,13000);
 
   // G4double pz = sqrt( (E*E - mass*mass) );
 
@@ -234,37 +234,21 @@ void PrimaryGeneratorAction::GenerateGaussian(G4Event* anEvent)
 void PrimaryGeneratorAction::GenerateMono(G4Event* anEvent)
 {
 
-  /*
-  G4double zshift = -20.0*cm;
-  if (zshift > fDetector->GetzstartAbs()) {
-    zshift = 0.5 * (fDetector->GetzstartAbs() - 0.5 * fDetector->GetWorldSizeZ());
-  }
-  fz0 = zshift;  // in SetDefaultKinematic fDetector is before update from the config file.
-  fx0 = fy0 = 0.0;
-
-  G4double mass = fParticleGun->GetParticleDefinition()->GetPDGMass();
-  G4double E = fParticleGun->GetParticleEnergy();
-  G4double pz = sqrt(E*E - mass*mass);
-
-  fParticleGun->SetParticlePosition(G4ThreeVector(fx0, fy0, fz0));
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.0, 0.0, pz));
-  fParticleGun->GeneratePrimaryVertex(anEvent);
-  */
-
   fz0 = 0.0;
-  //fy0 = 0.0*cm + G4RandFlat::shoot(-Setup::pix_y_size/2.0, Setup::pix_y_size/2.0);;
-  //fx0 = 270.0*mm + G4RandFlat::shoot(-Setup::pix_x_size/2.0, Setup::pix_x_size/2.0);;
+  fy0 = 0.0*cm + G4RandFlat::shoot(-Setup::pix_y_size/2.0, Setup::pix_y_size/2.0);
+  fx0 = 370.0*mm + G4RandFlat::shoot(-Setup::pix_x_size/2.0, Setup::pix_x_size/2.0);
 
-  // fy0 = 0.0*cm + G4RandFlat::shoot(-10*mm,10*mm);
-  // fx0 = 270.0*mm + G4RandFlat::shoot(-10*mm, 10*mm);
-
-  fy0 = 0.0;
-  fx0 = 0.0;
+  // fy0 = 0.0*mm;
+  // fx0 = 370.0*mm;
+  // fz0 = 0.0*mm;
 
   G4double mass = fParticleGun->GetParticleDefinition()->GetPDGMass();
   G4double E = fParticleGun->GetParticleEnergy();
+  // G4double E = G4RandFlat::shoot(1.*GeV,13.*GeV);
   G4double pz = sqrt(E*E - mass*mass);
+  std::cout << "E: " << E <<" "<<"pz: "<<pz<<"\n";
 
+  fParticleGun->SetParticleEnergy(E);
   fParticleGun->SetParticlePosition(G4ThreeVector(fx0, fy0, fz0));
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.0, 0.0, pz));
   fParticleGun->GeneratePrimaryVertex(anEvent);
@@ -288,6 +272,7 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
   }
 
   if (fnfixparticles > 0) {
+    std::cout << "Generating wrong\n";
     --fnfixparticles;
     fParticleGun->GeneratePrimaryVertex(anEvent);
     return;
@@ -333,6 +318,7 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
     if (pid == 11)  { particle = particleTable->FindParticle("e-"); }
     else if (pid == -11) { particle = particleTable->FindParticle("e+"); }
     else if (pid == 22)  { particle = particleTable->FindParticle("gamma"); }
+    // else if (pid == 22)  { return; }
     else {
       G4String msgstr("Error setting initial particle from a file!\n");
       G4Exception("PrimaryGeneratorAction::", "GeneratefromMC(Event)", FatalException, msgstr.c_str());
@@ -388,8 +374,9 @@ void PrimaryGeneratorAction::GeneratefromMC(G4Event* anEvent)
     fnfixparticles = 0;
   // }
 
-  //std::cout << "Generating " <<pid<<" "<< static_cast<int>(wght) << " particle with following mC data:\n";
+  std::cout << "Generating " <<pid<<"\n";
   fParticleGun->GeneratePrimaryVertex(anEvent);
+  std::cout << "Generated particle: " << pid << "\n";
   //std::for_each(pdata.begin(), pdata.end(), [](const double x){std::cout << x << "  ";});
   //std::cout << std::endl;
 }

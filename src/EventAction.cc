@@ -35,7 +35,7 @@ EventAction::EventAction() : G4UserEventAction()
 	RootOut = 0;
 }
 
-EventAction::EventAction(LCRootOut * RO) :G4UserEventAction()
+EventAction::EventAction(LCRootOut * RO) : G4UserEventAction()
 {
 	// std::cout<<"@@@@@@@@@@@@@@@@@@@@ Event action Init\n";
 	collID = -1;

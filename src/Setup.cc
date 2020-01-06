@@ -33,6 +33,10 @@
 G4double Setup::pix_x_size = 5.0 *mm;
 G4double Setup::pix_y_size = 5.0 *mm;
 
+G4bool Setup::isDeadAreas = false;
+G4double Setup::deadX = 0.1*mm;
+G4double Setup::deadY = 0.1*mm;
+
 Setup* Setup::theSetup = NULL;
 clock_t Setup::StartTime;
 G4int   Setup::LogFreq = 10;

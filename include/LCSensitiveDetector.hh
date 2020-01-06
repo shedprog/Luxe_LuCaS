@@ -66,7 +66,7 @@ public:
     // void SaveAll();
 
 private:
-	G4String collName; // the name of the collection - "LumiCalSD_HC"
+	  G4String collName; // the name of the collection - "LumiCalSD_HC"
 
     // Set methods for SD primary parameters - the volumes that make up LC
     // void SetNCellPhi(G4int nx);

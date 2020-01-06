@@ -34,6 +34,9 @@ public:
   //New calorimeter setups
   static G4double pix_x_size;
   static G4double pix_y_size;
+  static G4bool isDeadAreas;
+  static G4double deadX;
+  static G4double deadY;
   //-----------------------------------
   //  globals
   //-----------------------------------

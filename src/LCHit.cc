@@ -30,7 +30,6 @@ G4Allocator<LCHit> LCHitAllocator;
 
 // constructor defined in the header
 
-
 //destructor
 LCHit::~LCHit()
 {
@@ -74,13 +73,13 @@ void LCHit::Draw()
     }
 }
 void LCHit::Print()
-{  
+{
    PrimaryIDMapIterator iter;
    PrimaryIDMapIterator ite0 = trackIDs->begin();
    if( ite0 != trackIDs->end() )
    G4cout << " Tracks contributed to hit : " << G4endl;
    for (iter=ite0 ; iter != trackIDs->end(); iter++)
-     { 
+     {
        G4int PID = ( iter->first );
        G4int PDG = ( iter->second);
        G4cout<<"     ID: "<<PID<<"  PDG: "<<PDG<<G4endl;
