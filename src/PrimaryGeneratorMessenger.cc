@@ -16,55 +16,68 @@
 PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(
                                              PrimaryGeneratorAction* Gun)
 :G4UImessenger(),fAction(Gun),
- fGunDir(0),      
+ fGunDir(0),
  fDefaultCmd(0),
  fBeamTypeCmd(0),
  fBeamSigmaXCmd(0),
  fBeamSigmaYCmd(0),
  fMCFileCmd(0),
- fMCFileListCmd(0)
+ fMCFileListCmd(0),
+ fMonoLim_xmin(0),
+ fMonoLim_ymin(0),
+ fMonoLim_xmax(0),
+ fMonoLim_ymax(0)
 {
   fGunDir = new G4UIdirectory("/lxphoton/gun/");
   fGunDir->SetGuidance("gun control");
- 
+
   fDefaultCmd = new G4UIcmdWithoutParameter("/lxphoton/gun/setDefault",this);
   fDefaultCmd->SetGuidance("set/reset the kinematic defined in PrimaryGenerator");
   fDefaultCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
-  
+
   fBeamTypeCmd = new G4UIcmdWithAString("/lxphoton/gun/beamType",this);
   fBeamTypeCmd->SetGuidance("Distribution of primary particles of the beam. Supported types: gaussian, mono");
   fBeamTypeCmd->SetParameterName("beamType",false);
-  fBeamTypeCmd->AvailableForStates(G4State_PreInit, G4State_Idle);   
- 
+  fBeamTypeCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
   fSpectraFileCmd = new G4UIcmdWithAString("/lxphoton/gun/SpectraFile",this);
   fSpectraFileCmd->SetGuidance("File contaning tabulated PDF of primary particles of the beam.");
   fSpectraFileCmd->SetParameterName("SpectraFile",false);
-  fSpectraFileCmd->AvailableForStates(G4State_PreInit, G4State_Idle);  
+  fSpectraFileCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
   fBeamSigmaXCmd = new G4UIcmdWithADoubleAndUnit("/lxphoton/gun/setSigmaX",this);
   fBeamSigmaXCmd->SetGuidance("Set sigma for beam distribution in X direction at IP");
-  fBeamSigmaXCmd->SetParameterName("SigmaX",false);  
+  fBeamSigmaXCmd->SetParameterName("SigmaX",false);
   fBeamSigmaXCmd->SetRange("SigmaX>0.");
-  fBeamSigmaXCmd->SetUnitCategory("Length");  
+  fBeamSigmaXCmd->SetUnitCategory("Length");
   fBeamSigmaXCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
- 
+
   fBeamSigmaYCmd = new G4UIcmdWithADoubleAndUnit("/lxphoton/gun/setSigmaY",this);
   fBeamSigmaYCmd->SetGuidance("Set sigma for beam distribution in Y direction at IP");
-  fBeamSigmaYCmd->SetParameterName("SigmaY",false);  
+  fBeamSigmaYCmd->SetParameterName("SigmaY",false);
   fBeamSigmaYCmd->SetRange("SigmaY>0.");
-  fBeamSigmaYCmd->SetUnitCategory("Length");  
+  fBeamSigmaYCmd->SetUnitCategory("Length");
   fBeamSigmaYCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
-  
+
   fMCFileCmd = new G4UIcmdWithAString("/lxphoton/gun/MCParticlesFile",this);
   fMCFileCmd->SetGuidance("File contaning tabulated list of primary particles to simulate.");
   fMCFileCmd->SetParameterName("MCParticlesFile",false);
-  fMCFileCmd->AvailableForStates(G4State_PreInit, G4State_Idle);   
+  fMCFileCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
   fMCFileListCmd = new G4UIcmdWithAString("/lxphoton/gun/MCParticlesFileList",this);
   fMCFileListCmd->SetGuidance("File contaning list of files with primary particles to simulate.");
   fMCFileListCmd->SetParameterName("MCParticlesFileList",false);
-  fMCFileListCmd->AvailableForStates(G4State_PreInit, G4State_Idle);   
-  
+  fMCFileListCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+  fMonoLim_xmin = new G4UIcmdWithADouble("/lxphoton/gun/xmin",this);
+  fMonoLim_xmin->AvailableForStates(G4State_PreInit, G4State_Idle);
+  fMonoLim_ymin = new G4UIcmdWithADouble("/lxphoton/gun/ymin",this);
+  fMonoLim_ymin->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+  fMonoLim_xmax = new G4UIcmdWithADouble("/lxphoton/gun/xmax",this);
+  fMonoLim_xmax->AvailableForStates(G4State_PreInit, G4State_Idle);
+  fMonoLim_ymax = new G4UIcmdWithADouble("/lxphoton/gun/ymax",this);
+  fMonoLim_ymax->AvailableForStates(G4State_PreInit, G4State_Idle);
 }
 
 
@@ -74,39 +87,54 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
   delete fDefaultCmd;
   delete fBeamTypeCmd;
   delete fSpectraFileCmd;
-  delete fGunDir; 
+  delete fGunDir;
   delete fBeamSigmaXCmd;
   delete fBeamSigmaYCmd;
   delete fMCFileCmd;
   delete fMCFileListCmd;
+  
+  delete fMonoLim_xmin;
+  delete fMonoLim_ymin;
+  delete fMonoLim_xmax;
+  delete fMonoLim_ymax;
+
 }
 
 
 
 void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,
                                                G4String newValue)
-{ 
+{
   if (command == fDefaultCmd)
     {fAction->SetDefaultKinematic();}
-   
+
   if (command == fBeamTypeCmd)
-   { fAction->SetBeamType(newValue);}       
+   { fAction->SetBeamType(newValue);}
 
   if (command == fSpectraFileCmd)
-   { fAction->SetSpectraFile(newValue);}       
+   { fAction->SetSpectraFile(newValue);}
 
   if (command == fBeamSigmaXCmd)
-   { fAction->SetSigmaX(fBeamSigmaXCmd->GetNewDoubleValue(newValue));}       
+   { fAction->SetSigmaX(fBeamSigmaXCmd->GetNewDoubleValue(newValue));}
 
   if (command == fBeamSigmaYCmd)
-   { fAction->SetSigmaY(fBeamSigmaYCmd->GetNewDoubleValue(newValue));}       
-    
+   { fAction->SetSigmaY(fBeamSigmaYCmd->GetNewDoubleValue(newValue));}
+
   if (command == fMCFileCmd)
-   { fAction->SetMCParticleFile(newValue);}     
+   { fAction->SetMCParticleFile(newValue);}
 
-   if (command == fMCFileListCmd)
-   { fAction->SetMCParticleFile(newValue, true);}     
+  if (command == fMCFileListCmd)
+   { fAction->SetMCParticleFile(newValue, true);}
+
+  if (command == fMonoLim_xmin)
+   { fAction->SetXmin(fMonoLim_xmin->GetNewDoubleValue(newValue));}
+
+  if (command == fMonoLim_xmax)
+   { fAction->SetXmax(fMonoLim_xmax->GetNewDoubleValue(newValue));}
+
+  if (command == fMonoLim_ymin)
+   { fAction->SetYmin(fMonoLim_ymin->GetNewDoubleValue(newValue));}
+
+  if (command == fMonoLim_ymax)
+   { fAction->SetYmax(fMonoLim_ymax->GetNewDoubleValue(newValue));}
 }
-
-
-

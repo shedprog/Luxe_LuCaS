@@ -41,3 +41,19 @@ do
   ./lxbeamsim run_luxe_update.mac
 
 done
+
+# x=(12.5 17.5 22.5 27.5 32.5 37.5)
+#
+# number=6
+# for n in {1..$number}
+# do
+#   pos=${x[$(($n))]}
+#   sed "s|/lxphoton/gun/beamType.*|/lxphoton/gun/beamType mono|g;\
+#        s|/analysis/filename.*|/analysis/filename mono_${pos}.root|g;\
+#        s|/gun/position.*|/gun/position ${pos} 0.0 0.0|g;\
+#        s|/gun/energy.*|/gun/energy 5.0 GeV|g;\
+#        s|/run/beamOn.*|/run/beamOn 5000|g\
+#        " run_luxe.mac > run_luxe_update_${n}.mac
+#   ./lxbeamsim run_luxe_update_${n}.mac &
+#
+# done

@@ -8,14 +8,16 @@
 # LIST=/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_0.2J.out
 # LIST=/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_0.35J.out
 # LIST=/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_0.5J.out
-LIST=/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_0.7J.out
-# LIST=/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_0.85J.out
-# LIST=/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_1.0J.out
+LISTS=(
+"/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_0.7J.out"
+"/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_0.85J.out"
+"/nfs/dust/zeus/group/mykytaua/LUXE/IPstrong/Lists/bppp_17.5GeV_5mfoiltoIP_Enelas_1.0J.out"
+)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 WORKDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-OUTDIR=${WORKDIR}/condor_out
+OUTDIRGLOB=${WORKDIR}/condor_out
 
 #Some stearing variables
 E_start=-999
@@ -28,7 +30,11 @@ while test $# -gt 0; do
 
         --run| -r)
 
-            filename=$(basename $LIST)
+	    for LIST in "${LISTS[@]}"; do
+	    echo "List: " $LIST
+	    OUTDIR=${OUTDIRGLOB}
+
+	    filename=$(basename $LIST)
 
             OUTDIR=${OUTDIR}/${filename}
             mkdir -p $OUTDIR
@@ -45,20 +51,21 @@ while test $# -gt 0; do
             echo 'number of file: '$number
 
             sed "s|JOBS_NUMBER|$number|g;\
-            	   s|OUTDIR|$OUTDIR|g\
+            	 s|OUTDIR|$OUTDIR|g\
             	  " $WORKDIR/QA.job > $OUTDIR/QA.job
 
-                sed "s|option=.*|option=true|g;\
+            sed "s|option=.*|option=true|g;\
                  s|LIST_FILE=.*|LIST_FILE=$LIST|g;\
                  s|WORKDIR=.*|WORKDIR=$OUTDIR|g\
             	  " $WORKDIR/run_condor.sh > $OUTDIR/run_condor.sh
 
-	        ln -s $WORKDIR/lxbeamsim $OUTDIR/
-	        cp $WORKDIR/run_luxe.mac $OUTDIR/
+	    ln -s $WORKDIR/lxbeamsim $OUTDIR/
+	    cp $WORKDIR/run_luxe.mac $OUTDIR/
 
             cd $OUTDIR
            	condor_submit $OUTDIR/QA.job
             cd -
+	    done
             shift
             ;;
 
@@ -97,7 +104,7 @@ while test $# -gt 0; do
 
         --run_mono| -m)
             #This part of the code runs mono-energetical spectrum from E_start to E_end
-
+	    OUTDIR=${OUTDIRGLOB}
             mkdir -p $OUTDIR/output
             mkdir -p $OUTDIR/condor
             mkdir -p $OUTDIR/condor/log
@@ -125,6 +132,36 @@ while test $# -gt 0; do
 
             cd $OUTDIR
            	condor_submit $OUTDIR/QA.job
+            cd -
+            shift
+            ;;
+
+        --run_monolim| -ml)
+            #This part of the code runs mono-energetical spectrum from E_start to E_end
+	    OUTDIR=${OUTDIRGLOB}
+            mkdir -p $OUTDIR/output
+            mkdir -p $OUTDIR/condor
+            mkdir -p $OUTDIR/condor/log
+            mkdir -p $OUTDIR/condor/err
+            mkdir -p $OUTDIR/condor/out
+
+            echo "Number: " $Number
+            echo "Outdir: " $OUTDIR
+            echo "Workdir: " $WORKDIR
+
+            sed "s|JOBS_NUMBER|$Number|g;\
+               s|OUTDIR|$OUTDIR|g\
+                " $WORKDIR/QA.job > $OUTDIR/QA.job
+
+            sed "s|option=.*|option=monolim|g;\
+                 s|WORKDIR=.*|WORKDIR=$OUTDIR|g\
+                " $WORKDIR/run_condor.sh > $OUTDIR/run_condor.sh
+
+            ln -s $WORKDIR/lxbeamsim $OUTDIR/
+            cp $WORKDIR/run_luxe.mac $OUTDIR/
+
+            cd $OUTDIR
+            condor_submit $OUTDIR/QA.job
             cd -
             shift
             ;;

@@ -30,6 +30,9 @@
 // for world
 
 //New calorimeter setups
+G4double Setup::RotateAngleY = 0.0*deg;
+G4double Setup::fromedge_to_center = 10.0*cm;
+
 G4double Setup::pix_x_size = 5.0 *mm;
 G4double Setup::pix_y_size = 5.0 *mm;
 

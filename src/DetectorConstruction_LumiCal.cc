@@ -594,10 +594,10 @@ std::string delimiter = ":";
 
 	// G4cout <<  " Test Beam setup done !  "  << G4endl;
 
-    G4double fromedge_to_center = 10.0*cm;
+    // G4double fromedge_to_center = 10.0*cm;
+    // G4double RotateAngleY = 3.5*deg;
     G4double shift_y = base_airy + fromedge_to_center;
-
-    G4Transform3D tr1( G4RotationMatrix().rotateZ( 90.0*deg ),
+    G4Transform3D tr1( G4RotationMatrix().rotateZ( 90.0*deg ).rotateY( -RotateAngleY ),
                        G4ThreeVector( -shift_y, 0.0, 5.0*m));
     new G4PVPlacement(tr1,
     logicWorld,
@@ -607,7 +607,7 @@ std::string delimiter = ":";
     1,
     overlap_check); // copy number
 
-    G4Transform3D tr2( G4RotationMatrix().rotateZ( -90.0*deg ),
+    G4Transform3D tr2( G4RotationMatrix().rotateZ( -90.0*deg ).rotateY( RotateAngleY ),
                        G4ThreeVector( shift_y, 0.0, 5.0*m));
     new G4PVPlacement(tr2,
     logicWorld,
@@ -627,6 +627,9 @@ std::string delimiter = ":";
 void DetectorConstruction::InitDetectorParameters()
 {
   //New calorimeter setups
+  RotateAngleY =  Setup::RotateAngleY;
+  fromedge_to_center = Setup::fromedge_to_center;
+
   pix_x_size = Setup::pix_x_size;
   pix_y_size = Setup::pix_y_size;
 

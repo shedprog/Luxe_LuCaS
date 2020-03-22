@@ -32,6 +32,9 @@ public:
   //-----------------------------------------------
 public:
   //New calorimeter setups
+  static G4double RotateAngleY;
+  static G4double fromedge_to_center;
+
   static G4double pix_x_size;
   static G4double pix_y_size;
   static G4bool isDeadAreas;

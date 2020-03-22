@@ -20,6 +20,7 @@
 #include "G4String.hh"
 #include "GlobalVars.hh"
 #include <string>
+#include <cmath>
 
 #include <iostream>
 //#include <filesystem>
@@ -95,6 +96,8 @@ void PrimaryGeneratorAction::SetBeamType(G4String val)
     fBeamType = beamMono;
   } else if (val == "mc") {
     fBeamType = beamMC;
+  } else if (val == "monolim") {
+    fBeamType = beamMonoLimits;
   } else {
     G4cout << "PrimaryGeneratorAction::SetBeamType: <" << val << ">"
            << " is not defined"
@@ -121,7 +124,6 @@ void PrimaryGeneratorAction::SetSigmaY(const G4double sigma)
   std::cout << "PrimaryGeneratorAction: Set beam sigmaY at IP to : " << G4BestUnit(fsigmay, "Length") << std::endl;
 //   G4cout << "Set beam sigmaY at IP to : " << G4BestUnit(fsigmay, "Length") << G4endl;
 }
-
 
 void PrimaryGeneratorAction::SetSpectraFile(G4String val)
 {
@@ -166,6 +168,9 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     else if (fBeamType == beamMC) {
     GeneratefromMC(anEvent);
   }
+    else if (fBeamType == beamMonoLimits) {
+    GenerateMonoLimits(anEvent);
+    }
 
   // std::cout<<"@@@@@@@@@@@@@@@@@@@@@@ GenerateMono \n";
 }
@@ -234,25 +239,50 @@ void PrimaryGeneratorAction::GenerateGaussian(G4Event* anEvent)
 void PrimaryGeneratorAction::GenerateMono(G4Event* anEvent)
 {
 
-  fz0 = 0.0;
-  fy0 = 0.0*cm + G4RandFlat::shoot(-Setup::pix_y_size/2.0, Setup::pix_y_size/2.0);
-  fx0 = 370.0*mm + G4RandFlat::shoot(-Setup::pix_x_size/2.0, Setup::pix_x_size/2.0);
+  // fz0 = 0.0;
+  // fy0 = 0.0*cm + G4RandFlat::shoot(-Setup::pix_y_size/2.0, Setup::pix_y_size/2.0);
+  // fx0 = 370.0*mm + G4RandFlat::shoot(-Setup::pix_x_size/2.0, Setup::pix_x_size/2.0);
 
   // fy0 = 0.0*mm;
   // fx0 = 370.0*mm;
   // fz0 = 0.0*mm;
 
   G4double mass = fParticleGun->GetParticleDefinition()->GetPDGMass();
-  G4double E = fParticleGun->GetParticleEnergy();
+  // G4double E = fParticleGun->GetParticleEnergy();
+  // G4ThreeVector position = fParticleGun->GetParticlePosition();
+  G4ThreeVector position = G4ThreeVector(480.*mm,0.0,0.0);
   // G4double E = G4RandFlat::shoot(1.*GeV,13.*GeV);
+  // G4double pz = sqrt(E*E - mass*mass);
+
+  G4double E = 0.714011463377/std::sinh(5.22758393475e-07*position.x());
+  // G4double E = (269.0/4.0-position.x()*23.0/200.0)*GeV;
   G4double pz = sqrt(E*E - mass*mass);
-  std::cout << "E: " << E <<" "<<"pz: "<<pz<<"\n";
+
+  std::cout << "pos: "<< position << " E: " << E <<" "<<"pz: "<<pz<<"\n";
 
   fParticleGun->SetParticleEnergy(E);
-  fParticleGun->SetParticlePosition(G4ThreeVector(fx0, fy0, fz0));
+  fParticleGun->SetParticlePosition(position);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.0, 0.0, pz));
   fParticleGun->GeneratePrimaryVertex(anEvent);
 
+}
+
+void PrimaryGeneratorAction::GenerateMonoLimits(G4Event* anEvent)
+{
+  G4double mass = fParticleGun->GetParticleDefinition()->GetPDGMass();
+  G4double E = fParticleGun->GetParticleEnergy();
+  G4double pz = sqrt(E*E - mass*mass);
+
+  G4double x_ = G4RandFlat::shoot(monolim_xmin, monolim_xmax)*cm;
+  G4double y_ = G4RandFlat::shoot(monolim_ymin, monolim_ymax)*cm;
+  G4double z_ = 0.0;
+
+  std::cout<<"pos: "<<x_<<" "<<y_<<" E: "<<E<<" "<<"pz: "<<pz<<"\n";
+
+  fParticleGun->SetParticleEnergy(E);
+  fParticleGun->SetParticlePosition(G4ThreeVector(x_,y_,z_));
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.0, 0.0, pz));
+  fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 
 

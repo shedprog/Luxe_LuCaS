@@ -172,6 +172,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     *WorldMat;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ LUMUCAL Matirial~~~~~~~~~~~~~~! End
     //New calorimeter setups
+    G4double RotateAngleY;
+    G4double fromedge_to_center;
+
     G4double pix_x_size;
     G4double pix_y_size;
     // G4 regions created to set production cuts

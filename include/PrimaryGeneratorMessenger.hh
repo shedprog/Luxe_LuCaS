@@ -21,25 +21,29 @@ class PrimaryGeneratorMessenger: public G4UImessenger
   public:
     PrimaryGeneratorMessenger(PrimaryGeneratorAction*);
    ~PrimaryGeneratorMessenger();
-    
+
     virtual void SetNewValue(G4UIcommand*, G4String);
-    
+
   private:
     PrimaryGeneratorAction*    fAction;
-    
-    G4UIdirectory*             fGunDir;      
+
+    G4UIdirectory*             fGunDir;
     G4UIcmdWithoutParameter*   fDefaultCmd;
-    G4UIcmdWithAString*        fBeamTypeCmd; 
+    G4UIcmdWithAString*        fBeamTypeCmd;
     G4UIcmdWithAString*        fSpectraFileCmd;
-    
+
     G4UIcmdWithADoubleAndUnit* fBeamSigmaXCmd;
     G4UIcmdWithADoubleAndUnit* fBeamSigmaYCmd;
 
     G4UIcmdWithAString*        fMCFileCmd;
     G4UIcmdWithAString*        fMCFileListCmd;
+
+    G4UIcmdWithADouble* fMonoLim_xmin;
+    G4UIcmdWithADouble* fMonoLim_ymin;
+    G4UIcmdWithADouble* fMonoLim_xmax;
+    G4UIcmdWithADouble* fMonoLim_ymax;
 };
 
 
 
 #endif
-
