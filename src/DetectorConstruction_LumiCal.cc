@@ -83,15 +83,15 @@
 //// DESY 2016 Prototype test beam
 //----------------------------------------
 
-G4double SensorGap(G4double R, G4double r, G4double alpha)
-{
-    G4double b = -R * sqrt(4.0-2.0*r*r/(R*R)*(1.0-cos(alpha)));
-    G4double a = 1.0;
-    G4double c = R*R - r*r;
-    G4double dh = (-b-sqrt(b*b-4.0*a*c))/(2.0*a);
-    G4double res = r-R+dh;
-    return res;
-}
+// G4double SensorGap(G4double R, G4double r, G4double alpha)
+// {
+//     G4double b = -R * sqrt(4.0-2.0*r*r/(R*R)*(1.0-cos(alpha)));
+//     G4double a = 1.0;
+//     G4double c = R*R - r*r;
+//     G4double dh = (-b-sqrt(b*b-4.0*a*c))/(2.0*a);
+//     G4double res = r-R+dh;
+//     return res;
+// }
 
 void DetectorConstruction::BuildTBeamPT16(){
 
